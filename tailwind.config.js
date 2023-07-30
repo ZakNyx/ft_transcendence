@@ -5,7 +5,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        'npc-blue': '#80CEF0'
+        'npc-blue': '#80CEF0',
+        'npc-black': '#151317'
       }
     },
   },
