@@ -6,7 +6,10 @@ export default {
     extend: {
       colors: {
         'npc-blue': '#80CEF0',
-        'npc-black': '#151317'
+        'npc-black': '#151317',
+        'npc-purple': '#BB86FC',
+        'npc-cyan': '#03DAC5',
+        'npc-white': '#F5FCFF',
       }
     },
   },
