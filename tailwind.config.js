@@ -4,6 +4,15 @@ export default {
   content: ["./src/**/*.{jsx,js,ts,tsx}"],  
   theme: {
     extend: {
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+      },
+      animation: {
+        float: 'float 3s ease-in-out infinite', // Adjust the animation duration and easing for a smoother effect
+      },
       fontSize: {
         'sm': '0.875rem', // Small screens
         'base': '1rem',   // Default size
