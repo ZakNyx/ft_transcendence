@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function LoginPage() {
   return (
-    <div className="grid grid-cols-6 grid-rows-5 gap-0 h-screen relative">
+    <div className="grid grid-cols-6 grid-rows-5 gap-0 h-screen relative custom-gradient">
       {/* Logo */}
       <img
         className="absolute top-2 left-2 w-32 h-auto"
@@ -22,7 +22,7 @@ export default function LoginPage() {
 
       {/* Main Content */}
       <div className="col-span-4 row-span-5 col-start-3 bg-npc-black opacity-95 h-screen rounded-bl-3xl rounded-tl-3xl flex flex-col justify-center items-center">
-        <h1 className="text-npc-purple text-base sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-8">
+        <h1 className="text-npc-purple text-base sm:text-xl md:text-2xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold mb-8 text-center whitespace-nowrap">
           Play PONG with your friends
         </h1>
         <Link to="/home">

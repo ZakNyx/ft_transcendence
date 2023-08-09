@@ -1,5 +1,12 @@
+import React from "react";
+import NavBar from "../components/Navbar";
+
 function HomePage() {
-  return <h1>Hello World you landed on the Home Page</h1>;
+  return (
+    <div className="background-image">
+    <NavBar />
+    </div>
+  )
 }
 
 export default HomePage;
