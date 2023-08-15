@@ -17,3 +17,7 @@
     background-size: 100% 100%; /* This ensures the entire container is covered */
     height: 100vh;
   }
+
+  .navbar {
+    background-color: rgba(0, 0, 0, 0.15); 
+  }
