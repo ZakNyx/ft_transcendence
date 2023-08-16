@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import HomePage from './pages/Home';
-import Profile from './pages/Profile';
-import Error404 from './pages/Error404';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/Home";
+import Profile from "./pages/Profile";
+import Error404 from "./pages/Error404";
 
 function App() {
   return (
