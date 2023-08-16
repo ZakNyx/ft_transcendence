@@ -7,7 +7,7 @@ function NavBar() {
         @import
         url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
       </style>
-      <nav className="navbar flex justify-between items-center w-auto mx-auto">
+      <nav className="navbar flex justify-between items-center w-auto mx-auto top-0">
         <div>
           <img
             className="top-2 left-2 w-32 h-auto cursor-pointer"

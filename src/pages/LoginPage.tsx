@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 export default function LoginPage() {
   return (
     <div className="grid grid-cols-6 grid-rows-5 gap-0 h-screen relative custom-gradient">
+      {/* Import Google Fonts */}
+      <style>
+        @import
+        url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+      </style>
       {/* Logo */}
       <img
         className="absolute top-2 left-2 w-32 h-auto"
@@ -25,7 +30,7 @@ export default function LoginPage() {
           Play PONG with your friends
         </h1>
         <Link to="/home">
-          <button className="relative bg-npc-purple hover:bg-purple-hover hover:cursor-pointer text-black font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
+          <button className="relative bg-npc-purple hover:bg-purple-hover active:bg-purple-active hover:cursor-pointer text-black font-bold shadow-but text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
             {/* 42 Logo */}
             <img
               className="w-10 h-10 mr-4"
