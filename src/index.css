@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import
-url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
-
 .custom-gradient {
   background-image: linear-gradient(
     to bottom,
