@@ -1,9 +1,9 @@
-import React from "react";
 import NavBar from "../components/Navbar";
+import DoughnutChart from "../components/DoughnutChart";
 export default function Settings() {
     return (
     <div className="background-image">
         <NavBar />
-        <h1>Setting Page !</h1>
+        <DoughnutChart wins={60} losses={40} />
     </div>)
 }
