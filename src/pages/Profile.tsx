@@ -37,7 +37,7 @@ function Profile() {
           </div>
         </div>
         <div>
-        <DoughnutChart />
+        <DoughnutChart wins={60} losses={40} />
       </div>
       </div>
     </div>

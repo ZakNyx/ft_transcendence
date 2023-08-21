@@ -50,9 +50,9 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({ wins, losses }) => {
   };
 
   return (
-    <div>
-      <h1 className="text-white">Allah-Las</h1>
-      <div>
+    <div className="p-6" >
+      <h1 className="text-white">WINRATE</h1>
+      <div>        
         <Doughnut data={chartData} options={options} />
       </div>
     </div>
