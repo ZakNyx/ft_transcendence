@@ -1,5 +1,8 @@
 import React from "react";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface DoughnutChartProps {
   wins: number;
@@ -15,16 +18,19 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({ wins, losses }) => {
     datasets: [
       {
         data: [wins, losses],
-        backgroundColor: ["#6C2121", "#216C44"],
-        borderWidth: 0.5, 
+        backgroundColor: ["#216C44", "#6C2121"],
+        hoverBackgroundColor: ["#216C44", "#6C2121"],
+        borderWidth: 0.5,
       },
     ],
   };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "bottom",
+        position: "right",
         labels: {
           font: {
             size: 16,
@@ -38,12 +44,14 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({ wins, losses }) => {
 
   return (
     <div className="p-6 text-center">
-      <h1 className="text-white font-bold">WINRATE</h1>
-      <p className="text-white font-semibold">
-        {winratePercentage.toFixed(2)}%
+      <h1 className="text-white font-bold text-2xl mb-2">WINRATE</h1>
+      <p className="text-white font-semibold text-lg">
+        {winratePercentage.toFixed(0)}%
       </p>
-      <div>
-        <Doughnut data={chartData} options={options} />
+      <div className="mt-4">
+        <div className="w-[15vw] h-auto">
+          <Doughnut data={chartData} options={options} />
+        </div>
       </div>
     </div>
   );
