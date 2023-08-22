@@ -29,7 +29,7 @@ function NavBar() {
     <header>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
-      </style> 
+      </style>
       <nav className="navbar flex justify-between items-center w-auto mx-auto top-0">
         <div className="relative">
           <img
