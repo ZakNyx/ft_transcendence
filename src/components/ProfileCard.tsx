@@ -1,11 +1,10 @@
 import DoughnutChart from "../components/DoughnutChart";
-import React from "react";
 
 export default function ProfileCard() {
   return (
-    <div className="bg-black rounded-[150px] w-[850px] h-auto p-6 ml-2 mt-2 shadow-[0px_10px_30px_20px_#00000024]">
-      <h1 className="text-white font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pt-8 pl-14">
-        zihirri's Profile:
+    <div className="bg-gray-900 rounded-[150px] w-[850px] h-auto p-6 ml-2 mt-2 shadow-[0px_10px_30px_20px_#00000024]">
+      <h1 className="text-gray-200 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pt-8 pl-14">
+        Zihirri's Profile
       </h1>
       <div className="flex items-center">
         <div className="flex items-center">
@@ -35,7 +34,7 @@ export default function ProfileCard() {
           </div>
         </div>
         <div className="">
-          <DoughnutChart wins={155} losses={22} />
+          <DoughnutChart wins={12} losses={12} />
         </div>
       </div>
     </div>
