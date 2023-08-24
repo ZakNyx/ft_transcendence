@@ -16,7 +16,6 @@
     radial-gradient(at 81% 13%, #8850c6 0, transparent 77%),
     radial-gradient(at 82% 80%, #a179cd 0, transparent 88%),
     radial-gradient(at 52% 52%, #5f42a7 0, transparent 96%);
-  background-size: 100% 100%;
   /* This ensures the entire container is covered */
   background-attachment: fixed;
 }
