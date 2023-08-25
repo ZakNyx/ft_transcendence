@@ -10,19 +10,18 @@ function Profile() {
         @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
       </style>
       <NavBar />
-      <div className="flex">
-        <div className="w-[50%]">
+      <div className="flex flex-col lg:flex-row">
+        <div className="w-full lg:w-[50%] mb-4 lg:mb-0 lg:pr-4 lg:flex-shrink-0">
           <ProfileCard />
         </div>
-        <div className="w-[50%]">
-          <div className="">
-            <Achievements />
-          </div>
+        <div className="w-full lg:w-[50%]">
+          <Achievements />
         </div>
       </div>
-      <MatchHistory /> 
+      <MatchHistory />
     </div>
   );
 }
 
 export default Profile;
+
