@@ -28,21 +28,11 @@ const MatchHistory = () => {
         result: "win",
       },    {
         opponent: "ie-laabb",
-        playerScore: 3,
-        opponentScore: 2,
-        result: "win",
-      },    {
-        opponent: "ie-laabb",
         playerScore: 4,
         opponentScore: 5,
         result: "lost",
       }, 
-      {
-        opponent: "ie-laabb",
-        playerScore: 4,
-        opponentScore: 5,
-        result: "lost",
-      }, 
+
     // ... add more matches here ...
   ];
 

@@ -3,7 +3,7 @@ import Achievements from "../components/Achievements"
 
 export default function ProfileCard() {
   return (
-    <div className="bg-gray-900 rounded-[150px] w-[850px] h-auto p-6 ml-2 mt-3 shadow-[0px_10px_30px_20px_#00000024]">
+    <div className="bg-gray-900 rounded-[150px] w-[850px] h-auto p-6 ml-2 mt-3 sm:ml-14 lg:ml-14 lg:mt-14 shadow-[0px_10px_30px_20px_#00000024]">
       <h1 className="text-gray-200 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pt-8 pl-14">
         Zihirri's Profile
       </h1>
