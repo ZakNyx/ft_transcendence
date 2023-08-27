@@ -37,7 +37,7 @@ const MatchHistory = () => {
   ];
 
  return (
-    <div className="bg-gray-900 rounded-[30px] p-6 mt-6 mx-auto max-w-[70%] shadow-[0px_10px_20px_20px_#00000024]" >
+    <div className="bg-gray-900 rounded-[30px] p-6 mt-6 mx-auto lg:max-w-[70%] shadow-[0px_10px_20px_20px_#00000024]" >
       <h1 className="text-gray-200 font-[Rubik] text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl mb-4">
         Match History
       </h1>
