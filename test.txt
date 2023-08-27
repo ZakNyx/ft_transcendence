@@ -1,0 +1,35 @@
+import NavBar from "../components/Navbar";
+import ProfileCard from "../components/ProfileCard";
+import MatchHistory from "../components/MatchHistory";
+import Achievements from "../components/Achievements";
+
+function Profile() {
+  return (
+    <div className="background-image">
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+      </style>
+      <NavBar />
+      <div className="flex items-center flex-col h-[50vh]  ml-[50px] mr-[50px] gap-4 lg:flex-row">
+        <div className=" flex justify-evenly	items-center w-1/2 m-[50px]">
+          <ProfileCard />
+          {/* <div className="bg-npc-blue  flex justify-center content-center">zihirri.png</div>
+          <div className="bg-npc-blue  flex flex-col justify-center items-center">
+            <h1>Name</h1>
+            <h1>Elo</h1>
+            <h1>Rank</h1>
+          </div> */}
+          <div className="bg-npc-blue  flex justify-center items-center ">diagram</div>
+        </div>
+        <div className="w-1/2 flex justify-center items-center">
+          {/* <Achievements /> */}
+          <div className="bg-npc-black"> test </div>
+        </div>
+      </div>
+      <MatchHistory />
+    </div>
+  );
+}
+
+export default Profile;
+

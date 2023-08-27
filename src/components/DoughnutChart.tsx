@@ -30,7 +30,7 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({ wins, losses }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "right",
+        display: false,
         labels: {
           font: {
             size: 16,
@@ -44,8 +44,11 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({ wins, losses }) => {
 
   return (
     <div className="p-6 text-center">
-      <h1 className="text-white font-bold text-2xl mb-2">WINRATE</h1>
-      <p className="text-white font-semibold text-lg">
+      <h1 className="text-gray-200 font-bold text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-2xl mb-2">
+        WINRATE
+      </h1>
+
+      <p className="text-gray-200 font-semibold text-lg">
         {winratePercentage.toFixed(0)}%
       </p>
       <div className="mt-4">

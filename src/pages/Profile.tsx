@@ -11,10 +11,10 @@ function Profile() {
       </style>
       <NavBar />
       <div className="flex flex-col lg:flex-row">
-        <div className="w-full lg:w-[50%] mb-4 lg:mb-0 lg:pr-4 lg:flex-shrink-0">
+        <div className="mb-4 lg:mb-0 lg:pr-4 lg:flex-shrink-0 gap-6">
           <ProfileCard />
         </div>
-        <div className="w-full lg:w-[50%]">
+        <div className="">
           <Achievements />
         </div>
       </div>
