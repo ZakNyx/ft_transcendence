@@ -1,8 +1,10 @@
 import NavBar from "../components/Navbar";
-import DoughnutChart from "../components/DoughnutChart";
+import SettingForm from "../components/SettingForm";
+
 export default function Settings() {
     return (
     <div className="background-image">
         <NavBar />
+        <SettingForm />
     </div>)
 }

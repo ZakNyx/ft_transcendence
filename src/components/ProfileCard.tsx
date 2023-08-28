@@ -1,5 +1,4 @@
 import DoughnutChart from "../components/DoughnutChart";
-import Achievements from "../components/Achievements";
 
 export default function ProfileCard() {
   return (
@@ -12,7 +11,7 @@ export default function ProfileCard() {
           <img
             src="../../public/images/zihirri.jpg"
             alt="profile image"
-            className="w-52 h-50 rounded-[7rem] mr-6 md:mr-3 lg:mr-6 ml-[2.25rem]"
+           className="w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 object-contain rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
           />
           <div className="flex flex-col justify-center">
             <h1 className="text-white font-[Rubik] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-4xl">
