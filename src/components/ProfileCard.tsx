@@ -2,7 +2,7 @@ import DoughnutChart from "../components/DoughnutChart";
 
 export default function ProfileCard() {
   return (
-    <div className="bg-gray-900 rounded-[30px]  h-auto p-6  mt-3 sm:ml-8 lg:ml-8 lg:mt-14  shadow-[0px_10px_30px_20px_#00000024]">
+    <div className="background-gray rounded-[30px]  h-auto p-6  mt-3 sm:ml-8 lg:ml-8 lg:mt-14  shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
       <h1 className="text-gray-200 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-5xl ">
         Zihirri's Profile
       </h1>

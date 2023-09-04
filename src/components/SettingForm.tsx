@@ -72,7 +72,7 @@ export default function SettingForm() {
               placeholder="It's better to cm in the sink than to sink in the cm"
             />
             <div className="flex items-center mt-10">
-            <label htmlFor="2FA" className="font-semibold text-gray-200 pb1">Two-factor Authentication</label>
+            <label htmlFor="2FA" className="font-semibold text-gray-200 pr-6 pb1">Two-factor Authentication</label>
           <label className="flex cursor-pointer select-none items-center">
             <div className="relative">
               <input

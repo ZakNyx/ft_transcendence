@@ -9,9 +9,20 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-20px)" },
         },
+        "fade-in-top": {
+          "0%": {
+            transform: "translateY(-50px)",
+            opacity: "0",
+          },
+          to: {
+            transform: "translateY(0)",
+            opacity: "1",
+          },
+        },
       },
       animation: {
         float: "float 3s ease-in-out infinite", // Adjust the animation duration and easing for a smoother effect
+        "fade-in-top": "fade-in-top 0.6s linear both",
       },
       fontSize: {
         sm: "0.875rem", // Small screens

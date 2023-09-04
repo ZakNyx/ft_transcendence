@@ -30,7 +30,7 @@ export default function LoginPage() {
           Play PONG with your friends
         </h1>
         <Link to="/home">
-          <button className="relative bg-npc-purple hover:bg-purple-hover active:bg-purple-active hover:cursor-pointer text-black font-bold shadow-but text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
+          <button className="relative bg-npc-purple hover:bg-purple-hover hover:translate-y-[-6px] transition-all active:bg-purple-active hover:cursor-pointer text-black font-bold shadow-but text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
             {/* 42 Logo */}
             <img
               className="w-10 h-10 mr-4"
