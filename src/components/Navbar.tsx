@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-
+import IconButton from "./IconButton";
+import SearchBar from "./SearchBar";
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(undefined);
+  const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
+    undefined,
+  );
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -28,9 +31,10 @@ function NavBar() {
   return (
     <header>
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
+        @import
+        url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
       </style>
-      <nav className="navbar flex justify-between items-center w-auto mx-auto top-0">
+      <nav className="navbar flex justify-between items-center w-auto h-16 mx-auto top-0">
         <div className="relative">
           <img
             className="top-2 left-2 w-32 h-auto cursor-pointer"
@@ -39,45 +43,43 @@ function NavBar() {
           />
         </div>
         <div>
-          <ul className="float-right mr-10 flex leading-[80px] space-x-11 uppercase rounded">
+          <SearchBar />
+        </div>
+        <div>
+          <ul className="float-right mr-10 flex leading-[80px] space-x-3   uppercase rounded items-center">
             <li>
-              <NavLink
-                to="/home"
-                className={`hover:text-gray-300 hover:underline decoration-1 font-[Montserrat] font-bold ${
-                  window.location.pathname === "/home"
-                    ? "text-white underline decoration-1"
-                    : "text-[#2E2D2D]"
-                }`}
-              >
-                HOME
+              <NavLink to="/home">
+                <IconButton
+                  imagePath="../public/images/Home.svg"
+                  isActive={window.location.pathname === "/home"}
+                />
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink to="/chat">
+                <IconButton
+                  imagePath="../public/images/Chat.svg"
+                  isActive={window.location.pathname === "/chat"}
+                />
               </NavLink>
             </li>
             <li>
-              <NavLink
-                to="/chat"
-                className={`hover:text-gray-300 hover:underline decoration-1  font-[Montserrat] font-bold ${
-                  window.location.pathname === "/chat"
-                    ? "text-white underline decoration-1"
-                    : "text-[#2E2D2D]"
-                }`}
-              >
-                CHAT
+              <NavLink to="/leaderboard">
+                <IconButton
+                  imagePath="../public/images/Leaderboard.svg"
+                  isActive={window.location.pathname === "/leaderboard"}
+                />
               </NavLink>
             </li>
             <li>
-              <NavLink
-                to="/leaderboard"
-                className={`hover:text-gray-300 hover:underline decoration-1  font-[Montserrat] font-bold ${
-                  window.location.pathname === "/leaderboard"
-                    ? "text-white underline decoration-1"
-                    : "text-[#2E2D2D]"
-                }`}
-              >
-                LEADERBOARD
-              </NavLink>
+              <IconButton 
+                imagePath="../public/images/Notification.svg"
+                isActive={window.location.pathname === "/Notification"}
+              />
             </li>
             <li className="flex items-center">
-            <div
+              <div
                 className="relative"
                 onMouseEnter={openDropdown}
                 onMouseLeave={closeDropdown}
@@ -85,11 +87,11 @@ function NavBar() {
                 <img
                   src="../../public/images/zihirri.jpg"
                   alt="profile picture"
-                  className="w-12 h-12 cursor-pointer rounded-[30px] object-contain flex-shrink-0 min-w-[48px] min-h-[48px]"
+                  className="w-12 h-12 cursor-pointer rounded-[30px] flex-shrink-0 min-w-[48px] min-h-[48px]"
                 />
                 {isDropdownOpen && (
                   <div
-                  ref={dropdownRef}
+                    ref={dropdownRef}
                     className="absolute right-0 z-10 mt-2 w-40 text-left origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 opacity-70 focus:outline-none"
                     style={{ top: "3.5rem", right: "-2.5rem" }}
                   >
