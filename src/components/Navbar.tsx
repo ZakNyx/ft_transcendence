@@ -36,11 +36,13 @@ function NavBar() {
       </style>
       <nav className="navbar flex justify-between items-center w-auto h-16 mx-auto top-0">
         <div className="relative">
+          <NavLink to="/home">
           <img
             className="top-2 left-2 w-32 h-auto cursor-pointer"
             src="../public/images/pingpong.png"
             alt="PingPong"
           />
+          </NavLink>
         </div>
         <div>
           <SearchBar />
