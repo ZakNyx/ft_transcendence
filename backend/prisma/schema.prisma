@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  email          String  @unique
+
+  image_url      String
+  picture        String?
+  picture_status Boolean @default(false)
+  picture_mimetype String?
+
+  username    String @unique
+  displayname String @unique
+
+  wins  Int
+  loses Int
+  elo   Int
+
+  status_2fa Boolean @default(false)
+  validated  Boolean @default(false)
+
+  secret_2fa     String?
+  secret_authutl String?
+
+  games Game[]
+
+  @@map("users")
+}
+
+model Game {
+  id Int @id @default(autoincrement())
+
+  win  Boolean
+  lose Boolean
+
+  againstId Int
+  against   User @relation(fields: [againstId], references: [id])
+
+  @@map("games")
+}

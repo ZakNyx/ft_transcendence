@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  post:
+    image: postgres:13
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: cjad
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: pong
+    networks:
+      - transcendence
+networks:
+  transcendence:
