@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import NavBar from "../components/Navbar";
 import joystickSvg from "../../public/images/joystick.svg";
 import robotSvg from "../../public/images/robot.svg";
-import axios from 'axios';
+import axios from "axios";
 
 function HomePage() {
   const [user, setUser] = useState(null);
@@ -11,25 +11,25 @@ function HomePage() {
     // Function to fetch user data and set it in the state
     const fetchUserData = async () => {
       const tokenCookie = document.cookie
-        .split('; ')
-        .find(cookie => cookie.startsWith('token='));
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
 
       if (tokenCookie) {
-        const token = tokenCookie.split('=')[1];
+        const token = tokenCookie.split("=")[1];
 
         try {
           // Configure Axios to send the token in the headers
-          const response = await axios.get('http://localhost:3000/profile/me', {
+          const response = await axios.get("http://localhost:3000/profile/me", {
             headers: {
-              'Authorization': `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           });
 
           // Set the user data in the state
-          setUser(response.data.user);
+          setUser(response.data);
         } catch (error) {
           // Handle errors
-          console.error('Error fetching user data:', error);
+          console.error("Error fetching user data:", error);
         }
       }
     };
@@ -37,7 +37,6 @@ function HomePage() {
     // Call the fetchUserData function
     fetchUserData();
   }, []); // The empty dependency array ensures this effect runs only once
-
   return (
     <div className="background-image min-h-screen">
       {/* Import Google Fonts */}
@@ -49,7 +48,7 @@ function HomePage() {
       <NavBar />
       {/* Render the title */}
       <h1 className="text-white font-[Roboto] text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl pt-14 px-4 md:px-10 lg:px-14 relative">
-        Welcome back! {user ? user.username : 'Loading...'}.
+        Welcome back! {user ? user.displayname : "Loading..."}.
       </h1>
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center h-[65vh]">
