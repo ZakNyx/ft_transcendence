@@ -25,9 +25,17 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get('SearchName')
-  SearchName(@Body() body: SearchNameNameDTO) {
+  async SearchName(@Body() body: SearchNameNameDTO) {
     return this.profileService.searchName(body);
   }
+
+  @Get('me')
+  async ProfileMe(@Req() req)
+  {
+    console.log('ehehe');
+    return this.profileService.ProfileMe(req.user);
+  }
+
 
   @Get('ProfilePicture')
   async ProfilePicture(@Res() res, @Body() body: updateNameDTO) {

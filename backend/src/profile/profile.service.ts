@@ -22,6 +22,16 @@ export class ProfileService {
     return users;
   }
 
+  async ProfileMe(reqUser){
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: reqUser.username,
+      },
+    });
+    console.log(user);
+    return user;
+  }
+
   async profilePicture(username, res) {
     try {
       const user = await this.prismaService.user.findUnique({
