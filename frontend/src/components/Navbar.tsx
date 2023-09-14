@@ -54,28 +54,36 @@ function NavBar() {
   useEffect(() => {
     // Function to fetch user picture
     const fetchUserPicture = async () => {
-      try {
-        if (username) {
-          const response = await axios.get(
-            `http://localhost:3000/profile/ProfilePicture/${username}`,
-            {
-              responseType: "arraybuffer",
-            }
-          );
+      const tokenCookie = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("token="));
 
-          const contentType = response.headers["content-type"];
-          const blob = new Blob([response.data], { type: contentType });
-          const imageUrl = URL.createObjectURL(blob);
+    try {
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+        const response = await axios.get(
+          `http://localhost:3000/profile/ProfilePicture/${username}`,
+          {
+            responseType: "arraybuffer",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-          setUserPicture(imageUrl);
-        } else {
-          // Handle the case when there is no username (e.g., display a placeholder image)
-          setUserPicture("URL_OF_PLACEHOLDER_IMAGE");
-        }
-      } catch (error) {
-        // Handle errors gracefully (e.g., display an error message to the user)
-        console.error("Error fetching user picture:", error);
+        const contentType = response.headers["content-type"];
+        const blob = new Blob([response.data], { type: contentType });
+        const imageUrl = URL.createObjectURL(blob);
+
+        setUserPicture(imageUrl);
+      } else {
+        // Handle the case when there is no token (e.g., display a placeholder image)
+        setUserPicture("URL_OF_PLACEHOLDER_IMAGE");
       }
+    } catch (error) {
+      // Handle errors gracefully (e.g., display an error message to the user)
+      console.error("Error fetching user picture:", error);
+    }
     };
 
     // Call the fetchUserPicture function

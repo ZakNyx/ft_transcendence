@@ -8,17 +8,18 @@ import axios from 'axios';
 export class ProfileService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async searchName(body: SearchNameNameDTO) {
+  async searchName(body: string) {
     const users = await this.prismaService.user.findMany({
       where: {
         username: {
-          contains: body.name,
+          contains: body,
         },
       },
       select: {
         username: true,
       },
     });
+    console.log(users);
     return users;
   }
 

@@ -8,6 +8,7 @@ import {
   Put,
   Req,
   Res,
+  Param,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -24,9 +25,9 @@ import * as mimeTypes from 'mime-types';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  @Get('SearchName')
-  async SearchName(@Body() body: SearchNameNameDTO) {
-    return this.profileService.searchName(body);
+  @Get('SearchName/:search')
+  async SearchName(@Param('search') search: string) {
+    return this.profileService.searchName(search);
   }
 
   @Get('me')
@@ -37,9 +38,9 @@ export class ProfileController {
   }
 
 
-  @Get('ProfilePicture')
-  async ProfilePicture(@Res() res, @Body() body: updateNameDTO) {
-    return this.profileService.profilePicture(body, res);
+  @Get('ProfilePicture/:username')
+  async ProfilePicture(@Res() res, @Param('username') username: string) {
+    return this.profileService.profilePicture(username, res);
   }
 
   @Put('updateName')
