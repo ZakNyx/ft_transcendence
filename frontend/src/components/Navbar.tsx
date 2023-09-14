@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import IconButton from "./IconButton";
 import SearchBar from "./SearchBar";
+import axios from "axios";
+
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
-    undefined,
+    undefined
   );
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -14,6 +16,71 @@ function NavBar() {
     clearTimeout(dropdownTimeout);
     setIsDropdownOpen(true);
   };
+
+  const [username, setUser] = useState<string | null>(null);
+  const [userPicture, setUserPicture] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Function to fetch user data and set it in the state
+    const fetchUserData = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+
+        try {
+          // Configure Axios to send the token in the headers
+          const response = await axios.get("http://localhost:3000/profile/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          // Set the user data in the state
+          setUser(response.data.username);
+        } catch (error) {
+          // Handle errors gracefully (e.g., display an error message to the user)
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    // Call the fetchUserData function
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    // Function to fetch user picture
+    const fetchUserPicture = async () => {
+      try {
+        if (username) {
+          const response = await axios.get(
+            `http://localhost:3000/profile/ProfilePicture/${username}`,
+            {
+              responseType: "arraybuffer",
+            }
+          );
+
+          const contentType = response.headers["content-type"];
+          const blob = new Blob([response.data], { type: contentType });
+          const imageUrl = URL.createObjectURL(blob);
+
+          setUserPicture(imageUrl);
+        } else {
+          // Handle the case when there is no username (e.g., display a placeholder image)
+          setUserPicture("URL_OF_PLACEHOLDER_IMAGE");
+        }
+      } catch (error) {
+        // Handle errors gracefully (e.g., display an error message to the user)
+        console.error("Error fetching user picture:", error);
+      }
+    };
+
+    // Call the fetchUserPicture function
+    fetchUserPicture();
+  }, [username]);
 
   const closeDropdown = () => {
     const timeout = setTimeout(() => {
@@ -28,6 +95,7 @@ function NavBar() {
     };
   }, [dropdownTimeout]);
 
+  // Render your Navbar JSX here, using the username and userPicture states
   return (
     <header>
       <style>
@@ -86,11 +154,10 @@ function NavBar() {
                 onMouseEnter={openDropdown}
                 onMouseLeave={closeDropdown}
               >
-                <img
-                  src="../../public/images/zihirri.jpg"
+                  {userPicture && <img src={userPicture}
                   alt="profile picture"
                   className="w-12 h-12 cursor-pointer rounded-[30px] flex-shrink-0 min-w-[48px] min-h-[48px]"
-                />
+                />}
                 {isDropdownOpen && (
                   <div
                     ref={dropdownRef}
