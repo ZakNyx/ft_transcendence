@@ -37,11 +37,6 @@ export class ProfileController {
     return this.profileService.ProfileMe(req.user);
   }
 
-  @Get('leaderboard')
-  async Leaderboard() {
-    return this.profileService.Leaderboard();
-  }
-
 
   @Get('ProfilePicture/:username')
   async ProfilePicture(@Res() res, @Param('username') username: string) {

@@ -17,4 +17,8 @@ export class UserController {
     return this.userService.getUser(username);
   }
   
+  @Get('leaderboard')
+  async Leaderboard() {
+    return this.userService.Leaderboard();
+  }
 }
