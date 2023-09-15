@@ -7,7 +7,8 @@ function Profile() {
   return (
     <div className="background-image">
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+        @import
+        url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
       </style>
       <NavBar />
       <div className="flex lg:items-center flex-col lg:flex-row">
@@ -24,4 +25,3 @@ function Profile() {
 }
 
 export default Profile;
-

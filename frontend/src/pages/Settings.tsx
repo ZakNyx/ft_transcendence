@@ -2,9 +2,10 @@ import NavBar from "../components/Navbar";
 import SettingForm from "../components/SettingForm";
 
 export default function Settings() {
-    return (
+  return (
     <div className="background-image">
-        <NavBar />
-        <SettingForm />
-    </div>)
+      <NavBar />
+      <SettingForm />
+    </div>
+  );
 }

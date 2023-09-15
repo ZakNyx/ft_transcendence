@@ -4,6 +4,11 @@ export default {
   content: ["./src/**/*.{jsx,js,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        montserrat: ["Montserrat"],
+        lato: ["Lato"],
+        garamond: ["Garamond"],
+      },
       keyframes: {
         float: {
           "0%, 100%": { transform: "translateY(0)" },

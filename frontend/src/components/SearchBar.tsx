@@ -22,9 +22,9 @@ export default function SearchBar() {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
-            console.log(response.data);
+          console.log(response.data);
           setUsers(response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);

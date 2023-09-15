@@ -7,7 +7,7 @@ import axios from "axios";
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
-    undefined
+    undefined,
   );
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -55,35 +55,35 @@ function NavBar() {
     // Function to fetch user picture
     const fetchUserPicture = async () => {
       const tokenCookie = document.cookie
-      .split("; ")
-      .find((cookie) => cookie.startsWith("token="));
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
 
-    try {
-      if (tokenCookie) {
-        const token = tokenCookie.split("=")[1];
-        const response = await axios.get(
-          `http://localhost:3000/profile/ProfilePicture/${username}`,
-          {
-            responseType: "arraybuffer",
-            headers: {
-              Authorization: `Bearer ${token}`,
+      try {
+        if (tokenCookie) {
+          const token = tokenCookie.split("=")[1];
+          const response = await axios.get(
+            `http://localhost:3000/profile/ProfilePicture/${username}`,
+            {
+              responseType: "arraybuffer",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             },
-          }
-        );
+          );
 
-        const contentType = response.headers["content-type"];
-        const blob = new Blob([response.data], { type: contentType });
-        const imageUrl = URL.createObjectURL(blob);
+          const contentType = response.headers["content-type"];
+          const blob = new Blob([response.data], { type: contentType });
+          const imageUrl = URL.createObjectURL(blob);
 
-        setUserPicture(imageUrl);
-      } else {
-        // Handle the case when there is no token (e.g., display a placeholder image)
-        setUserPicture("URL_OF_PLACEHOLDER_IMAGE");
+          setUserPicture(imageUrl);
+        } else {
+          // Handle the case when there is no token (e.g., display a placeholder image)
+          setUserPicture("URL_OF_PLACEHOLDER_IMAGE");
+        }
+      } catch (error) {
+        // Handle errors gracefully (e.g., display an error message to the user)
+        console.error("Error fetching user picture:", error);
       }
-    } catch (error) {
-      // Handle errors gracefully (e.g., display an error message to the user)
-      console.error("Error fetching user picture:", error);
-    }
     };
 
     // Call the fetchUserPicture function
@@ -113,11 +113,11 @@ function NavBar() {
       <nav className="navbar flex justify-between items-center w-auto h-16 mx-auto top-0">
         <div className="relative">
           <NavLink to="/home">
-          <img
-            className="top-2 left-2 w-32 h-auto cursor-pointer"
-            src="../public/images/pingpong.png"
-            alt="PingPong"
-          />
+            <img
+              className="top-2 left-2 w-32 h-auto cursor-pointer"
+              src="../public/images/pingpong.png"
+              alt="PingPong"
+            />
           </NavLink>
         </div>
         <div>
@@ -151,7 +151,7 @@ function NavBar() {
               </NavLink>
             </li>
             <li>
-              <IconButton 
+              <IconButton
                 imagePath="../public/images/Notification.svg"
                 isActive={window.location.pathname === "/Notification"}
               />
@@ -162,10 +162,13 @@ function NavBar() {
                 onMouseEnter={openDropdown}
                 onMouseLeave={closeDropdown}
               >
-                  {userPicture && <img src={userPicture}
-                  alt="profile picture"
-                  className="w-12 h-12 cursor-pointer rounded-[30px] flex-shrink-0 min-w-[48px] min-h-[48px]"
-                />}
+                {userPicture && (
+                  <img
+                    src={userPicture}
+                    alt="profile picture"
+                    className="w-12 h-12 cursor-pointer rounded-[30px] flex-shrink-0 min-w-[48px] min-h-[48px]"
+                  />
+                )}
                 {isDropdownOpen && (
                   <div
                     ref={dropdownRef}

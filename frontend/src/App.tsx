@@ -4,6 +4,7 @@ import HomePage from "./pages/Home";
 import Profile from "./pages/Profile";
 import Error404 from "./pages/Error404";
 import Settings from "./pages/Settings";
+import Leaderboard from "./pages/Leaderboard";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="*" element={<Error404 />} />
       </Routes>
     </Router>

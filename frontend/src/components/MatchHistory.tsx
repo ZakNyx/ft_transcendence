@@ -1,43 +1,43 @@
-
 import React from "react";
 
 const MatchHistory = () => {
   const matchHistory = [
     {
       opponent: "ie-laabb",
-      playerScore:5,
+      playerScore: 5,
       opponentScore: 0,
       result: "win",
     },
     {
-        opponent: "ie-laabb",
-        playerScore: 3,
-        opponentScore: 2,
-        result: "win",
-      },
-      {
-        opponent: "ie-laabb",
-        playerScore: 5,
-        opponentScore: 2,
-        result: "win",
-      },
-      {
-        opponent: "ie-laabb",
-        playerScore: 3,
-        opponentScore: 2,
-        result: "win",
-      },    {
-        opponent: "ie-laabb",
-        playerScore: 4,
-        opponentScore: 5,
-        result: "lost",
-      }, 
+      opponent: "ie-laabb",
+      playerScore: 3,
+      opponentScore: 2,
+      result: "win",
+    },
+    {
+      opponent: "ie-laabb",
+      playerScore: 5,
+      opponentScore: 2,
+      result: "win",
+    },
+    {
+      opponent: "ie-laabb",
+      playerScore: 3,
+      opponentScore: 2,
+      result: "win",
+    },
+    {
+      opponent: "ie-laabb",
+      playerScore: 4,
+      opponentScore: 5,
+      result: "lost",
+    },
 
     // ... add more matches here ...
   ];
 
- return (
-    <div className="background-gray rounded-[30px] p-6 mt-6 mx-auto lg:max-w-[70%] shadow-[0px_10px_20px_20px_#00000024] animate-fade-in-top" >
+  return (
+    <div className="background-gray rounded-[30px] p-6 mt-6 mx-auto lg:max-w-[70%] shadow-[0px_10px_20px_20px_#00000024] animate-fade-in-top">
       <h1 className="text-gray-200 font-[Rubik] text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl mb-4">
         Match History
       </h1>
