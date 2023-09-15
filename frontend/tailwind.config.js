@@ -37,6 +37,8 @@ export default {
       },
       colors: {
         "npc-blue": "#80CEF0",
+        "npc-gray": "#252526",
+        "npc-light-gray": "#7c7c7d",
         "npc-black": "#151317",
         "npc-purple": "#BB86FC",
         "npc-cyan": "#03DAC5",
