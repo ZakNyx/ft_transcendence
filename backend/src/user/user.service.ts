@@ -40,6 +40,8 @@ export class UserService {
         username: true,
         displayname: true,
         elo: true,
+        Gamesplayed: true,
+        wins: true,
       },
     });
     return users;

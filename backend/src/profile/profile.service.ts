@@ -43,10 +43,10 @@ export class ProfileService {
       });
       if (user.picture) {
         const imageBuffer = await fs.readFile(user.picture);
-        res.setHeader('Content-Type', user.picture_mimetype);
+        res.setHeader('Content-Type', user.pictureMimetype);
         res.send(imageBuffer);
       } else {
-        const url_image = await axios.get(user.image_url, { responseType: 'arraybuffer' });
+        const url_image = await axios.get(user.imageUrl , { responseType: 'arraybuffer' });
         const imageBuffer = Buffer.from(url_image.data, 'binary');
         res.setHeader('Content-Type', 'image/jpg');
         res.send(imageBuffer);
@@ -83,8 +83,8 @@ export class ProfileService {
       },
       data: {
         picture: filepath,
-        picture_status: true,
-        picture_mimetype: mimetype,
+        pictureStatus: true,
+        pictureMimetype: mimetype,
       },
     });
   }
@@ -95,7 +95,7 @@ export class ProfileService {
         username: req.user.username,
       },
     });
-    if (user.picture_status === true) {
+    if (user.pictureStatus === true) {
       await fs.unlink(req.user.picture);
     }
     const updateUser = await this.prismaService.user.update({
@@ -104,7 +104,7 @@ export class ProfileService {
       },
       data: {
         picture: './uploads/default.png',
-        picture_status: false,
+        pictureStatus: false,
       },
     });
   }

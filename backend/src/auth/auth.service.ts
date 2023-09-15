@@ -30,11 +30,8 @@ export class AuthService {
           username: newUser.username,
           displayname: newUser.username,
           email: newUser.email,
-          image_url: imageLink,
+          imageUrl : imageLink,
           picture:null,
-          wins: 0,
-          loses: 0,
-          elo: 0,
         },
       });
       return user;
@@ -74,8 +71,8 @@ export class AuthService {
     const updateuser = await this.prismaService.user.update({
       where: { username: userId.username },
       data: {
-        secret_2fa: secret,
-        secret_authutl: uri,
+        secret2fa: secret,
+        secretAuthUrl: uri,
       },
     });
 
@@ -99,7 +96,7 @@ export class AuthService {
       algorithm: 'SHA1',
       digits: 6,
       period: 30,
-      secret: user.secret_2fa,
+      secret: user.secret2fa,
     });
 
     const delta = totp.validate({
@@ -115,7 +112,7 @@ export class AuthService {
         username: body.username,
       },
       data: {
-        status_2fa: true,
+        status2fa: true,
       },
     });
     return {
@@ -140,7 +137,7 @@ export class AuthService {
       algorithm: 'SHA1',
       digits: 6,
       period: 30,
-      secret: user.secret_2fa,
+      secret: user.secret2fa,
     });
 
     const delta = totp.validate({
@@ -182,7 +179,7 @@ export class AuthService {
       algorithm: 'SHA1',
       digits: 6,
       period: 30,
-      secret: user.secret_2fa,
+      secret: user.secret2fa,
     });
 
     const delta = totp.validate({
@@ -198,7 +195,7 @@ export class AuthService {
         username: body.username,
       },
       data: {
-        status_2fa: false,
+        status2fa: false,
         validated: false,
       },
     });
