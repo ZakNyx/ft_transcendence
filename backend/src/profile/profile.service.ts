@@ -33,6 +33,20 @@ export class ProfileService {
     return user;
   }
 
+  async Leaderboard() {
+    const users = await this.prismaService.user.findMany({
+      orderBy: {
+        elo: 'desc',
+      },
+      select: {
+        username: true,
+        displayname: true,
+        elo: true,
+      },
+    });
+    return users;
+  }
+  
   async profilePicture(username, res) {
     try {
       const user = await this.prismaService.user.findUnique({
