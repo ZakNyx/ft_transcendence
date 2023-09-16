@@ -5,7 +5,6 @@ import Profile from "./pages/Profile";
 import Error404 from "./pages/Error404";
 import Settings from "./pages/Settings";
 import Leaderboard from "./pages/Leaderboard";
-
 function App() {
   return (
     <Router>
