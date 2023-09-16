@@ -19,7 +19,6 @@ export class ProfileService {
         username: true,
       },
     });
-    console.log(users);
     return users;
   }
 
@@ -29,7 +28,6 @@ export class ProfileService {
         username: reqUser.username,
       },
     });
-    console.log(user);
     return user;
   }
 

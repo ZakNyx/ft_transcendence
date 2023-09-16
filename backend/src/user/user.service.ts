@@ -42,6 +42,7 @@ export class UserService {
         elo: true,
         Gamesplayed: true,
         wins: true,
+        winrate: true,
       },
     });
     return users;

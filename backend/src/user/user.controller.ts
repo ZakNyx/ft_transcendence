@@ -12,13 +12,15 @@ export class UserController {
     return this.userService.getMe(req.user);
   }
 
+  @Get('leaderboard')
+  async Leaderboard() {
+    return this.userService.Leaderboard();
+  }
+
   @Get(':username')
   getUser(@Param('username') username: string) {
     return this.userService.getUser(username);
   }
   
-  @Get('leaderboard')
-  async Leaderboard() {
-    return this.userService.Leaderboard();
-  }
+  
 }

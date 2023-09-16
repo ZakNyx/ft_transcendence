@@ -33,7 +33,6 @@ export class ProfileController {
   @Get('me')
   async ProfileMe(@Req() req)
   {
-    console.log('ehehe');
     return this.profileService.ProfileMe(req.user);
   }
 

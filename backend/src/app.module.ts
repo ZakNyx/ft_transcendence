@@ -7,7 +7,6 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { ProfileModule } from './profile/profile.module';
 import { ChatModule } from './chat/chat.module';
-import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
