@@ -1,0 +1,8 @@
+- 2FA
+- Profile merge (Picture/Elo/Rank)
+- Settings
+- Search Bar
+- Logout
+- Redirect to / if user isnt loged it
+- Button in leaderboard leads to profile
+- /profile/{username} should be implemanted
