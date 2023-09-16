@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import NavBar from "../components/Navbar";
 import axios from "axios";
-import data from "./data.tsx";
 import BackToTop from "../components/BackToTop.tsx";
 export default function Leaderboard() {
 

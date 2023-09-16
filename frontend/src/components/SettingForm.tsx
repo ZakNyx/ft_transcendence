@@ -1,11 +1,10 @@
 import { useState } from "react";
+import Modal from "./Modal"; // Import the Modal component
 
 export default function SettingForm() {
   const [isChecked, setIsChecked] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
-  };
 
   return (
     <div className="flex flex-col lg:flex-row justify-center items-center min-h-screen space-y-6 lg:space-y-0">
@@ -80,24 +79,7 @@ export default function SettingForm() {
               </label>
               <label className="flex cursor-pointer select-none items-center">
                 <div className="relative">
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={handleCheckboxChange}
-                    className="sr-only"
-                  />
-                  <div
-                    className={`h-5 w-14 rounded-full ${
-                      isChecked
-                        ? "bg-green-400 shadow-inner"
-                        : "bg-red-400 shadow-inner"
-                    }`}
-                  ></div>
-                  <div
-                    className={`absolute left-0 -top-1 h-7 w-7 rounded-full transition transform ${
-                      isChecked ? "bg-green-500 translate-x-7" : "bg-red-500"
-                    }`}
-                  ></div>
+              
                 </div>
               </label>
             </div>
