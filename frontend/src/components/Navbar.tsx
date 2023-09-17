@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar";
 import axios from "axios";
 
 function NavBar() {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
     undefined,
   );

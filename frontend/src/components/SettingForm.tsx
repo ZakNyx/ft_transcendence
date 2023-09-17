@@ -2,12 +2,10 @@ import { useState } from "react";
 import Modal from "./Modal"; // Import the Modal component
 
 export default function SettingForm() {
-  const [isChecked, setIsChecked] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-
+  const [isChecked, setIsChecked] = useState<boolean>(false);
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-center min-h-screen space-y-6 lg:space-y-0">
+    <div className="flex flex-col lg:flex-row font-montserrat justify-center items-center min-h-screen space-y-6 lg:space-y-0">
       <div className="lg:w-1/5 background-gray rounded-lg p-6 mt-6 shadow-[0px_10px_30px_20px_#00000024]">
         <span className="font-semibold text-gray-200 pt-4 opacity-90">
           Profile Picture
@@ -78,9 +76,7 @@ export default function SettingForm() {
                 Two-factor Authentication
               </label>
               <label className="flex cursor-pointer select-none items-center">
-                <div className="relative">
-              
-                </div>
+                <Modal />
               </label>
             </div>
           </div>
