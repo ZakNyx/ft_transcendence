@@ -26,7 +26,7 @@ model User {
   wins  Int @default(0)
   loses Int @default(0)
   winrate Float @default(0)
-  Gamesplayed Int @default(0)
+  gamesPlayed Int @default(0)
   elo   Int @default(0)
 
   status2fa Boolean @default(false)
