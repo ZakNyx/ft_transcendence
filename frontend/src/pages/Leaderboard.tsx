@@ -132,7 +132,7 @@ export default function Leaderboard() {
 
             <div className="hidden sm:flex flex-col justify-center mr-4">
               <h2 className="font-montserrat font-semibold text-white text-sm md:text-base lg:text-xl xl:text-2xl">
-                {item.Gamesplayed}
+                {item.gamesPlayed}
               </h2>
               <p className="font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
                 Games Played

@@ -40,7 +40,7 @@ export class UserService {
         username: true,
         displayname: true,
         elo: true,
-        Gamesplayed: true,
+        gamesPlayed: true,
         wins: true,
         winrate: true,
       },
