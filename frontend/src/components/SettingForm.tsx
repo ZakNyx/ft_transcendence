@@ -76,7 +76,7 @@ export default function SettingForm() {
                 Two-factor Authentication
               </label>
               <label className="flex cursor-pointer select-none items-center">
-              <Modal isChecked={isChecked} setIsChecked={setIsChecked} />
+              <Modal />
               </label>
             </div>
           </div>

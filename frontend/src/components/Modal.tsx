@@ -2,21 +2,15 @@ import Popup from "reactjs-popup";
 import { useState, useEffect } from "react";
 import React from "react";
 
-interface ModalProps {
-  isChecked: boolean;
-  setIsChecked: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
-function Modal({ isChecked, setIsChecked }: ModalProps) {
+
+function Modal () {
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const handleActive = () => {
     setIsActive(!isActive);
   };
 
-  const handleClick = () => {
-    setIsChecked(!isChecked);
-  };
 
   return (
     <div>
