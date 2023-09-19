@@ -2,15 +2,12 @@ import Popup from "reactjs-popup";
 import { useState, useEffect } from "react";
 import React from "react";
 
-
-
-function Modal () {
+function Modal() {
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const handleActive = () => {
     setIsActive(!isActive);
   };
-
 
   return (
     <div>

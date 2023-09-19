@@ -4,7 +4,7 @@ import axios from "axios";
 import BackToTop from "../components/BackToTop.tsx";
 export default function Leaderboard() {
 
-  const [dataa, setData] = useState(null);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     // Function to fetch user data and set it in the state
@@ -77,23 +77,23 @@ export default function Leaderboard() {
 
     // Function to update profile pictures in the user data
     const updateUserPictures = async () => {
-      if (dataa) {
-        const updatedDataa = [];
+      if (data) {
+        const updateddata = [];
 
-        for (const user of dataa) {
+        for (const user of data) {
           const imageUrl = await fetchUserPicture(user.username);
           user.profilePicture = imageUrl;
-          updatedDataa.push(user);
+          updateddata.push(user);
         }
 
         // Update the state with the updated data
-        setData(updatedDataa);
+        setData(updateddata);
       }
     };
 
     // Call the function to update user pictures
     updateUserPictures();
-  }, [dataa]);
+  }, [data]);
 
   return (
     <div className="background-image min-h-screen">
@@ -103,7 +103,7 @@ export default function Leaderboard() {
       </h1>
       <BackToTop />
       <div className="p-6 mt-6 mx-auto lg:max-w-[90%]">
-        {dataa && dataa.map((item, index) => (
+        {data && data.map((item, index) => (
           <div
             key={item.userID}
             className="flex rounded-2xl p-4 mb-4 justify-between bg-npc-gray shadow-[0px_2px_4px_2px_#00000006]"
