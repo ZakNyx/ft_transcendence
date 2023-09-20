@@ -1,8 +1,6 @@
-import { useState } from "react";
 import Modal from "./Modal"; // Import the Modal component
 
 export default function SettingForm() {
-  const [isChecked, setIsChecked] = useState<boolean>(false);
 
   return (
     <div className="flex flex-col lg:flex-row font-montserrat justify-center items-center min-h-screen space-y-6 lg:space-y-0">
