@@ -11,11 +11,12 @@ export class ProfileService {
   async searchName(body: string) {
     const users = await this.prismaService.user.findMany({
       where: {
-        username: {
+        displayname: {
           contains: body,
         },
       },
       select: {
+        displayname: true,
         username: true,
       },
     });
@@ -31,6 +32,39 @@ export class ProfileService {
     return user;
   }
 
+  async getProfile(username:string){
+    const user = await this.prismaService.user.findUnique({
+      where : {
+        username:username,
+      },
+    })
+    if (!user){
+      throw new HttpException("user not found", 404);
+    }
+    return user;
+  }
+
+  async profilePictureMe(requser, res) {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: {
+          username: requser.username,
+        },
+      });
+      if (user.picture) {
+        const imageBuffer = await fs.readFile(user.picture);
+        res.setHeader('Content-Type', user.pictureMimetype);
+        res.send(imageBuffer);
+      } else {
+        const url_image = await axios.get(user.imageUrl , { responseType: 'arraybuffer' });
+        const imageBuffer = Buffer.from(url_image.data, 'binary');
+        res.setHeader('Content-Type', 'image/jpg');
+        res.send(imageBuffer);
+      }
+    } catch (error) {
+      res.status(500).send('could not upload the image');
+    }
+  }
   
   async profilePicture(username, res) {
     try {

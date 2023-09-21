@@ -1,5 +1,7 @@
 import React, { useState, ChangeEvent, useEffect, useRef } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+
 
 interface UsersData {
   username: string;
@@ -123,12 +125,12 @@ export default function SearchBar() {
               key={item.username}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer rounded-lg "
             >
-              <a
-                href={`/profile/${item.username}`}
+              <Link
+                to={`/profile/${item.username}`}
                 className="font-semibold font-montserrat text-npc-gray cursor-pointer"
               >
                 {item.displayname}
-              </a>
+              </Link>
             </div>
           ))}
         </div>

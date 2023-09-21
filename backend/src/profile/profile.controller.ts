@@ -30,10 +30,21 @@ export class ProfileController {
     return this.profileService.searchName(search);
   }
 
+
   @Get('me')
   async ProfileMe(@Req() req)
   {
     return this.profileService.ProfileMe(req.user);
+  }
+
+  @Get(':username')
+  async getProfile(@Param('username') username: string){
+    return this.profileService.getProfile(username);
+  }
+
+  @Get('ProfilePicture/me')
+  async ProfilePictureMe(@Res() res, @Req() req) {
+    return this.profileService.profilePictureMe(req.user, res);
   }
 
 

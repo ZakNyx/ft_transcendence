@@ -59,7 +59,7 @@ function NavBar() {
         .find((cookie) => cookie.startsWith("token="));
 
       try {
-        if (tokenCookie) {
+        if (tokenCookie && username) {
           const token = tokenCookie.split("=")[1];
           const response = await axios.get(
             `http://localhost:3000/profile/ProfilePicture/${username}`,
@@ -78,7 +78,7 @@ function NavBar() {
           setUserPicture(imageUrl);
         } else {
           // Handle the case when there is no token (e.g., display a placeholder image)
-          setUserPicture("URL_OF_PLACEHOLDER_IMAGE");
+          setUserPicture("../../public/images/default.png");
         }
       } catch (error) {
         // Handle errors gracefully (e.g., display an error message to the user)

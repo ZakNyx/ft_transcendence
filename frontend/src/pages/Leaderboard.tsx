@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import NavBar from "../components/Navbar";
 import axios from "axios";
 import BackToTop from "../components/BackToTop";
+import { Link } from "react-router-dom";
 
 interface UserData {
   userID: string;
@@ -169,13 +170,13 @@ export default function Leaderboard() {
               </div>
 
               <div className="flex flex-col justify-center ">
-                <a href="">
+                <Link to={`/profile/${item.username}`}>
                   <img
                     src="../../public/images/greaterthan.svg"
                     className="w-8 md:w-10 lg:w-12 xl:w-12 h-8 md:h-10 lg:h-12 xl:h-12"
                     alt="greater than symbol"
                   ></img>
-                </a>
+                </Link>
               </div>
             </div>
           ))}
