@@ -81,7 +81,6 @@ export default function ProfileCard() {
           setUserPicture(imageUrl);
         } else {
           // Handle the case when there is no token (e.g., display a placeholder image)
-          console.log('went here');
           setUserPicture("../../public/images/default.png");
         }
       } catch (error) {

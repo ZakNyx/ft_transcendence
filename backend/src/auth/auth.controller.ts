@@ -21,10 +21,10 @@ export class AuthController {
     res.redirect('http://localhost:5173/home');
   }
 
-  @Post('2fa')
+  @Get('2fa')
   @UseGuards(AuthGuard('jwt'))
-  add2fa(@Body() user: twoFacUserDTO) {
-    return this.authService.add2fa(user);
+  add2fa(@Req() req) {
+    return this.authService.add2fa(req.user);
   }
 
   @Put('2fa/verify')

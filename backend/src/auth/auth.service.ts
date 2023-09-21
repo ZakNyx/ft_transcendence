@@ -45,10 +45,10 @@ export class AuthService {
     return token;
   }
 
-  async add2fa(userId: twoFacUserDTO) {
+  async add2fa(requser) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        username: userId.username,
+        username: requser.username,
       },
     });
 
@@ -69,7 +69,7 @@ export class AuthService {
     const uri = totp.toString();
 
     const updateuser = await this.prismaService.user.update({
-      where: { username: userId.username },
+      where: { username: user.username },
       data: {
         secret2fa: secret,
         secretAuthUrl: uri,
