@@ -6,6 +6,9 @@ import { twoFacUserDTO, twoFacVerifyDTO, validate2faDTO } from './dto/auth.dto';
 import { generateSecretRandomBase32 } from './lib/secret-base32';
 import { ConfigService } from '@nestjs/config';
 import * as OTPAuth from 'otpauth';
+import * as qr from 'qrcode';
+import * as fs from 'fs';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -45,7 +48,7 @@ export class AuthService {
     return token;
   }
 
-  async add2fa(requser) {
+  async add2fa(requser, res: Response) {
     const user = await this.prismaService.user.findUnique({
       where: {
         username: requser.username,
@@ -75,8 +78,9 @@ export class AuthService {
         secretAuthUrl: uri,
       },
     });
-
-    return { uri, secret };
+    res.type('png');
+    const qrCodeBuffer = await qr.toBuffer(uri);
+    res.send(qrCodeBuffer); 
   }
 
   async verify2fa(body: twoFacVerifyDTO) {

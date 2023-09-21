@@ -17,8 +17,8 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('findAllChat')
-  findAll() {
-    return this.chatService.findAll();
+  findAll(@MessageBody() roomId: number) {
+    return this.chatService.findAll(roomId);
   }
 
   @SubscribeMessage('joinRoom')

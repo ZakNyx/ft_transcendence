@@ -15,7 +15,6 @@ import { ChatModule } from './chat/chat.module';
     PrismaModule,
     UserModule,
     ProfileModule,
-    ChatModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],

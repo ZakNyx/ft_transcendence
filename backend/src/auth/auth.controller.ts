@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Put, Req, Res, UseGuards } from '@nestjs/c
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { twoFacUserDTO, twoFacVerifyDTO, validate2faDTO } from './dto/auth.dto';
+import { Response } from 'express';
 
 @Controller()
 export class AuthController {
@@ -23,8 +24,8 @@ export class AuthController {
 
   @Get('2fa')
   @UseGuards(AuthGuard('jwt'))
-  add2fa(@Req() req) {
-    return this.authService.add2fa(req.user);
+  add2fa(@Req() req, @Res() res: Response) {
+    return this.authService.add2fa(req.user, res);
   }
 
   @Put('2fa/verify')
