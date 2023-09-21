@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { twoFacUserDTO, twoFacVerifyDTO, validate2faDTO } from './dto/auth.dto';
+import {twoFacVerifyDTO, validate2faDTO } from './dto/auth.dto';
 import { Response } from 'express';
 
 @Controller()
@@ -30,20 +30,20 @@ export class AuthController {
 
   @Put('2fa/verify')
   @UseGuards(AuthGuard('jwt'))
-  verify2fa(@Body() body: twoFacVerifyDTO) {
-    return this.authService.verify2fa(body);
+  verify2fa(@Body() body: twoFacVerifyDTO, @Req() req) {
+    return this.authService.verify2fa(body, req.user);
   }
 
   @Put('2fa/validate')
   @UseGuards(AuthGuard('jwt'))
-  validate2fa(@Body() body: validate2faDTO) {
-    return this.authService.validate2fa(body);
+  validate2fa(@Body() body: validate2faDTO, @Req() req) {
+    return this.authService.validate2fa(body,req.user);
   }
 
   @Put('2fa/disable')
   @UseGuards(AuthGuard('jwt'))
-  disable2fa(@Body() body: twoFacVerifyDTO) {
-    return this.authService.disable2fa(body);
+  disable2fa(@Body() body: twoFacVerifyDTO, @Req() req) {
+    return this.authService.disable2fa(body,req.user);
   }
 
   @Post('logout')

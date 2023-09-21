@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { imageLink } from '../strategies/42.strategy';
 import { JwtService } from '@nestjs/jwt';
-import { twoFacUserDTO, twoFacVerifyDTO, validate2faDTO } from './dto/auth.dto';
+import { twoFacVerifyDTO, validate2faDTO } from './dto/auth.dto';
 import { generateSecretRandomBase32 } from './lib/secret-base32';
 import { ConfigService } from '@nestjs/config';
 import * as OTPAuth from 'otpauth';
@@ -83,10 +83,10 @@ export class AuthService {
     res.send(qrCodeBuffer); 
   }
 
-  async verify2fa(body: twoFacVerifyDTO) {
+  async verify2fa(body: twoFacVerifyDTO, requser) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        username: body.username,
+        username:  requser.username,
       },
     });
 
@@ -111,23 +111,24 @@ export class AuthService {
       throw new HttpException('Invalid token', 400);
     }
 
-    const updatedUser = this.prismaService.user.update({
+    const updatedUser = await this.prismaService.user.update({
       where: {
-        username: body.username,
+        username: requser.username,
       },
       data: {
         status2fa: true,
       },
     });
+    console.log(updatedUser);
     return {
       message: '2fa enabled successfully',
     };
   }
 
-  async validate2fa(body: validate2faDTO) {
+  async validate2fa(body: validate2faDTO, requser) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        username: body.username,
+        username: requser.username,
       },
     });
 
@@ -152,9 +153,9 @@ export class AuthService {
       throw new HttpException('Invalid token', 400);
     }
 
-    const updatedUser = this.prismaService.user.update({
+    const updatedUser = await this.prismaService.user.update({
       where: {
-        username: body.username,
+        username: requser.username,
       },
       data: {
         validated: true,
@@ -166,10 +167,10 @@ export class AuthService {
     };
   }
 
-  async disable2fa(body: twoFacVerifyDTO) {
+  async disable2fa(body: twoFacVerifyDTO, requser) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        username: body.username,
+        username: requser.username,
       },
     });
 
@@ -194,9 +195,9 @@ export class AuthService {
       throw new HttpException('Invalid token', 400);
     }
 
-    const updatedUser = this.prismaService.user.update({
+    const updatedUser = await this.prismaService.user.update({
       where: {
-        username: body.username,
+        username: requser.username,
       },
       data: {
         status2fa: false,

@@ -1,8 +1,7 @@
 import Popup from "reactjs-popup";
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-import React from "react";
+import { NavLink } from "react-router-dom";
 
 interface UserData {
   userID: string;
@@ -19,19 +18,22 @@ interface UserData {
   secretAuthUrl: boolean;
 }
 
-interface Data2fa{
-  uri: string;
-  secret: string;
-}
 
 function Modal() {
   const [isActive, setIsActive] = useState<boolean>(false);
+  const [passCode, setPassCode] = useState<string>('');
 
   const handleActive = () => {
     setIsActive(!isActive);
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassCode(e.target.value);
+    console.log(passCode);
+  }
+
   const [user, setUser] = useState<UserData | null>(null);
-  const [data2fa, setdata2fa] = useState<Data2fa | null>(null);
+  const [data2fa, setdata2fa] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -57,12 +59,10 @@ function Modal() {
     };
 
     fetchUserData();
-  }, []);
+  }, [user]);
 
   const handlePopupOpen = async () => {
-    console.log("ishere1");
-    if (!user.status2fa) {
-      console.log("ishere2");
+    if (!user?.status2fa) {
       const tokenCookie = document.cookie
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
@@ -75,15 +75,63 @@ function Modal() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
+            responseType: "arraybuffer",
           });
-          console.log(response.data);
-          setdata2fa(response.data);
+
+          const contentType = response.headers["content-type"];
+          const blob = new Blob([response.data], { type: contentType });
+          const imageUrl = URL.createObjectURL(blob);
+          setdata2fa(imageUrl);
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
       }
     }
   };
+
+  const handleSubmit = async() => {
+    if(!user?.status2fa){
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+  
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+  
+        try {
+          const response = await axios.put(`http://localhost:3000/2fa/verify`, {token: passCode} ,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log("2FA enabled:", response.data);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+      setPassCode("");
+    }
+    else if (user.status2fa){
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+  
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+  
+        try {
+          const response = await axios.put(`http://localhost:3000/2fa/disable`, {token: passCode} ,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log("2FA enabled:", response.data);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    }
+  }
   
   return (
     <div>
@@ -148,11 +196,11 @@ function Modal() {
                       Scan QR Code
                     </h1>
                     <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-                    <img
-                      src="../../public/images/QR_Code.png"
+                    {data2fa && <img
+                      src={data2fa}
                       alt="QR Code"
-                      className="w-32 h-auto"
-                    />
+                      className="w-56 h-auto"
+                    />}
                   </div>
                 </div>
               )}
@@ -161,6 +209,7 @@ function Modal() {
                 <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
 
                 <input
+                  onChange={handleChange}
                   className="bg-gray-600 rounded-md p-0.5"
                   placeholder="Authentication Code"
                 ></input>
@@ -175,7 +224,9 @@ function Modal() {
                       : "bg-blue-500 hover:bg-blue-600"
                   }  hover:cursor-pointer text-gray-200 w-auto rounded-lg flex items-center transition mb-4`}
                   onClick={() => {
-                    handleActive();
+                    handleSubmit();
+                    <NavLink to="/setting">
+                    </NavLink>
                     close();
                   }}
                 >
