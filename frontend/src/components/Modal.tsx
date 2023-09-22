@@ -2,7 +2,9 @@ import Popup from "reactjs-popup";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-
+{
+  /* @ts-ignore */
+}
 interface UserData {
   userID: string;
   username: string;
@@ -18,19 +20,13 @@ interface UserData {
   secretAuthUrl: boolean;
 }
 
-
 function Modal() {
-  const [isActive, setIsActive] = useState<boolean>(false);
-  const [passCode, setPassCode] = useState<string>('');
-
-  const handleActive = () => {
-    setIsActive(!isActive);
-  };
+  const [passCode, setPassCode] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassCode(e.target.value);
     console.log(passCode);
-  }
+  };
 
   const [user, setUser] = useState<UserData | null>(null);
   const [data2fa, setdata2fa] = useState<string | null>(null);
@@ -66,10 +62,10 @@ function Modal() {
       const tokenCookie = document.cookie
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
-  
+
       if (tokenCookie) {
         const token = tokenCookie.split("=")[1];
-  
+
         try {
           const response = await axios.get(`http://localhost:3000/2fa`, {
             headers: {
@@ -89,73 +85,84 @@ function Modal() {
     }
   };
 
-  const handleSubmit = async() => {
-    if(!user?.status2fa){
+  const handleSubmit = async () => {
+    if (!user?.status2fa) {
       const tokenCookie = document.cookie
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
-  
+
       if (tokenCookie) {
         const token = tokenCookie.split("=")[1];
-  
+
         try {
-          const response = await axios.put(`http://localhost:3000/2fa/verify`, {token: passCode} ,{
-            headers: {
-              Authorization: `Bearer ${token}`,
+          const response = await axios.put(
+            `http://localhost:3000/2fa/verify`,
+            { token: passCode },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             },
-          });
+          );
           console.log("2FA enabled:", response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
       }
       setPassCode("");
-    }
-    else if (user.status2fa){
+    } else if (user.status2fa) {
       const tokenCookie = document.cookie
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
-  
+
       if (tokenCookie) {
         const token = tokenCookie.split("=")[1];
-  
+
         try {
-          const response = await axios.put(`http://localhost:3000/2fa/disable`, {token: passCode} ,{
-            headers: {
-              Authorization: `Bearer ${token}`,
+          const response = await axios.put(
+            `http://localhost:3000/2fa/disable`,
+            { token: passCode },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             },
-          });
+          );
           console.log("2FA enabled:", response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
       }
     }
-  }
-  
+  };
+
   return (
     <div>
       <Popup
+        /* @ts-ignore  */
         trigger={
-          user && (<div
-            className={`button relative p-2 ${
-              user.status2fa
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-blue-500 hover:bg-blue-600"
-            }  hover:cursor-pointer text-gray-200 w-auto rounded-lg flex items-center transition`}
-          >
-            {user.status2fa ? "Disable 2FA" : "Enable 2FA"}
-          </div>)
+          user && (
+            <div
+              className={`button relative p-2 ${
+                user.status2fa
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-blue-500 hover:bg-blue-600"
+              }  hover:cursor-pointer text-gray-200 w-auto rounded-lg flex items-center transition`}
+            >
+              {user.status2fa ? "Disable 2FA" : "Enable 2FA"}
+            </div>
+          )
         }
         modal
         nested
         onOpen={handlePopupOpen} // Use the onOpen callback
       >
+        {/* @ts-ignore  */}
         {(close: () => void) => (
           <div className="modal background-gray  text-gray-200 font-montserrat rounded-lg shadow-[0px_10px_30px_20px_#00000024] pl-4 pr-4">
             <button className="close rounded-full text-xl ml-2" onClick={close}>
               X
-              </button>
+            </button>
             <div className="header font-bold">
               Two-Factor Authentication (2FA)
             </div>
@@ -196,11 +203,13 @@ function Modal() {
                       Scan QR Code
                     </h1>
                     <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-                    {data2fa && <img
-                      src={data2fa}
-                      alt="QR Code"
-                      className="w-56 h-auto"
-                    />}
+                    {data2fa && (
+                      <img
+                        src={data2fa}
+                        alt="QR Code"
+                        className="w-56 h-auto"
+                      />
+                    )}
                   </div>
                 </div>
               )}
@@ -225,12 +234,11 @@ function Modal() {
                   }  hover:cursor-pointer text-gray-200 w-auto rounded-lg flex items-center transition mb-4`}
                   onClick={() => {
                     handleSubmit();
-                    <NavLink to="/setting">
-                    </NavLink>
+                    <NavLink to="/setting"></NavLink>;
                     close();
                   }}
                 >
-                  {user?.status2fa? "Disable" : "Enable"}
+                  {user?.status2fa ? "Disable" : "Enable"}
                 </button>
               </div>
             </div>
