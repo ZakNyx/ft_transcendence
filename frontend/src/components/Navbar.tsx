@@ -49,6 +49,7 @@ function NavBar() {
           console.error("Error fetching user data:", error);
         }
       } else {
+        console.log("zab");
         navigate("/");
       }
     };
