@@ -24,29 +24,33 @@ export class AuthController {
 
   @Get('2fa')
   @UseGuards(AuthGuard('jwt'))
-  add2fa(@Req() req, @Res() res: Response) {
+  async add2fa(@Req() req, @Res() res: Response) {
     return this.authService.add2fa(req.user, res);
   }
 
   @Put('2fa/verify')
   @UseGuards(AuthGuard('jwt'))
-  verify2fa(@Body() body: twoFacVerifyDTO, @Req() req) {
+  async verify2fa(@Body() body: twoFacVerifyDTO, @Req() req) {
     return this.authService.verify2fa(body, req.user);
   }
 
   @Put('2fa/validate')
   @UseGuards(AuthGuard('jwt'))
-  validate2fa(@Body() body: validate2faDTO, @Req() req) {
+  async validate2fa(@Body() body: validate2faDTO, @Req() req) {
     return this.authService.validate2fa(body,req.user);
   }
 
   @Put('2fa/disable')
   @UseGuards(AuthGuard('jwt'))
-  disable2fa(@Body() body: twoFacVerifyDTO, @Req() req) {
+  async disable2fa(@Body() body: twoFacVerifyDTO, @Req() req) {
     return this.authService.disable2fa(body,req.user);
   }
 
-  @Post('logout')
+  @Get('logout')
   @UseGuards(AuthGuard('jwt'))
-  logout() {}
+  logout(@Res({ passthrough: true }) res : Response) {
+    res.clearCookie('token');
+    res.json({ message: 'Logout successful' });
+    console.log("was here");
+  }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import IconButton from "./IconButton";
 import SearchBar from "./SearchBar";
 import axios from "axios";
@@ -9,7 +9,7 @@ function NavBar() {
   const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
     undefined,
   );
-
+  const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const openDropdown = () => {
@@ -40,16 +40,21 @@ function NavBar() {
 
           // Set the user data in the state
           setUser(response.data.username);
-        } catch (error) {
-          // Handle errors gracefully (e.g., display an error message to the user)
+        } catch (error: any) {
+          if (error.response && error.response.status === 401) {
+            // Redirect to localhost:5137/ if Axios returns a 401 error
+            navigate("/");
+          } // Redirect to the root path
           console.error("Error fetching user data:", error);
         }
+      } else {
+        navigate("/");
       }
     };
 
     // Call the fetchUserData function
     fetchUserData();
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     // Function to fetch user picture
@@ -202,7 +207,15 @@ function NavBar() {
                           src="../../public/images/logout.svg"
                           alt="logout"
                         />
-                        <NavLink to="/" className="block">
+                        <NavLink
+                          onClick={() => {
+                            // Clear the 'token' cookie
+                            document.cookie =
+                              "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                            navigate("/");
+                          }}
+                          to="/"
+                        >
                           Logout
                         </NavLink>
                       </li>
