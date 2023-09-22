@@ -3,9 +3,14 @@ import NavBar from "../components/Navbar";
 import joystickSvg from "../../public/images/joystick.svg";
 import robotSvg from "../../public/images/robot.svg";
 import axios from "axios";
+import Validate from "../components/Validate";
+
+interface UserData {
+  displayname: string;
+}
 
 function HomePage() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<UserData | null>(null);
 
   useEffect(() => {
     // Function to fetch user data and set it in the state
@@ -19,7 +24,7 @@ function HomePage() {
 
         try {
           // Configure Axios to send the token in the headers
-          const response = await axios.get("http://localhost:3000/profile/me", {
+          const response = await axios.get<UserData>("http://localhost:3000/profile/me", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -37,12 +42,12 @@ function HomePage() {
     // Call the fetchUserData function
     fetchUserData();
   }, []); // The empty dependency array ensures this effect runs only once
+
   return (
     <div className="background-image min-h-screen">
       {/* Import Google Fonts */}
       <style>
-        @import
-        url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
       </style>
       {/* Render the navigation bar */}
       <NavBar />

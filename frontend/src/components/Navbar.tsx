@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import IconButton from "./IconButton";
 import SearchBar from "./SearchBar";
 import axios from "axios";
+import Validate from "../components/Validate";
 
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -115,6 +116,7 @@ function NavBar() {
         @import
         url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
       </style>
+      <Validate />
       <nav className="navbar flex justify-between items-center w-auto h-16 mx-auto top-0">
         <div className="relative">
           <NavLink to="/home">

@@ -210,7 +210,7 @@ function Modal() {
 
                 <input
                   onChange={handleChange}
-                  className="bg-gray-600 rounded-md p-0.5"
+                  className="bg-gray-600 rounded-md p-0.5 text-npc-light-gray"
                   placeholder="Authentication Code"
                 ></input>
               </div>
