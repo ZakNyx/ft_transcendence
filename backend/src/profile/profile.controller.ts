@@ -27,35 +27,36 @@ export class ProfileController {
 
   @Get('SearchName/:search')
   async SearchName(@Param('search') search: string) {
-    return this.profileService.searchName(search);
+    return await this.profileService.searchName(search);
   }
 
 
   @Get('me')
   async ProfileMe(@Req() req)
   {
-    return this.profileService.ProfileMe(req.user);
+    return await this.profileService.ProfileMe(req.user);
   }
 
   @Get(':username')
   async getProfile(@Param('username') username: string){
-    return this.profileService.getProfile(username);
+    return await this.profileService.getProfile(username);
   }
 
   @Get('ProfilePicture/me')
   async ProfilePictureMe(@Res() res, @Req() req) {
-    return this.profileService.profilePictureMe(req.user, res);
+    return await this.profileService.profilePictureMe(req.user, res);
   }
 
 
   @Get('ProfilePicture/:username')
   async ProfilePicture(@Res() res, @Param('username') username: string) {
-    return this.profileService.profilePicture(username, res);
+    return await this.profileService.profilePicture(username, res);
   }
 
   @Put('updateName')
   async updateName(@Body() body: updateNameDTO, @Req() req) {
-    return this.profileService.updateName(body, req);
+    console.log(body);
+    return await this.profileService.updateName(body, req);
   }
 
   @Post('updatePicture')
@@ -83,17 +84,17 @@ export class ProfileController {
       },
     }),
   )
-  updatePicture(@UploadedFile() file, @Req() req) {
-    return this.profileService.updatePicture(file.path, req, file.mimetype);
+  async updatePicture(@UploadedFile() file, @Req() req) {
+    return await this.profileService.updatePicture(file.path, req, file.mimetype);
   }
 
   @Delete('deleteName')
-  deleteName(@Req() req) {
-    return this.profileService.deleteName(req);
+  async deleteName(@Req() req) {
+    return await this.profileService.deleteName(req);
   }
 
   @Delete('deletePicture')
-  deletePicture(@Req() req) {
-    return this.profileService.deletePicture(req);
+  async deletePicture(@Req() req) {
+    return await this.profileService.deletePicture(req);
   }
 }

@@ -1,6 +1,7 @@
 import Modal from "./Modal"; // Import the Modal component
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 interface UserData {
   userID: string;
@@ -92,15 +93,13 @@ export default function SettingForm() {
   ) => {
     if (event.target.files) {
       const selectedFile = event.target.files[0];
-      // You can add code to validate the file type and size here if needed.
-      // Store the selected file in state.
       setUserProfilePicture(selectedFile);
     }
   };
 
+  // Update Profile Picture
   const uploadProfilePicture = async () => {
     if (!userProfilePicture) {
-      // Handle the case when no file is selected (optional).
       return;
     }
 
@@ -122,20 +121,33 @@ export default function SettingForm() {
               Authorization: `Bearer ${token}`,
               "Content-Type": "multipart/form-data",
             },
-          },
+          },   
         );
-
-        // Optionally, you can update the user's profile picture in the state
-        // and display it immediately on successful upload.
+        Swal.fire({
+          title:
+            "<h1 style='color: rgb(229 231 235 / 1'>" + "Success" + "</h1>",
+          text: "Profile picture has been updated.",
+          icon: "success",
+          background: "#252526",
+          timer: 2000,
+        });
       }
-    } catch (error) {
-      // Handle errors gracefully (e.g., display an error message to the user).
+    } catch (error:any) {
       console.error("Error uploading user picture:", error);
+      if (error.response && error.response.status == 400) {
+        Swal.fire({
+          title:
+            "<h1 style='color: rgb(229 231 235 / 1'>" + "Error" + "</h1>",
+          text: "Invalid file type or size.",
+          icon: "error",
+          background: "#252526",
+          timer: 2000,
+        });
+      }
     }
   };
 
   const deleteProfilePicture = async () => {
-
     const tokenCookie = document.cookie
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
@@ -144,54 +156,77 @@ export default function SettingForm() {
       if (tokenCookie && user) {
         const token = tokenCookie.split("=")[1];
 
-        await axios.delete(
-          `http://localhost:3000/profile/deletePicture`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        await axios.delete(`http://localhost:3000/profile/deletePicture`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
+        Swal.fire({
+          title:
+            "<h1 style='color: rgb(229 231 235 / 1'>" + "Success" + "</h1>",
+          text: "Profile picture has been deleted.",
+          icon: "success",
+          background: "#252526",
+          timer: 2000,
+        });
       }
     } catch (error) {
       console.error("Error deleting user picture:", error);
     }
   };
 
-  const [newDisplayName, setUserDisplayName] = useState<String | null>(
-    null,
-  );
+  const [newDisplayName, setUserDisplayName] = useState<string>("");
 
   const handleDisplaynameChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-      setUserDisplayName(event.target.value);
-      console.log(newDisplayName);
+    setUserDisplayName(event.target.value);
   };
 
+  // Change the username
   const updateDisplayName = async () => {
     const tokenCookie = document.cookie
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
 
-    try {
-      if (tokenCookie && user) {
-        const token = tokenCookie.split("=")[1];
-
-        await axios.put(
-          `http://localhost:3000/profile/updateName`,
-          {name: newDisplayName},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+      try {
+        if (tokenCookie && user) {
+          const token = tokenCookie.split("=")[1];
+    
+          await axios.put(
+            `http://localhost:3000/profile/updateName`,
+            { name: newDisplayName },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          Swal.fire({
+            title:
+              "<h1 style='color: rgb(229 231 235 / 1'>" + "Success" + "</h1>",
+            text: "Username has been updated.",
+            icon: "success",
+            background: "#252526",
+            timer: 2000,
+          });
+          setUserDisplayName("");
+        }
+      } catch (error:any) {
+      console.error("Error Changing Display Name:", error);
+      if (error.response && error.response.status == 400) {
+        Swal.fire({
+          title:
+            "<h1 style='color: rgb(229 231 235 / 1'>" + "Error" + "</h1>",
+          text: "Username invalid or already taken.",
+          icon: "error",
+          background: "#252526",
+          timer: 2000,
+        });
       }
-    } catch (error) {
-      console.error("Error deleting user picture:", error);
+
     }
-  }
+  };
 
   return (
     <div className="flex flex-col lg:flex-row font-montserrat justify-center items-center min-h-screen space-y-6 lg:space-y-0">
@@ -261,6 +296,7 @@ export default function SettingForm() {
                 id="username"
                 className="border-1 rounded-r px-4 py-2 w-full"
                 type="text"
+                value={newDisplayName}
                 onChange={handleDisplaynameChange}
                 placeholder={user ? user.displayname : "loading..."}
               />

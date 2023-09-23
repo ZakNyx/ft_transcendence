@@ -95,7 +95,7 @@ export class ProfileService {
       },
     });
     if (user) {
-      return new HttpException('name taken', 400);
+      throw new HttpException('name taken', 400);
     }
     const updateUser = await this.prismaService.user.update({
       where: {
