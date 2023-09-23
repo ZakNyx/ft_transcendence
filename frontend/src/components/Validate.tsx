@@ -90,7 +90,7 @@ const Validate: React.FC = () => {
         );
         // If validation is successful, set the 2faValidated cookie to true with a 24-hour expiration
         const expirationDate = new Date();
-        expirationDate.setTime(expirationDate.getTime() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+        expirationDate.setTime(expirationDate.getTime() +24 * 60 * 60 * 1000); // 24 hours in milliseconds
         const expires = `expires=${expirationDate.toUTCString()}`;
         document.cookie = `2faValidated=true; ${expires}; path=/;`;
         console.log("2FA validated:", response.data);

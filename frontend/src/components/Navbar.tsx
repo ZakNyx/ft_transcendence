@@ -5,6 +5,21 @@ import SearchBar from "./SearchBar";
 import axios from "axios";
 import Validate from "../components/Validate";
 
+interface UserData {
+  userID: string;
+  username: string;
+  profilePicture: string;
+  displayname: string;
+  gamesPlayed: number;
+  wins: number;
+  loses: number;
+  winrate: number;
+  elo: number;
+  status2fa: boolean;
+  secret2fa: boolean;
+  secretAuthUrl: boolean;
+}
+
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
@@ -18,7 +33,8 @@ function NavBar() {
     setIsDropdownOpen(true);
   };
 
-  const [username, setUser] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [userPicture, setUserPicture] = useState<string | null>(null);
 
   useEffect(() => {
@@ -40,7 +56,8 @@ function NavBar() {
           });
 
           // Set the user data in the state
-          setUser(response.data.username);
+          setUser(response.data);
+          setUsername(response.data.username);
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error
@@ -56,7 +73,7 @@ function NavBar() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [navigate]);
+  }, [navigate, user]);
 
   useEffect(() => {
     // Function to fetch user picture
@@ -95,7 +112,7 @@ function NavBar() {
 
     // Call the fetchUserPicture function
     fetchUserPicture();
-  }, [username]);
+  }, [user]);
 
   const closeDropdown = () => {
     const timeout = setTimeout(() => {
