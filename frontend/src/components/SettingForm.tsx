@@ -113,6 +113,11 @@ export default function SettingForm() {
         const formData = new FormData();
         formData.append("updatePicture", userProfilePicture);
 
+        await axios.delete(`http://localhost:3000/profile/deletePicture`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         await axios.post(
           `http://localhost:3000/profile/updatePicture`, // Update the URL to match your server endpoint
           formData,

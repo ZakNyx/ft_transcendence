@@ -128,7 +128,11 @@ export class ProfileService {
       },
     });
     if (user.pictureStatus === true) {
+      try {
       await fs.unlink(req.user.picture);
+      } catch(error){
+        
+      }
     }
     const updateUser = await this.prismaService.user.update({
       where: {

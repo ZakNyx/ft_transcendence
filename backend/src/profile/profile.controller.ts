@@ -55,7 +55,6 @@ export class ProfileController {
 
   @Put('updateName')
   async updateName(@Body() body: updateNameDTO, @Req() req) {
-    console.log(body);
     return await this.profileService.updateName(body, req);
   }
 
