@@ -17,7 +17,6 @@ export class AuthController {
   async signinRedired(@Req() req, @Res({ passthrough: true }) res) {
     const user = await this.authService.signup(req.user);
     const token = await this.authService.asignJwtToken(user.username, user.email);
-    console.log(token);
     res.cookie('token', token);
     res.redirect('http://localhost:5173/home');
   }
@@ -51,6 +50,5 @@ export class AuthController {
   logout(@Res({ passthrough: true }) res : Response) {
     res.clearCookie('token');
     res.json({ message: 'Logout successful' });
-    console.log("was here");
   }
 }

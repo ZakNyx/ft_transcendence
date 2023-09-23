@@ -119,7 +119,6 @@ export class AuthService {
         status2fa: true,
       },
     });
-    console.log(updatedUser);
     return {
       message: '2fa enabled successfully',
     };
@@ -152,15 +151,6 @@ export class AuthService {
     if (delta === null) {
       throw new HttpException('Invalid token', 400);
     }
-
-    const updatedUser = await this.prismaService.user.update({
-      where: {
-        username: requser.username,
-      },
-      data: {
-        validated: true,
-      },
-    });
 
     return {
       message: '2fa validated successfully',
