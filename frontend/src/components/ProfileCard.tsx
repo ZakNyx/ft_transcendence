@@ -2,6 +2,8 @@ import DoughnutChart from "../components/DoughnutChart";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import FriendButton from "./FriendButton";
+import BlockButton from "./BlockButton";
 
 interface UserData {
   userID: string;
@@ -15,12 +17,11 @@ interface UserData {
   elo: number;
 }
 
-
 export default function ProfileCard() {
   const [user, setUser] = useState<UserData | null>(null);
   const [userPicture, setUserPicture] = useState<string | null>(null);
   let { username } = useParams(); // Get the username parameter from the URL
-  if (!username){
+  if (!username) {
     username = "me";
   }
   useEffect(() => {
@@ -35,11 +36,14 @@ export default function ProfileCard() {
 
         try {
           // Use the `username` from the URL in the API endpoint
-          const response = await axios.get(`http://localhost:3000/profile/${username}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
+          const response = await axios.get(
+            `http://localhost:3000/profile/${username}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             },
-          });
+          );
 
           // Set the user data in the state
           setUser(response.data);
@@ -91,7 +95,7 @@ export default function ProfileCard() {
 
     // Call the fetchUserPicture function
     fetchUserPicture();
-  }, [username])
+  }, [username]);
   return (
     <div className="background-gray rounded-[30px] h-auto p-6 mt-3 sm:ml-8 lg:ml-8 lg:mt-14 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
       <h1 className="text-gray-200 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-5xl">
@@ -99,17 +103,21 @@ export default function ProfileCard() {
       </h1>
       <div className="flex items-center">
         <div className="flex items-center">
-        {userPicture && (
+          {userPicture && (
             <img
               src={userPicture}
               alt="profile picture"
-            className="w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
-          />)}
+              className="w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
+            />
+          )}
+          <div className="absolute flex items-center space-x-2 top-5 right-5 mt-2 mr-2">
+            <FriendButton />
+            <BlockButton   />
+          </div>
           <div className="flex flex-col justify-center">
             <h1 className="text-white font-[Rubik] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-4xl">
               {user ? user.displayname : "Loading..."}
             </h1>
-
             <h2 className="text-white font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-2xl flex items-center">
               <img
                 className="w-6 h-6 mr-2"
@@ -129,7 +137,10 @@ export default function ProfileCard() {
           </div>
         </div>
         <div className="">
-          <DoughnutChart wins={user ? user.wins : 0} losses={user ? user.loses : 0} />
+          <DoughnutChart
+            wins={user ? user.wins : 0}
+            losses={user ? user.loses : 0}
+          />
         </div>
       </div>
     </div>
