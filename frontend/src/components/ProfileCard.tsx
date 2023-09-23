@@ -19,11 +19,43 @@ interface UserData {
 
 export default function ProfileCard() {
   const [user, setUser] = useState<UserData | null>(null);
+  const [jwtUser, setJwtUser] = useState<UserData | null>(null);
   const [userPicture, setUserPicture] = useState<string | null>(null);
   let { username } = useParams(); // Get the username parameter from the URL
   if (!username) {
     username = "me";
   }
+
+  useEffect(() => {
+    // Function to fetch user data and set it in the state
+    const fetchUserData = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+
+        try {
+          // Configure Axios to send the token in the headers
+          const response = await axios.get("http://localhost:3000/profile/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          // Set the user data in the state
+          setJwtUser(response.data);
+        } catch (error: any) {
+          console.error("Error fetching user data:", error);
+        }
+      } 
+    };
+
+    // Call the fetchUserData function
+    fetchUserData();
+  }, [jwtUser]);
+
   useEffect(() => {
     // Function to fetch user data and set it in the state
     const fetchUserData = async () => {
@@ -110,10 +142,10 @@ export default function ProfileCard() {
               className="w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
             />
           )}
-          <div className="absolute flex items-center space-x-2 top-5 right-5 mt-2 mr-2">
+          {(jwtUser?.username !== user?.username) &&(<div className="absolute flex items-center space-x-2 top-5 right-5 mt-2 mr-2">
             <FriendButton />
             <BlockButton   />
-          </div>
+          </div>)}
           <div className="flex flex-col justify-center">
             <h1 className="text-white font-[Rubik] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-4xl">
               {user ? user.displayname : "Loading..."}

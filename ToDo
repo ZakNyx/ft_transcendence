@@ -1,8 +1,8 @@
 - 2FA <Done>
-- Profile merge (Picture/Elo/Rank)
-- Settings
-- Search Bar
-- Logout
-- Redirect to / if user isnt loged it
-- Button in leaderboard leads to profile
-- /profile/{username} should be implemanted
+- Profile merge (Picture/Elo/Rank) <Done>
+- Settings <Done>
+- Search Bar <Done>
+- Logout <Done>
+- Redirect to / if user isnt loged it <Done>
+- Button in leaderboard leads to profile <Done>
+- /profile/{username} should be implemanted <Done>
