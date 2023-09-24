@@ -28,8 +28,8 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Notification" (
     "id" SERIAL NOT NULL,
-    "recieverId" INTEGER NOT NULL,
-    "senderId" INTEGER NOT NULL,
+    "reciever" TEXT NOT NULL,
+    "sender" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "data" TEXT NOT NULL,
     "time" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -109,7 +109,7 @@ CREATE UNIQUE INDEX "_userInChatRoom_AB_unique" ON "_userInChatRoom"("A", "B");
 CREATE INDEX "_userInChatRoom_B_index" ON "_userInChatRoom"("B");
 
 -- AddForeignKey
-ALTER TABLE "Notification" ADD CONSTRAINT "Notification_recieverId_fkey" FOREIGN KEY ("recieverId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Notification" ADD CONSTRAINT "Notification_reciever_fkey" FOREIGN KEY ("reciever") REFERENCES "User"("username") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Message" ADD CONSTRAINT "Message_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

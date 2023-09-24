@@ -51,13 +51,13 @@ model User {
 model Notification {
   id Int @id @default(autoincrement())
 
-  recieverId Int
-  senderId   Int
+  reciever String
+  sender   String
   type String
   data String
   time DateTime @default(now())
 
-  user User @relation(fields: [recieverId], references: [id])
+  user User @relation(fields: [reciever], references: [username])
 }
 
 model ChatRoom {
