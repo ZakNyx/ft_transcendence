@@ -22,6 +22,7 @@ model User {
 
   username    String @unique
   displayname String @unique
+  status      Status @default(OFFLINE)
 
   wins  Int @default(0)
   loses Int @default(0)
@@ -40,9 +41,23 @@ model User {
   blocks User[] @relation("blocked")
   blockedBy User[] @relation("blocked")
 
+  notifications Notification[]
+
   chatRooms ChatRoom[] @relation("userInChatRoom")
   messages  Message[]
 
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+
+  recieverId Int
+  senderId   Int
+  type String
+  data String
+  time DateTime @default(now())
+
+  user User @relation(fields: [recieverId], references: [id])
 }
 
 model ChatRoom {
@@ -79,3 +94,8 @@ model Message {
   roomData ChatRoom @relation(fields: [roomId], references: [id])
 }
 
+enum Status {
+  ONLINE
+  OFFLINE
+  INGAME
+}
