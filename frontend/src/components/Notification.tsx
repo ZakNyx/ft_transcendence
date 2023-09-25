@@ -21,10 +21,10 @@ const Notifications = () => {
   ];
 
   return (
-    <div className="text-gray-200 flex justify-center items-center font-montserrat pr-3 pl-3">
+    <div className="text-gray-200 flex justify-center items-center font-montserrat pr-3 pl-3 max-h-screen overflow-y-auto">
       <ul>
         {notifications.map((notification, index) => (
-          <li className="mb-3" key={index}>
+          <li className="" key={index}>
             <div className="items-center flex space-x-3">
               <img
                 className="w-8 md:w-10 lg:w-10 xl:w-10 h-8 md:h-10 lg:h-10 xl:h-10 rounded-full"

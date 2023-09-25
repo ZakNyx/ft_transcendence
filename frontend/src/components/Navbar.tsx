@@ -154,7 +154,7 @@ function NavBar() {
           <SearchBar />
         </div>
         <div>
-          <ul className="float-right mr-10 flex leading-[80px] space-x-3   uppercase rounded items-center">
+          <ul className="float-right mr-10 flex leading-[80px] space-x-3 uppercase rounded items-center">
             <li>
               <NavLink to="/home">
                 <IconButton
@@ -186,7 +186,7 @@ function NavBar() {
                 isActive={isNotificationOpen}
               />
             </li>
-            <div className="absolute z-10 right-10 top-[4rem] bg-npc-gray shadow-lg rounded-2xl">
+            <div className="absolute z-10 right-10 top-[4rem] origin-top-right bg-npc-gray shadow-lg rounded-2xl">
               {isNotificationOpen && <Notification />}
             </div>
             <li className="flex items-center">
@@ -205,7 +205,7 @@ function NavBar() {
                 {isDropdownOpen && (
                   <div
                     ref={dropdownRef}
-                    className="absolute right-0 z-10 mt-2 w-40 text-left origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 opacity-70 focus:outline-none"
+                    className="absolute right-0 z-10 mt-2 w-40 text-left origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 opacity-70 focus:outline-none max-h-screen overflow-y-auto"
                     style={{ top: "3.5rem", right: "-2.5rem" }}
                   >
                     <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">

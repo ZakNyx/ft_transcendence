@@ -80,12 +80,11 @@ body::-webkit-scrollbar-thumb {
   border-radius: 10px;
 }
 
-/* Modify the background color */
 .swal-bg-black {
-  background-color: black !important; /* Use !important to override default styles */
+  background-color: black !important; 
 }
 
 /* Modify the text color */
 .swal-text-white {
-  color: white !important; /* Use !important to override default styles */
+  color: white !important;
 }
