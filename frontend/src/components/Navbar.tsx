@@ -4,7 +4,7 @@ import IconButton from "./IconButton";
 import SearchBar from "./SearchBar";
 import axios from "axios";
 import Validate from "../components/Validate";
-
+import Notification from "./Notification";
 interface UserData {
   userID: string;
   username: string;
@@ -25,12 +25,18 @@ function NavBar() {
   const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
     undefined,
   );
+  const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
+
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const openDropdown = () => {
     clearTimeout(dropdownTimeout);
     setIsDropdownOpen(true);
+  };
+
+  const toggleNotification = () => {
+    setIsNotificationOpen((prevIsOpen) => !prevIsOpen);
   };
 
   const [username, setUsername] = useState<string | null>(null);
@@ -174,12 +180,15 @@ function NavBar() {
                 />
               </NavLink>
             </li>
-            <li>
+            <li onClick={toggleNotification}>
               <IconButton
                 imagePath="../public/images/Notification.svg"
-                isActive={window.location.pathname === "/Notification"}
+                isActive={isNotificationOpen}
               />
             </li>
+            <div className="absolute z-10 right-10 top-[4rem] bg-npc-gray shadow-lg rounded-2xl">
+              {isNotificationOpen && <Notification />}
+            </div>
             <li className="flex items-center">
               <div
                 className="relative"

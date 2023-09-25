@@ -45,6 +45,7 @@ export default {
         "npc-white": "#F5FCFF",
         "purple-hover": "#A66DDA",
         "purple-active": "#9255E5",
+        "red-hover": "#c71e1e",
       },
     },
   },

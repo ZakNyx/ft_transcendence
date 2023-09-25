@@ -5,7 +5,7 @@ import Achievements from "../components/Achievements"; // Import the Achievement
 
 function Profile() {
   return (
-    <div className="background-image">
+    <div className="background-image min-h-screen">
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
