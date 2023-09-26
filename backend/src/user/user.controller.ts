@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
+import { userDTO } from './dto/user.dto';
 
 @Controller('user')
 @UseGuards(AuthGuard('jwt'))
@@ -12,19 +13,18 @@ export class UserController {
     return this.userService.Leaderboard();
   }
 
-  
-  @Post('block/:username')
-  async blockUser(@Req() req, @Param('username') username: string) {
-    return this.userService.blockUser(req.user, username);
+  @Put('block')
+  async blockUser(@Req() req, @Body() user: userDTO) {
+    return this.userService.blockUser(req.user, user.username);
   }
 
-  @Post('unblock/:username')
-  async unblockUser(@Req() req, @Param('username') username: string) {
-    return this.userService.unblockUser(req.user, username);
+  @Put('unblock')
+  async unblockUser(@Req() req, @Body() user: userDTO) {
+    return this.userService.unblockUser(req.user, user.username);
   }
 
-  @Post('unfriend/:username')
-  async unfriendUser(@Req() req, @Param('username') username: string) {
-    return this.userService.unfriendUser(req.user, username);
+  @Put('unfriend')
+  async unfriendUser(@Req() req, @Body() user: userDTO) {
+    return this.userService.unfriendUser(req.user, user.username);
   }
 }

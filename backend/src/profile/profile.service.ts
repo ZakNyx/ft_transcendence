@@ -24,6 +24,7 @@ export class ProfileService {
         requested: true,
       },
     });
+    
 
     let users: any = await this.prismaService.user.findMany({
       where: {
@@ -37,12 +38,12 @@ export class ProfileService {
       },
     });
 
-    let index = users.findIndex((user) => user.username == user.username);
+    let index = users.findIndex((usertoLook) => usertoLook.username == user.username);
     if (index != -1) users = users.splice(index, index);
     users.map((obj: any) => {
       let status = this.checkUserStatus(user, obj);
       if (status == "blocked") {
-        users.findIndex((user) => user.username == user.username);
+        users.findIndex((user) => user.username == obj.username);
         users = users.splice(index, index);
       }
     });
@@ -119,7 +120,8 @@ export class ProfileService {
     if (!user) {
       throw new HttpException("user not found", 404);
     }
-    let status = this.checkUserStatus(reqUser, user);
+
+    let status = this.checkUserStatus(user, targetUser);
 
     if (status == "blocked") {
       throw new UnauthorizedException("no access");
@@ -247,7 +249,7 @@ export class ProfileService {
   }
 
   private checkUserStatus(user, targetUser) {
-    if (user.blocked.find((obj) => obj.username == targetUser.username))
+    if (user.blocks.find((obj) => obj.username == targetUser.username))
       return "blocked";
     else if (user.blockedBy.find((obj) => obj.username == targetUser.username))
       return "blocked";

@@ -37,17 +37,17 @@ export class ProfileController {
     return await this.profileService.ProfileMe(req.user);
   }
 
-  @Get('me/friends')
+  @Get('friends')
   getMyFriends(@Req() req) {
     return this.profileService.getMyFriends(req.user);
   }
 
-  @Get('me/requests')
+  @Get('requests')
   getMyRequests(@Req() req) {
     return this.profileService.getMyRequests(req.user);
   }
 
-  @Get('me/blocks')
+  @Get('blocks')
   getMyBlocks(@Req() req) {
     return this.profileService.getMyBlocks(req.user);
   }

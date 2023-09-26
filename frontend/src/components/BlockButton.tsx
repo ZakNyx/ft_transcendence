@@ -1,20 +1,41 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-export default function BlockButton() {
-    const [state, setState] = useState<boolean>(false)
-    const handleState = () => {
-        setState(!state)
-        console.log(state)
+export default function BlockButton(props: { username: string }) {
+  const blockUser = async () => {
+    const tokenCookie = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("token="));
+
+    if (tokenCookie) {
+      const token = tokenCookie.split("=")[1];
+      try {
+        // Configure Axios to send the token in the headers
+        // await axios.put(`http://localhost:3000/user/block/${props.username}`, {
+        const res = await axios.put(
+          `http://localhost:3000/user/block`,
+          { username: props.username },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        window.location.reload();
+      } catch (error: any) {
+        console.error("Error fetching user data:", error);
+      }
     }
-    return (
-        <div>
-            <button onClick={handleState} className={`${
-                state
-                  ? "bg-green-500 hover:bg-green-600"
-                  : "bg-red-500 hover:bg-red-600"
-              } transition-all rounded-3xl text-gray-200 font-montserrat p-1.5`}>
-                {state ? "Unblock" : "Block"}
-            </button>
-        </div>
-    )
+  };
+
+  return (
+    <div>
+      <button
+        onClick={blockUser}
+        className={` bg-red-500 hover:bg-red-600 transition-all rounded-3xl text-gray-200 font-montserrat p-1.5`}
+      >
+        Block
+      </button>
+    </div>
+  );
 }

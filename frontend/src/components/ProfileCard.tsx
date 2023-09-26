@@ -144,7 +144,7 @@ export default function ProfileCard() {
           )}
           {(jwtUser?.username !== user?.username) &&(<div className="absolute flex items-center space-x-2 top-5 right-5 mt-2 mr-2">
             <FriendButton />
-            <BlockButton   />
+            {user && <BlockButton username={user.username}  />}
           </div>)}
           <div className="flex flex-col justify-center">
             <h1 className="text-white font-[Rubik] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-4xl">
