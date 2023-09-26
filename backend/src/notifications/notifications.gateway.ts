@@ -12,7 +12,10 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { Req, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { jwtStrategy } from "src/strategies/jwt.strategy";
 import { AuthGuard } from "@nestjs/passport";
-import { notificationBodyDTO } from "./dto/notifications.dto";
+import {
+  notificationBodyDTO,
+  replyToFriendRequestDTO,
+} from "./dto/notifications.dto";
 
 @WebSocketGateway({ namespace: "notifications", cors: { origin: "*" } })
 export class NotificationsGateway
@@ -73,6 +76,23 @@ export class NotificationsGateway
     return await this.notificationsService.sendNotification(
       body,
       req.user,
+      this.socketsByUser,
+    );
+  }
+
+  @SubscribeMessage("getNotifications")
+  @UseGuards(AuthGuard("jwtWebSocket"))
+  async getNotifications(@Req() req) {
+    return await this.notificationsService.getNotifications(req.user);
+  }
+
+  @SubscribeMessage("replyToFriendRequest")
+  @UseGuards(AuthGuard("jwtWebSocket"))
+  async replyToFriendRequest(
+    @MessageBody() body: replyToFriendRequestDTO,
+  ) {
+    return await this.notificationsService.replyToFriendRequest(
+      body,
       this.socketsByUser,
     );
   }

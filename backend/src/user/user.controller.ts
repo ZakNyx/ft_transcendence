@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 
@@ -22,5 +22,18 @@ export class UserController {
     return this.userService.getUser(username);
   }
   
-  
+  @Post('block/:username')
+  async blockUser(@Req() req, @Param('username') username: string) {
+    return this.userService.blockUser(req.user, username);
+  }
+
+  @Post('unblock/:username')
+  async unblockUser(@Req() req, @Param('username') username: string) {
+    return this.userService.unblockUser(req.user, username);
+  }
+
+  @Post('unfriend/:username')
+  async unfriendUser(@Req() req, @Param('username') username: string) {
+    return this.userService.unfriendUser(req.user, username);
+  }
 }

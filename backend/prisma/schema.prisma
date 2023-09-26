@@ -40,6 +40,8 @@ model User {
   friendOf User[] @relation("friends")
   blocks User[] @relation("blocked")
   blockedBy User[] @relation("blocked")
+  requested User[] @relation("friendreq")
+  requestedBy User[] @relation("friendreq")
 
   notifications Notification[]
 

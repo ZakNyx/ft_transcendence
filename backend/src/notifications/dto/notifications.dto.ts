@@ -13,3 +13,14 @@ export class notificationBodyDTO {
   @IsString()
   reciever: string;
 }
+
+export class replyToFriendRequestDTO {
+
+  @IsNotEmpty()
+  @IsString()
+  status: string;
+
+  @IsNotEmpty()
+  @IsString()
+  id: number;
+}

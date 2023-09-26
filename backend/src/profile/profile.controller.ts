@@ -26,8 +26,8 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get('SearchName/:search')
-  async SearchName(@Param('search') search: string) {
-    return await this.profileService.searchName(search);
+  async SearchName(@Param('search') search: string, @Req() req) {
+    return await this.profileService.searchName(search, req.user);
   }
 
 
@@ -38,8 +38,8 @@ export class ProfileController {
   }
 
   @Get(':username')
-  async getProfile(@Param('username') username: string){
-    return await this.profileService.getProfile(username);
+  async getProfile(@Param('username') username: string, @Req() req){
+    return await this.profileService.getProfile(username, req.user);
   }
 
   @Get('ProfilePicture/me')

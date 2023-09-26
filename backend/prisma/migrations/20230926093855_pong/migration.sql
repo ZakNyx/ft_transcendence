@@ -76,6 +76,12 @@ CREATE TABLE "_blocked" (
 );
 
 -- CreateTable
+CREATE TABLE "_friendreq" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "_userInChatRoom" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
@@ -103,6 +109,12 @@ CREATE UNIQUE INDEX "_blocked_AB_unique" ON "_blocked"("A", "B");
 CREATE INDEX "_blocked_B_index" ON "_blocked"("B");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "_friendreq_AB_unique" ON "_friendreq"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_friendreq_B_index" ON "_friendreq"("B");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_userInChatRoom_AB_unique" ON "_userInChatRoom"("A", "B");
 
 -- CreateIndex
@@ -128,6 +140,12 @@ ALTER TABLE "_blocked" ADD CONSTRAINT "_blocked_A_fkey" FOREIGN KEY ("A") REFERE
 
 -- AddForeignKey
 ALTER TABLE "_blocked" ADD CONSTRAINT "_blocked_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_friendreq" ADD CONSTRAINT "_friendreq_A_fkey" FOREIGN KEY ("A") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_friendreq" ADD CONSTRAINT "_friendreq_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_userInChatRoom" ADD CONSTRAINT "_userInChatRoom_A_fkey" FOREIGN KEY ("A") REFERENCES "ChatRoom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
