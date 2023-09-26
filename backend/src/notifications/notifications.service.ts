@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Body, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "../prisma/prisma.service";
 import {
@@ -20,6 +20,9 @@ export class NotificationsService {
       where: {
         username: reqUser.username,
       },
+      include: {
+        requestedBy: true
+      },
     });
 
     const reciever = await this.prismaService.user.findUnique({
@@ -27,6 +30,18 @@ export class NotificationsService {
         username: notifBody.reciever,
       },
     });
+
+    if (this.isRequested(sender, reciever)) {
+      const notification = await this.prismaService.notification.findMany({
+        where: {
+          sender: sender.username,
+          reciever: reciever.username,
+          type: notifBody.type,
+        }
+      });
+      let body = {id: notification[0].id, status: "accept"};
+      return this.replyToFriendRequest(body, socketsByUser);
+    }
 
     await this.prismaService.user.update({
       where: {
@@ -59,6 +74,12 @@ export class NotificationsService {
     }
   }
 
+  private isRequested(sender, reciever) {
+    if (sender.requestedBy.find((obj) => obj.username == reciever.username))
+      return true;
+    else return false;
+  }
+
   async getNotifications(reqUser) {
     const notifications = await this.prismaService.notification.findMany({
       where: {
@@ -75,7 +96,7 @@ export class NotificationsService {
   ) {
     if (body.status == "accept") {
       const notification = await this.acceptRequest(body);
-      this.acceptRequest(body);
+      this.deleteRequest(body);
       const acceptation = {
         title: notification.type,
         reicever: notification.reciever,
@@ -125,39 +146,39 @@ export class NotificationsService {
   async acceptRequest(body: replyToFriendRequestDTO) {
     const notification = await this.prismaService.notification.findUnique({
       where: {
-        id: body.id
+        id: body.id,
       },
     });
 
     await this.prismaService.user.update({
-      where:{
+      where: {
         username: notification.sender,
       },
-      data :{
-        friends:{
-          connect :{
-            username:notification.reciever,
-          }
+      data: {
+        friends: {
+          connect: {
+            username: notification.reciever,
+          },
         },
         requested: {
-          disconnect:{
-            username : notification.reciever,
-          }
-        }
-      }
+          disconnect: {
+            username: notification.reciever,
+          },
+        },
+      },
     });
 
     await this.prismaService.user.update({
-      where:{
+      where: {
         username: notification.reciever,
       },
-      data :{
-        friends:{
-          connect :{
-            username:notification.sender,
-          }
+      data: {
+        friends: {
+          connect: {
+            username: notification.sender,
+          },
         },
-      }
+      },
     });
     return notification;
   }
