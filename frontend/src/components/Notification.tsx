@@ -3,6 +3,52 @@ import React, { useState } from "react";
 const Notifications = () => {
   const notifications = [
     {
+      username: "First",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Jad",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Bihee",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Wassim",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Ilias",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Jad",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Bihee",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Wassim",
+      picture: "../../public/images/ie-laabb.jpg",
+    },    {
+      username: "Ilias",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Jad",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Bihe",
+      picture: "../../public/images/ie-laabb.jpg",
+    },
+    {
+      username: "Wassim",
+      picture: "../../public/images/ie-laabb.jpg",
+    },    {
       username: "Ilias",
       picture: "../../public/images/ie-laabb.jpg",
     },
@@ -21,7 +67,8 @@ const Notifications = () => {
   ];
 
   return (
-    <div className="text-gray-200 flex justify-center items-center font-montserrat pr-3 pl-3 max-h-screen overflow-y-auto">
+    <div className="text-gray-200 flex justify-center items-center font-montserrat pr-3 pl-3 max-h-screen overflow-y-scroll">
+
       <ul>
         {notifications.map((notification, index) => (
           <li className="" key={index}>
@@ -46,7 +93,8 @@ const Notifications = () => {
           </li>
         ))}
       </ul>
-    </div>  
+      </div>
+  
   );
 };
 

@@ -186,7 +186,7 @@ function NavBar() {
                 isActive={isNotificationOpen}
               />
             </li>
-            <div className="absolute z-10 right-10 top-[4rem] origin-top-right bg-npc-gray shadow-lg rounded-2xl">
+            <div className="absolute z-10 right-10 top-[4rem] origin-top-right bg-npc-gray shadow-lg rounded-2xl bg-opacity-90">
               {isNotificationOpen && <Notification />}
             </div>
             <li className="flex items-center">
@@ -205,11 +205,11 @@ function NavBar() {
                 {isDropdownOpen && (
                   <div
                     ref={dropdownRef}
-                    className="absolute right-0 z-10 mt-2 w-40 text-left origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 opacity-70 focus:outline-none max-h-screen overflow-y-auto"
+                    className="absolute right-0 z-10 mt-2 w-40 text-left origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 bg-opacity-90 focus:outline-none max-h-screen overflow-y-auto"
                     style={{ top: "3.5rem", right: "-2.5rem" }}
                   >
-                    <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-                      <li className="px-4 text-gray-700 hover:bg-gray-200 flex items-center">
+                    <ul className="py-2 text-sm text-gray-700">
+                      <li className="px-4 text-gray-700 hover:bg-gray-300 flex items-center">
                         <img
                           className="w-4 h-4 mr-2"
                           src="../../public/images/user.svg"
@@ -219,7 +219,7 @@ function NavBar() {
                           Profile
                         </NavLink>
                       </li>
-                      <li className="px-4 text-gray-700 hover:bg-gray-200 flex items-center">
+                      <li className="px-4 text-gray-700 hover:bg-gray-300 flex items-center">
                         <img
                           className="w-4 h-4 mr-2"
                           src="../../public/images/setting.svg"
@@ -229,7 +229,7 @@ function NavBar() {
                           Settings
                         </NavLink>
                       </li>
-                      <li className="px-4 text-gray-700 hover:bg-gray-200 flex items-center">
+                      <li className="px-4 text-gray-700 hover:bg-gray-300 flex items-center">
                         <img
                           className="w-4 h-4 mr-2"
                           src="../../public/images/logout.svg"
