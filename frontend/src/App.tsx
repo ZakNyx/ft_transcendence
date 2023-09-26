@@ -10,7 +10,7 @@ import BlockList from "./components/BlockList";
 function App() {
   return (
     <Router>
-      <Routes>
+      <Routes> 
         <Route path="/" element={<LoginPage />} />
         <Route path="/blocklist" element={<BlockList  />} />
         <Route path="/home" element={<HomePage />} />
@@ -19,6 +19,7 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="*" element={<Error404 />} />
+       
       </Routes>
     </Router>
   );

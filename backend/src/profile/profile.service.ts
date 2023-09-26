@@ -117,7 +117,7 @@ export class ProfileService {
       },
     });
 
-    if (!user) {
+    if (!targetUser) {
       throw new HttpException("user not found", 404);
     }
 

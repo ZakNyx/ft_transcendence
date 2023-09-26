@@ -2,6 +2,7 @@ import { Body, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "../prisma/prisma.service";
 import {
+  cancelNotificationDTO,
   notificationBodyDTO,
   replyToFriendRequestDTO,
 } from "./dto/notifications.dto";
@@ -16,6 +17,8 @@ export class NotificationsService {
     reqUser,
     socketsByUser: Map<string, Socket[]>,
   ) {
+
+    console.log(notifBody);
     const sender = await this.prismaService.user.findUnique({
       where: {
         username: reqUser.username,
@@ -34,8 +37,8 @@ export class NotificationsService {
     if (this.isRequested(sender, reciever)) {
       const notification = await this.prismaService.notification.findMany({
         where: {
-          sender: sender.username,
-          reciever: reciever.username,
+          sender: reciever.username,
+          reciever: sender.username,
           type: notifBody.type,
         }
       });
@@ -78,6 +81,41 @@ export class NotificationsService {
     if (sender.requestedBy.find((obj) => obj.username == reciever.username))
       return true;
     else return false;
+  }
+
+  async cancelNotification(
+    notifBody: cancelNotificationDTO,
+    reqUser,
+    socketsByUser: Map<string, Socket[]>,
+  ){
+
+    const targetUser = await this.prismaService.user.findUnique({
+      where:{
+        username: notifBody.reciever,
+      },
+    });
+
+    await this.prismaService.user.update({
+      where:{
+        username:reqUser.username,
+      },
+      data :{
+          requested: {
+            disconnect: {
+              username: targetUser.username
+            },
+          }
+      }
+    });
+
+    await this.prismaService.notification.deleteMany({
+      where: {
+        sender: reqUser.username,
+        reciever: targetUser.username,
+        type: "friendRequest",
+      },
+    });
+
   }
 
   async getNotifications(reqUser) {

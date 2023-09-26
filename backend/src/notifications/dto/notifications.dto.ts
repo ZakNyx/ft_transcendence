@@ -24,3 +24,9 @@ export class replyToFriendRequestDTO {
   @IsString()
   id: number;
 }
+
+export class cancelNotificationDTO {
+  @IsNotEmpty()
+  @IsString()
+  reciever: string;
+}

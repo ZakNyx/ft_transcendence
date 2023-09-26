@@ -10,9 +10,7 @@ export default function BlockButton(props: { username: string }) {
     if (tokenCookie) {
       const token = tokenCookie.split("=")[1];
       try {
-        // Configure Axios to send the token in the headers
-        // await axios.put(`http://localhost:3000/user/block/${props.username}`, {
-        const res = await axios.put(
+        await axios.put(
           `http://localhost:3000/user/block`,
           { username: props.username },
           {
