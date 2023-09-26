@@ -1,40 +1,18 @@
-import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import {
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
+import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class UserService {
   constructor(private prismaService: PrismaService) {}
 
-  async getMe(userMe) {
-    const user = await this.prismaService.user.findUnique({
-      where: { username: userMe.username },
-    });
-
-    if (!user) {
-      throw new HttpException('User not found', 404);
-    }
-
-    return {user};
-  }
-
-  async getUser(username: string) {
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        username,
-      },
-    });
-
-    if (!user) {
-      throw new HttpException('User not found', 404);
-    }
-
-    return user;
-  }
-
   async Leaderboard() {
     const users = await this.prismaService.user.findMany({
       orderBy: {
-        elo: 'desc',
+        elo: "desc",
       },
       select: {
         username: true,
@@ -52,28 +30,26 @@ export class UserService {
     try {
       await this.unfriendUser(reqUser, toBlockUser);
       await this.addUserToBlocking(reqUser, toBlockUser);
-    }
-    catch (error) {
+    } catch (error) {
       throw new InternalServerErrorException();
     }
   }
-
 
   async unfriendUser(reqUser, toUnfriendUser: string) {
     const user = await this.prismaService.user.findUnique({
       where: {
         username: reqUser.username,
-      }
+      },
     });
 
     const unfriendUser = await this.prismaService.user.findUnique({
       where: {
         username: toUnfriendUser,
-      }
+      },
     });
 
     if (!user || !unfriendUser) {
-      throw new HttpException('User not found', 404);
+      throw new HttpException("User not found", 404);
     }
 
     await this.prismaService.user.update({
@@ -84,9 +60,9 @@ export class UserService {
         friends: {
           disconnect: {
             username: unfriendUser.username,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     await this.prismaService.user.update({
@@ -97,9 +73,9 @@ export class UserService {
         friends: {
           disconnect: {
             username: user.username,
-          }
-        }
-      }
+          },
+        },
+      },
     });
   }
 
@@ -107,7 +83,7 @@ export class UserService {
     const user = await this.prismaService.user.findUnique({
       where: {
         username: reqUser.username,
-      }
+      },
     });
 
     const updatedUser = await this.prismaService.user.update({
@@ -119,8 +95,8 @@ export class UserService {
           connect: {
             username: toBlockUser,
           },
-        }
-      }
+        },
+      },
     });
   }
 
@@ -128,7 +104,7 @@ export class UserService {
     const user = await this.prismaService.user.findUnique({
       where: {
         username: reqUser.username,
-      }
+      },
     });
 
     const updatedUser = await this.prismaService.user.update({
@@ -140,8 +116,8 @@ export class UserService {
           disconnect: {
             username: toUnblockUser,
           },
-        }
-      }
+        },
+      },
     });
   }
 }

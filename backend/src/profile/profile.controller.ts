@@ -37,6 +37,21 @@ export class ProfileController {
     return await this.profileService.ProfileMe(req.user);
   }
 
+  @Get('me/friends')
+  getMyFriends(@Req() req) {
+    return this.profileService.getMyFriends(req.user);
+  }
+
+  @Get('me/requests')
+  getMyRequests(@Req() req) {
+    return this.profileService.getMyRequests(req.user);
+  }
+
+  @Get('me/blocks')
+  getMyBlocks(@Req() req) {
+    return this.profileService.getMyBlocks(req.user);
+  }
+
   @Get(':username')
   async getProfile(@Param('username') username: string, @Req() req){
     return await this.profileService.getProfile(username, req.user);

@@ -54,12 +54,44 @@ export class ProfileService {
       where: {
         username: reqUser.username,
       },
+    });
+    return user;
+  }
+
+  async getMyFriends(reqUser) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: reqUser.username,
+      },
       include: {
         friends: true,
+      },
+    });
+    return user.friends;
+  }
+
+  async getMyRequests(reqUser) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: reqUser.username,
+      },
+      include: {
         requested: true,
       },
     });
-    return user;
+    return user.requested;
+  }
+
+  async getMyBlocks(reqUser) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: reqUser.username,
+      },
+      include: {
+        blocks: true,
+      },
+    });
+    return user.blocks;
   }
 
   async getProfile(username: string, reqUser) {

@@ -7,20 +7,11 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('me')
-  getMe(@Req() req) {
-    return this.userService.getMe(req.user);
-  }
-
   @Get('leaderboard')
   async Leaderboard() {
     return this.userService.Leaderboard();
   }
 
-  @Get(':username')
-  getUser(@Param('username') username: string) {
-    return this.userService.getUser(username);
-  }
   
   @Post('block/:username')
   async blockUser(@Req() req, @Param('username') username: string) {
