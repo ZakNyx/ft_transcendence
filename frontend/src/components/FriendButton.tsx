@@ -1,26 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import io from "socket.io-client";
-
-const tokenCookie = document.cookie
-  .split("; ")
-  .find((cookie) => cookie.startsWith("token="));
-
-const token = tokenCookie?.split("=")[1];
-
-
-const socket = io("http://localhost:3000/notifications", {
-  extraHeaders:{
-    Authorization: `Bearer ${token}`
-  }
-});
-// socket.on('connect', () => {
-//   console.log('Connected to WebSocket server');
-// });
-
-// socket.on('error', (error) => {
-//   console.error('WebSocket error:', error);
-// });
+import { initializeSocket } from "./socketManager";
 
 interface UserData {
   profilestatus: string;
@@ -31,6 +11,7 @@ function StateChangingButton(props: { username: string }) {
   const [user, setUser] = useState<UserData | null>(null);
   const [jwtUser, setJwtUser] = useState<UserData | null>(null);
 
+  const socket = initializeSocket('');
   useEffect(() => {
     // Function to fetch user data and set it in the state
     const fetchUserData = async () => {
@@ -105,33 +86,61 @@ function StateChangingButton(props: { username: string }) {
       case "friend":
         unFriend();
         break;
+      case "requestedBy":
+        acceptRequest();
+        break;
       default:
         sendFriendRequest();
     }
   };
 
   const sendFriendRequest = async () => {
-    const notificationData = {
-      // Customize the notification data as needed
-      type: "friendRequest", // You can define your notification types
-      data: "You have a new friend request from " + jwtUser?.username,
-      reciever: user?.username,
-      // Add any other relevant data
-    };
-    // Emit the "sendNotification" event to the WebSocket server
-    socket.emit("sendNotification", notificationData);
-    window.location.reload();
+    try {
+      const notificationData = {
+        // Customize the notification data as needed
+        type: "friendRequest", // You can define your notification types
+        data: "You have a new friend request from " + jwtUser?.username,
+        reciever: user?.username,
+        // Add any other relevant data
+      };
+      // Emit the "sendNotification" event to the WebSocket server
+      socket.emit("sendNotification", notificationData);
+      window.location.reload();
+    } catch (error: any) {
+      console.error("Error fetching user data:", error);
+    }
   };
 
   const cancelFriendRequest = async () => {
-    const notificationData = {
-      // Customize the notification data as needed
-      reciever: user?.username,
-    };
-    // Emit the "sendNotification" event to the WebSocket server
-    socket.emit("cancelNotification", notificationData);
-    window.location.reload();
+    try {
+      const notificationData = {
+        // Customize the notification data as needed
+        reciever: user?.username,
+      };
+      // Emit the "sendNotification" event to the WebSocket server
+      socket.emit("cancelNotification", notificationData);
+      window.location.reload();
+    } catch (error: any) {
+      console.error("Error fetching user data:", error);
+    }
   };
+
+  const acceptRequest = async () => {
+    try {
+      const notificationData = {
+        // Customize the notification data as needed
+        reciever: jwtUser?.username,
+        sender: user?.username,
+        type: "friendRequest",
+        status: "accept",
+      };
+      // Emit the "sendNotification" event to the WebSocket server
+      socket.emit("replyToFriendRequest", notificationData);
+      window.location.reload();
+    } catch (error: any) {
+      console.error("Error fetching user data:", error);
+    }
+  }
 
   const unFriend = async () => {
     const tokenCookie = document.cookie
@@ -173,6 +182,10 @@ function StateChangingButton(props: { username: string }) {
       buttonClassName =
         "text-gray-200 bg-red-400 hover:bg-red-500 transition-all font-montserrat p-1.5 rounded-lg sm:text-sm md:text-base";
       break;
+    case "requestedBy":
+      buttonClassName =
+        "text-gray-200 bg-green-500 hover:bg-green-600 transition-all font-montserrat p-1.5 rounded-lg sm:text-sm md:text-base";
+      break;
     default:
       buttonClassName =
         "text-gray-200 bg-npc-purple hover:bg-purple-hover transition-all font-montserrat p-1.5 rounded-lg sm:text-sm md:text-base";
@@ -185,6 +198,8 @@ function StateChangingButton(props: { username: string }) {
           ? "Add Friend"
           : user?.profilestatus === "requested"
           ? "Cancel Request"
+          : user?.profilestatus === "requestedBy"
+          ? "Accept Request"
           : "Remove Friend"}
       </button>
     </div>

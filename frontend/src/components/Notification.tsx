@@ -10,60 +10,6 @@ const Notifications = () => {
       username: "Jad",
       picture: "../../public/images/ie-laabb.jpg",
     },
-    {
-      username: "Bihee",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Wassim",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Ilias",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Jad",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Bihee",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Wassim",
-      picture: "../../public/images/ie-laabb.jpg",
-    },    {
-      username: "Ilias",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Jad",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Bihe",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Wassim",
-      picture: "../../public/images/ie-laabb.jpg",
-    },    {
-      username: "Ilias",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Jad",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Bihe",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
-    {
-      username: "Wassim",
-      picture: "../../public/images/ie-laabb.jpg",
-    },
   ];
 
   return (

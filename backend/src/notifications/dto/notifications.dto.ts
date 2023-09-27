@@ -22,7 +22,15 @@ export class replyToFriendRequestDTO {
 
   @IsNotEmpty()
   @IsString()
-  id: number;
+  sender: string;
+
+  @IsNotEmpty()
+  @IsString()
+  type: string;
+
+  @IsNotEmpty()
+  @IsString()
+  reciever: string;
 }
 
 export class cancelNotificationDTO {

@@ -35,14 +35,14 @@ export class NotificationsService {
     });
 
     if (this.isRequested(sender, reciever)) {
-      const notification = await this.prismaService.notification.findMany({
+      const notification = await this.prismaService.notification.findFirst({
         where: {
           sender: reciever.username,
           reciever: sender.username,
           type: notifBody.type,
         }
       });
-      let body = {id: notification[0].id, status: "accept"};
+      let body = {type: notification.type , status: "accept", sender: notification.sender, reciever: notification.reciever};
       return this.replyToFriendRequest(body, socketsByUser);
     }
 
@@ -155,7 +155,9 @@ export class NotificationsService {
   async deleteRequest(body: replyToFriendRequestDTO) {
     const notif = await this.prismaService.notification.findFirst({
       where: {
-        id: body.id,
+        type: body.type,
+        sender: body.sender,
+        reciever: body.reciever,
       },
     });
 
@@ -182,9 +184,11 @@ export class NotificationsService {
   }
 
   async acceptRequest(body: replyToFriendRequestDTO) {
-    const notification = await this.prismaService.notification.findUnique({
+    const notification = await this.prismaService.notification.findFirst({
       where: {
-        id: body.id,
+        type: body.type,
+        sender: body.sender,
+        reciever: body.reciever,
       },
     });
 

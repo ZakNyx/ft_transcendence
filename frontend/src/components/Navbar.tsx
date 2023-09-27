@@ -5,6 +5,8 @@ import SearchBar from "./SearchBar";
 import axios from "axios";
 import Validate from "../components/Validate";
 import Notification from "./Notification";
+import { initializeSocket } from "./socketManager";
+
 interface UserData {
   userID: string;
   username: string;
@@ -64,6 +66,7 @@ function NavBar() {
           // Set the user data in the state
           setUser(response.data);
           setUsername(response.data.username);
+          const socket = initializeSocket(token);
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error

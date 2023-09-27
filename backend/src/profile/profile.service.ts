@@ -22,6 +22,7 @@ export class ProfileService {
         blocks: true,
         blockedBy: true,
         requested: true,
+        requestedBy: true,
       },
     });
     
@@ -105,6 +106,7 @@ export class ProfileService {
         blocks: true,
         blockedBy: true,
         requested: true,
+        requestedBy: true,
       },
     });
     let targetUser: any = await this.prismaService.user.findUnique({
@@ -257,6 +259,8 @@ export class ProfileService {
       return "friend";
     else if (user.requested.find((obj) => obj.username == targetUser.username))
       return "requested";
+    else if (user.requestedBy.find((obj) => obj.username == targetUser.username))
+      return "requestedBy";
     else if (user.username == targetUser.username) return "me";
     else return "notFriend";
   }
