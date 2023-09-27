@@ -88,3 +88,10 @@ body::-webkit-scrollbar-thumb {
 .swal-text-white {
   color: white !important;
 }
+
+.username {
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

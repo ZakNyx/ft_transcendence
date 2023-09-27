@@ -97,7 +97,6 @@ const BlockList = () => {
 
     if (tokenCookie) {
       const token = tokenCookie.split("=")[1];
-
       try {
         const response = await axios.put(
           `http://localhost:3000/user/unblock`,
@@ -126,27 +125,32 @@ const BlockList = () => {
   }
   return (
     <div className="flex justify-center items-center font-montserrat pr-3 pl-3 background-gray">
-      <div className="max-w-screen-md  h-[20vh] w-[25vw] overflow-y-auto">
+      <div className="max-w-screen-md h-[20vh] w-[50vw] lg:w-[30vw] overflow-y-auto">
         <ul className="text-gray-200">
-          {blocklist && blocklist.map((blocklist, index) => (
-            <li className="" key={index}>
-              <div className="items-center flex space-x-3">
+          {blocklist &&
+            blocklist.map((blocklist, index) => (
+              <li className="mb-3 flex items-center" key={index}>
                 <img
                   className="w-8 md:w-10 lg:w-10 xl:w-10 h-8 md:h-10 lg:h-10 xl:h-10 rounded-full"
                   src={blocklist.profilePicture}
                   alt="User profile picture"
                 />
-                <p className="max-w-[12rem] break-words text-xs xs:text-xs md:text-xs lg:text-sm">
+                <p className="max-w-[10rem] pl-3 break-words text-xs xs:text-xs md:text-xs lg:text-sm username">
                   <b>{blocklist.displayname}</b> is blocked.
                 </p>
-                <div className="">
-                  <button onClick={() =>{
-                    handleClick({displayname:blocklist.displayname, username:blocklist.username})
-                  } } className="rounded-md bg-red-500 hover:bg-red-hover p-1.5 shadow-md text-xs xs:text-xs md:text-xs lg:text-sm">
+                <div className="ml-auto">
+                  <button
+                    onClick={() =>
+                      handleClick({
+                        displayname: blocklist.displayname,
+                        username: blocklist.username,
+                      })
+                    }
+                    className="rounded-md bg-red-500 hover:bg-red-hover p-1.5 shadow-md text-xs xs:text-xs md:text-xs lg:text-sm"
+                  >
                     Unblock
                   </button>
                 </div>
-              </div>
             </li>
           ))}
         </ul>
