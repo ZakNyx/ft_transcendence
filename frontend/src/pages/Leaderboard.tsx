@@ -128,7 +128,7 @@ export default function Leaderboard() {
                     className="w-8 md:w-10 lg:w-16 xl:w-20 h-8 md:h-10 lg:h-16 xl:h-20 rounded-full"
                   />
                 )}
-                <h1 className="font-montserrat font-bold text-white ml-4 text-xs md:text-sm lg:text-base xl:text-xl">
+                <h1 className="max-w-[10rem] break-words font-montserrat font-bold text-white ml-4 text-xs md:text-sm lg:text-base xl:text-xl">
                   {item.displayname}
                 </h1>
               </div>
@@ -137,7 +137,7 @@ export default function Leaderboard() {
                 <h2 className="font-montserrat font-semibold text-white text-sm md:text-base lg:text-xl xl:text-2xl">
                   {item.gamesPlayed}
                 </h2>
-                <p className="font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
+                <p className="max-w-[10rem] break-words font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
                   Games Played
                 </p>
               </div>
@@ -146,7 +146,7 @@ export default function Leaderboard() {
                 <h2 className=" font-montserrat font-semibold text-white text-sm md:text-base lg:text-xl xl:text-2xl">
                   {item.wins}
                 </h2>
-                <p className="font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
+                <p className="max-w-[10rem] break-words font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
                   Games Won
                 </p>
               </div>
@@ -155,7 +155,7 @@ export default function Leaderboard() {
                 <h2 className="font-montserrat font-semibold text-white text-sm md:text-base lg:text-xl xl:text-2xl">
                   {item.winrate}%
                 </h2>
-                <p className="font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
+                <p className="max-w-[10rem] break-words font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
                   Winrate
                 </p>
               </div>
@@ -164,7 +164,7 @@ export default function Leaderboard() {
                 <h2 className="font-montserrat font-semibold text-white text-sm md:text-base lg:text-xl xl:text-2xl">
                   {item.elo}
                 </h2>
-                <p className="font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
+                <p className="max-w-[10rem] break-words font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
                   Elo
                 </p>
               </div>

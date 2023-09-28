@@ -164,10 +164,10 @@ export default function ProfileCard() {
             </div>
           )}
           <div className="flex flex-col justify-center">
-            <h1 className="text-white font-[Rubik] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-4xl">
+            <h1 className="max-w-[10rem] pl-3 break-words text-white font-[Rubik] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-4xl">
               {user ? user.displayname : "Loading..."}
             </h1>
-            <h2 className="text-white font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-2xl flex items-center">
+            <h2 className="max-w-[10rem] pl-3 break-words text-white font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-2xl flex items-center">
               <img
                 className="w-6 h-6 mr-2"
                 src="../public/images/trophy.png"
@@ -175,13 +175,13 @@ export default function ProfileCard() {
               />
               Elo - {user ? user.elo : "..."}
             </h2>
-            <h2 className="text-white font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-2xl flex items-center">
+            <h2 className= "max-w-[10rem] pl-3 break-words text-white font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-2xl flex items-center">
               <img
                 className="w-6 h-6 mr-2"
                 src="../public/images/rank.png"
                 alt="Medal"
               />
-              Rank - #667
+              Rank - #1
             </h2>
           </div>
         </div>
