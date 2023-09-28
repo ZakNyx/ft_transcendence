@@ -24,7 +24,7 @@ const OnlineStatus: React.FC<{ status: string }> = ({ status }) => {
   }
 
   return (
-    <div className={`absolute bottom-0.5 right-3 md:bottom-1 md:right-9 w-4 h-4 md:w-6 lg:w-7 xl:w-8 md:h-6 lg:h-7 xl:h-8 rounded-full border-2 border-white  ${statusColorClass}`}></div>
+    <div className={`absolute right-3 bottom-0.5 sm:bottom-1 md:bottom-1 sm:right-6 md:right-9 w-4 md:w-6 lg:w-7 xl:w-8 h-4 md:h-6 lg:h-7 xl:h-8 rounded-full border-2 border-white  ${statusColorClass}`}></div>
   );
 };
 

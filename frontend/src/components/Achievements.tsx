@@ -43,12 +43,12 @@ export default function Achievements() {
     fetchUserData();
   }, [username]);
 
-  let friend:boolean = false;
-  let played:boolean = false;
-  let won:boolean = false;
+  let friend: boolean = false;
+  let played: boolean = false;
+  let won: boolean = false;
   if (user) {
     console.log(user.gamesPlayed, user.wins);
-    friend = (user.friends?.length >= 1);
+    friend = user.friends?.length >= 1;
 
     played = user.gamesPlayed >= 1;
 
@@ -61,47 +61,55 @@ export default function Achievements() {
           Achievements
         </h2>
         <div className="">
-          <ul>
-            {friend && (
-              <li className="flex items-center space-x-4 mb-4">
-                <img
-                  src="../../public/images/bronze.png"
-                  alt="bronze"
-                  className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl"
-                />
-                <div className="text-gray-200 font-[Rubik]">
-                  <h3 className="text-lg">Not So lonely ...</h3>
-                  <span className="ml-6 text-sm">Got His First Friend</span>
-                </div>
-              </li>
-            )}
-            {played && (
-              <li className="flex items-center space-x-4 mb-4">
-                <img
-                  src="../../public/images/silver.png"
-                  alt="silver"
-                  className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl "
-                />
-                <div className="text-gray-200 font-[Rubik]">
-                  <h3 className="text-lg">How did it go ?</h3>
-                  <span className="ml-6 text-sm">Played First Game</span>
-                </div>
-              </li>
-            )}
-            {won && (
-              <li className="flex items-center space-x-4 mb-4">
-                <img
-                  src="../../public/images/gold.png"
-                  alt="gold"
-                  className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl"
-                />
-                <div className="text-gray-200 font-[Rubik]">
-                  <h3 className="text-lg">The Next Faker</h3>
-                  <span className="ml-6 text-sm">Got His First Win</span>
-                </div>
-              </li>
-            )}
-          </ul>
+          {!friend && !played && !won ? (
+            <div className="">
+            <p className="text-gray-200 font-[Rubik] text-lg text-center m-28">
+              Boohoo! You haven't achieved anything yet (In life too)
+            </p>
+            </div>
+          ) : (
+            <ul>
+              {friend && (
+                <li className="flex items-center space-x-4 mb-4">
+                  <img
+                    src="../../public/images/bronze.png"
+                    alt="bronze"
+                    className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl"
+                  />
+                  <div className="text-gray-200 font-[Rubik]">
+                    <h3 className="text-lg">Not So lonely ...</h3>
+                    <span className="ml-6 text-sm">Got His First Friend</span>
+                  </div>
+                </li>
+              )}
+              {played && (
+                <li className="flex items-center space-x-4 mb-4">
+                  <img
+                    src="../../public/images/silver.png"
+                    alt="silver"
+                    className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl "
+                  />
+                  <div className="text-gray-200 font-[Rubik]">
+                    <h3 className="text-lg">How did it go ?</h3>
+                    <span className="ml-6 text-sm">Played First Game</span>
+                  </div>
+                </li>
+              )}
+              {won && (
+                <li className="flex items-center space-x-4 mb-4">
+                  <img
+                    src="../../public/images/gold.png"
+                    alt="gold"
+                    className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl"
+                  />
+                  <div className="text-gray-200 font-[Rubik]">
+                    <h3 className="text-lg">The Next Faker</h3>
+                    <span className="ml-6 text-sm">Got His First Win</span>
+                  </div>
+                </li>
+              )}
+            </ul>
+          )}
         </div>
       </div>
     </div>

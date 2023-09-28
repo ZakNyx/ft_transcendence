@@ -185,12 +185,21 @@ function NavBar() {
                 />
               </NavLink>
             </li>
-            <li onClick={toggleNotification}>
-              <IconButton
-                imagePath="../public/images/Notification.svg"
-                isActive={isNotificationOpen}
-              />
-            </li>
+            <div>
+              <li onClick={toggleNotification} className="relative">
+                <IconButton
+                  imagePath="../public/images/Notification.svg"
+                  isActive={isNotificationOpen}
+                />
+                {/* Notification counter */}
+                {isNotificationOpen && (
+                  <div className="absolute w-4 h-4 bg-red-600 rounded-full text-white text-xs -top-1 -right-1 flex items-center justify-center">
+                    1
+                  </div>
+                )}
+              </li>
+            </div>
+
             <div className="absolute z-10 right-10 top-[4rem] origin-top-right bg-npc-gray shadow-lg rounded-2xl bg-opacity-90">
               {isNotificationOpen && <Notification />}
             </div>
