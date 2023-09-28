@@ -5,6 +5,7 @@ import Profile from "./pages/Profile";
 import Error404 from "./pages/Error404";
 import Settings from "./pages/Settings";
 import Leaderboard from "./pages/Leaderboard";
+import Error401 from "./pages/Error401";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/Error401" element={<Error401 />} />
         <Route path="*" element={<Error404 />} />
        
       </Routes>

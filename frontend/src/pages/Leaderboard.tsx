@@ -29,7 +29,7 @@ export default function Leaderboard() {
 
         try {
           const response = await axios.get<UserData[]>(
-            "http://localhost:3000/user/leaderboard/",
+            `http://localhost:3000/user/leaderboard/`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

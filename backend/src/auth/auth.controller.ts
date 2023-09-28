@@ -3,10 +3,11 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import {twoFacVerifyDTO, validate2faDTO } from './dto/auth.dto';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Controller()
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private config: ConfigService) {}
 
   @Get()
   @UseGuards(AuthGuard('42'))
@@ -18,7 +19,7 @@ export class AuthController {
     const user = await this.authService.signup(req.user);
     const token = await this.authService.asignJwtToken(user.username, user.email);
     res.cookie('token', token);
-    res.redirect('http://localhost:5173/home');
+    res.redirect(`http://${this.config.get('FRONT_URL')}/home`);
   }
 
   @Get('2fa')

@@ -22,7 +22,7 @@ const BlockList = () => {
 
         try {
           const response = await axios.get<UserData[]>(
-            "http://localhost:3000/profile/blocks/",
+            `http://localhost:3000/profile/blocks/`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

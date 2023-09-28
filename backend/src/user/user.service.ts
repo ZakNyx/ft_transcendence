@@ -77,6 +77,31 @@ export class UserService {
         },
       },
     });
+
+    await this.prismaService.user.update({
+      where: {
+        username: unfriendUser.username,
+      },
+      data: {
+        requested: {
+          disconnect: {
+            username: user.username,
+          },
+        },
+      },
+    });
+    await this.prismaService.user.update({
+      where: {
+        username: unfriendUser.username,
+      },
+      data: {
+        requestedBy: {
+          disconnect: {
+            username: user.username,
+          },
+        },
+      },
+    });
   }
 
   async addUserToBlocking(reqUser, toBlockUser: string) {

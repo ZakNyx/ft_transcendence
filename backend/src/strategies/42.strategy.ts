@@ -11,7 +11,7 @@ export class AuthStrategy extends PassportStrategy(Strategy, '42') {
     super({
       clientID: config.get('CLIENT_ID'),
       clientSecret: config.get('CLIENT_SECRET'),
-      callbackURL: 'http://localhost:3000/auth/redirect',
+      callbackURL: `http://${config.get('API_URL')}/auth/redirect`,
     });
   }
 
