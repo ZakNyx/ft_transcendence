@@ -143,11 +143,14 @@ export default function ProfileCard() {
       <div className="flex items-center">
         <div className="flex items-center">
           {userPicture && (
+            <div>
             <img
               src={userPicture}
               alt="profile picture"
-              className="w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
+              className=" w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
             />
+            <div className="status-circle "> </div>
+            </div>
           )}
           {jwtUser?.username !== user?.username && (
             <div className="absolute flex items-center space-x-2 top-5 right-5 mt-2 mr-2">
