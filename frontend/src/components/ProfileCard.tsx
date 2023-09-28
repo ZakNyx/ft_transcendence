@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import FriendButton from "./FriendButton";
 import BlockButton from "./BlockButton";
+import OnlineStatus from "./OnlineStatus";
 
 interface UserData {
   userID: string;
@@ -14,6 +15,7 @@ interface UserData {
   wins: number;
   loses: number;
   winrate: number;
+  status :string;
   elo: number;
 }
 
@@ -81,6 +83,7 @@ export default function ProfileCard() {
 
           // Set the user data in the state
           setUser(response.data);
+          console.log(response.data);
         } catch (error: any) {
           if (error.response && error.response.status == 401) {
             navigate("/Error401");
@@ -135,6 +138,7 @@ export default function ProfileCard() {
     // Call the fetchUserPicture function
     fetchUserPicture();
   }, [username]);
+  
   return (
     <div className="background-gray rounded-[30px] h-auto p-6 mt-3 sm:ml-8 lg:ml-8 lg:mt-14 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
       <h1 className="text-gray-200 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-5xl">
@@ -143,11 +147,15 @@ export default function ProfileCard() {
       <div className="flex items-center">
         <div className="flex items-center">
           {userPicture && (
+            <div className="relative">
             <img
               src={userPicture}
               alt="profile picture"
               className="w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
             />
+            {/* Online / Offline status */}
+            {user && <OnlineStatus status={user.status} />}
+             </div>
           )}
           {jwtUser?.username !== user?.username && (
             <div className="absolute flex items-center space-x-2 top-5 right-5 mt-2 mr-2">
