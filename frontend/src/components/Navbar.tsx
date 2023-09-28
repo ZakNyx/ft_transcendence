@@ -203,7 +203,7 @@ function NavBar() {
                   isActive={isNotificationOpen}
                 />
                 {/* Notification counter */}
-                {!isNotificationOpen && (user && user.notifications && user.notifications.length) && (
+                {!isNotificationOpen && (user && user.notifications && user.notifications.length > 0) && (
                   <div className="absolute w-4 h-4 bg-red-600 rounded-full text-white text-xs -top-1 -right-1 flex items-center justify-center">
                     {user.notifications.length}
                   </div>
