@@ -56,6 +56,9 @@ export class ProfileService {
       where: {
         username: reqUser.username,
       },
+      include: {
+        notifications:true,
+      },
     });
     return user;
   }

@@ -20,8 +20,19 @@ interface UserData {
   status2fa: boolean;
   secret2fa: boolean;
   secretAuthUrl: boolean;
+  notifications: notifData[];
 }
 
+interface notifData {
+  int :number;
+
+  reciever: string;
+  sender: string;
+  sernderDisplayName:string;
+  senderPicture: string;
+  type: string;
+  data:string;
+}
 // const apiurl = process.env.API_URL;
 
 function NavBar() {
@@ -83,7 +94,7 @@ function NavBar() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [navigate, user]);
+  }, []);
 
   useEffect(() => {
     // Function to fetch user picture
@@ -192,9 +203,9 @@ function NavBar() {
                   isActive={isNotificationOpen}
                 />
                 {/* Notification counter */}
-                {isNotificationOpen && (
+                {!isNotificationOpen && (user && user.notifications && user.notifications.length) && (
                   <div className="absolute w-4 h-4 bg-red-600 rounded-full text-white text-xs -top-1 -right-1 flex items-center justify-center">
-                    1
+                    {user.notifications.length}
                   </div>
                 )}
               </li>

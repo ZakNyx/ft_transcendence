@@ -83,7 +83,6 @@ export default function ProfileCard() {
 
           // Set the user data in the state
           setUser(response.data);
-          console.log(response.data);
         } catch (error: any) {
           if (error.response && error.response.status == 401) {
             navigate("/Error401");

@@ -76,7 +76,6 @@ const Notifications = () => {
           );
 
           setNotifications(response.data);
-          console.log(response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
         }

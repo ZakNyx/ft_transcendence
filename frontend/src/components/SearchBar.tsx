@@ -40,7 +40,6 @@ export default function SearchBar() {
               },
             }
           );
-          console.log(response.data);
           setUsers(response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
