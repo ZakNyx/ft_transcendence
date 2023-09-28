@@ -9,10 +9,10 @@ interface UserData {
 }
 
 const BlockList = () => {
-  const [blocklist, setBlockList] = useState<UserData[] | null> (null);
+  const [blocklist, setBlockList] = useState<UserData[] | null>(null);
 
   useEffect(() => {
-    const fetchBlockList= async () => {
+    const fetchBlockList = async () => {
       const tokenCookie = document.cookie
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
@@ -27,7 +27,7 @@ const BlockList = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
 
           setBlockList(response.data);
@@ -56,7 +56,7 @@ const BlockList = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
 
           const contentType = response.headers["content-type"];
@@ -89,8 +89,11 @@ const BlockList = () => {
 
     updateUserPictures();
   }, [blocklist]);
-  
-  const handleClick = async (param:{displayname:string ,username:string}) => {
+
+  const handleClick = async (param: {
+    displayname: string;
+    username: string;
+  }) => {
     const tokenCookie = document.cookie
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
@@ -100,7 +103,7 @@ const BlockList = () => {
       try {
         const response = await axios.put(
           `http://localhost:3000/user/unblock`,
-          {username: param.username},
+          { username: param.username },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -122,38 +125,41 @@ const BlockList = () => {
         console.error("Error fetching user data:", error);
       }
     }
-  }
+  };
   return (
-    <div className="flex justify-center items-center font-montserrat pr-3 pl-3 background-gray">
-      <div className="max-w-screen-md h-[20vh] w-[50vw] lg:w-[30vw] overflow-y-auto">
-        <ul className="text-gray-200">
-          {blocklist &&
-            blocklist.map((blocklist, index) => (
-              <li className="mb-3 flex items-center" key={index}>
-                <img
-                  className="w-8 md:w-10 lg:w-10 xl:w-10 h-8 md:h-10 lg:h-10 xl:h-10 rounded-full"
-                  src={blocklist.profilePicture}
-                  alt="User profile picture"
-                />
-                <p className="max-w-[10rem] pl-3 break-words text-xs xs:text-xs md:text-xs lg:text-sm username">
-                  <b>{blocklist.displayname}</b> is blocked.
-                </p>
-                <div className="ml-auto">
-                  <button
-                    onClick={() =>
-                      handleClick({
-                        displayname: blocklist.displayname,
-                        username: blocklist.username,
-                      })
-                    }
-                    className="rounded-md bg-red-500 hover:bg-red-hover p-1.5 shadow-md text-xs xs:text-xs md:text-xs lg:text-sm"
-                  >
-                    Unblock
-                  </button>
-                </div>
-            </li>
-          ))}
-        </ul>
+    <div>
+      <span className="font-semibold text-gray-200 opacity-90 ml-2">Block List</span>
+      <div className="flex justify-center items-center font-montserrat pr-3 pl-3 background-gray">
+        <div className="max-w-screen-md h-[20vh] w-[50vw] lg:w-[30vw] overflow-y-auto">
+          <ul className="text-gray-200">
+            {blocklist &&
+              blocklist.map((blocklist, index) => (
+                <li className="mb-3 flex items-center" key={index}>
+                  <img
+                    className="w-8 md:w-10 lg:w-10 xl:w-10 h-8 md:h-10 lg:h-10 xl:h-10 rounded-full"
+                    src={blocklist.profilePicture}
+                    alt="User profile picture"
+                  />
+                  <p className="max-w-[10rem] pl-3 break-words text-xs xs:text-xs md:text-xs lg:text-sm username">
+                    <b>{blocklist.displayname}</b> is blocked.
+                  </p>
+                  <div className="ml-auto">
+                    <button
+                      onClick={() =>
+                        handleClick({
+                          displayname: blocklist.displayname,
+                          username: blocklist.username,
+                        })
+                      }
+                      className="rounded-md bg-red-500 hover:bg-red-hover p-1.5 shadow-md text-xs xs:text-xs md:text-xs lg:text-sm"
+                    >
+                      Unblock
+                    </button>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
