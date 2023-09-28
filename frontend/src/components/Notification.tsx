@@ -162,12 +162,12 @@ const Notifications = () => {
   }
 }
 
-const acceptRequest = async (user:any) => {
+const acceptRequest = async (user:string) => {
   try {
     const notificationData = {
       // Customize the notification data as needed
       reciever: jwtUser?.username,
-      sender: user?.username,
+      sender: user,
       type: "friendRequest",
       status: "accept",
     };
@@ -179,14 +179,17 @@ const acceptRequest = async (user:any) => {
   }
 };
 
-const cancelFriendRequest = async (user: any) => {
+const cancelFriendRequest = async (user: string) => {
   try {
     const notificationData = {
       // Customize the notification data as needed
-      reciever: user?.username,
+      reciever: jwtUser?.username,
+      sender: user,
+      type: "friendRequest",
+      status: "reject",
     };
     // Emit the "sendNotification" event to the WebSocket server
-    socket.emit("cancelNotification", notificationData);
+    socket.emit("replyToFriendRequest", notificationData);
     window.location.reload();
   } catch (error: any) {
     console.error("Error fetching user data:", error);
