@@ -48,7 +48,7 @@ export default function Achievements() {
   let won:boolean = false;
   if (user) {
     console.log(user.gamesPlayed, user.wins);
-    friend = (user.friends.length >= 1);
+    friend = (user.friends?.length >= 1);
 
     played = user.gamesPlayed >= 1;
 

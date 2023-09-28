@@ -93,8 +93,8 @@ export default function Leaderboard() {
         setData(updatedData);
       }
     };
-
-    updateUserPictures();
+    if(data && data.length)
+      updateUserPictures();
   }, [data]);
 
   return (

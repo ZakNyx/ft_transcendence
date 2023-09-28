@@ -140,7 +140,7 @@ function StateChangingButton(props: { username: string }) {
     } catch (error: any) {
       console.error("Error fetching user data:", error);
     }
-  }
+  };
 
   const unFriend = async () => {
     const tokenCookie = document.cookie

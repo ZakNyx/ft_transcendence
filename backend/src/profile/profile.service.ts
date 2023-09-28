@@ -96,6 +96,18 @@ export class ProfileService {
     return user.blocks;
   }
 
+  async getMyNotifs(reqUser) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: reqUser.username,
+      },
+      include: {
+        notifications: true,
+      },
+    });
+    return user.notifications;
+  }
+
   async getProfile(username: string, reqUser) {
     let user = await this.prismaService.user.findUnique({
       where: {

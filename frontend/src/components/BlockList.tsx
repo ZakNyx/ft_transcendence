@@ -9,10 +9,10 @@ interface UserData {
 }
 
 const BlockList = () => {
-  const [blocklist, setBlockList] = useState<UserData[] | null> (null);
+  const [blocklist, setBlockList] = useState<UserData[] | null>(null);
 
   useEffect(() => {
-    const fetchBlockList= async () => {
+    const fetchBlockList = async () => {
       const tokenCookie = document.cookie
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
@@ -27,7 +27,7 @@ const BlockList = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
 
           setBlockList(response.data);
@@ -56,7 +56,7 @@ const BlockList = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
 
           const contentType = response.headers["content-type"];
@@ -86,11 +86,13 @@ const BlockList = () => {
         setBlockList(updatedData);
       }
     };
-
-    updateUserPictures();
+    if (blocklist && blocklist.length) updateUserPictures();
   }, [blocklist]);
-  
-  const handleClick = async (param:{displayname:string ,username:string}) => {
+
+  const handleClick = async (param: {
+    displayname: string;
+    username: string;
+  }) => {
     const tokenCookie = document.cookie
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
@@ -100,7 +102,7 @@ const BlockList = () => {
       try {
         const response = await axios.put(
           `http://localhost:3000/user/unblock`,
-          {username: param.username},
+          { username: param.username },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -122,7 +124,7 @@ const BlockList = () => {
         console.error("Error fetching user data:", error);
       }
     }
-  }
+  };
   return (
     <div className="flex justify-center items-center font-montserrat pr-3 pl-3 background-gray">
       <div className="max-w-screen-md h-[20vh] w-[50vw] lg:w-[30vw] overflow-y-auto">
@@ -151,8 +153,8 @@ const BlockList = () => {
                     Unblock
                   </button>
                 </div>
-            </li>
-          ))}
+              </li>
+            ))}
         </ul>
       </div>
     </div>
