@@ -24,7 +24,7 @@ function StateChangingButton(props: { username: string }) {
 
         try {
           // Configure Axios to send the token in the headers
-          const response = await axios.get("http://localhost:3000/profile/me", {
+          const response = await axios.get(`http://localhost:3000/profile/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

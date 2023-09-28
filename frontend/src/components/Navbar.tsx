@@ -22,6 +22,8 @@ interface UserData {
   secretAuthUrl: boolean;
 }
 
+// const apiurl = process.env.API_URL;
+
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
@@ -31,7 +33,7 @@ function NavBar() {
 
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
+  // console.log(apiurl);
   const openDropdown = () => {
     clearTimeout(dropdownTimeout);
     setIsDropdownOpen(true);
@@ -57,7 +59,7 @@ function NavBar() {
 
         try {
           // Configure Axios to send the token in the headers
-          const response = await axios.get("http://localhost:3000/profile/me", {
+          const response = await axios.get(`http://localhost:3000/profile/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

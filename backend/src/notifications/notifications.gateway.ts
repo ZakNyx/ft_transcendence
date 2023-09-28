@@ -34,6 +34,7 @@ export class NotificationsGateway
 
   @WebSocketServer()
   async handleConnection(client: Socket) {
+    console.log('here');
     try {
       const token = client.handshake.headers.authorization.slice(7);
       if (!token){
