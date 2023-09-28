@@ -39,7 +39,6 @@ export class NotificationsGateway
       if (!token){
         throw new UnauthorizedException();
       }
-      console.log('client connected', client.id);
       const userObj = this.jwtService.verify(token);
       if (this.socketsByUser.has(userObj.username)) {
         this.socketsByUser.get(userObj.username).push(client);
