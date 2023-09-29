@@ -57,6 +57,7 @@ export class ProfileService {
         username: reqUser.username,
       },
       include: {
+        friends:true,
         notifications:true,
       },
     });
