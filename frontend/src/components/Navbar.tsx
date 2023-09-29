@@ -37,7 +37,7 @@ interface notifData {
 
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
+  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | undefined>(
     undefined,
   );
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);

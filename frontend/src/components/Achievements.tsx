@@ -41,7 +41,7 @@ export default function Achievements() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [username]);
+  }, [user]);
 
   let friend: boolean = false;
   let played: boolean = false;
@@ -53,6 +53,8 @@ export default function Achievements() {
     played = user.gamesPlayed >= 1;
 
     won = user.wins >= 1;
+
+    console.log(user);
   }
   return (
     <div>
@@ -61,7 +63,7 @@ export default function Achievements() {
           Achievements
         </h2>
         <div className="">
-          {!friend && !played && !won ? (
+          {(!friend && !played && !won) ? (
             <div className="">
             <p className="text-gray-200 font-[Rubik] text-lg text-center m-28">
               Boohoo! You haven't achieved anything yet (In life too)
