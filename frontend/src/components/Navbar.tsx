@@ -94,7 +94,7 @@ function NavBar() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [user]);
+  }, [username]);
 
   useEffect(() => {
     // Function to fetch user picture
@@ -119,7 +119,6 @@ function NavBar() {
           const contentType = response.headers["content-type"];
           const blob = new Blob([response.data], { type: contentType });
           const imageUrl = URL.createObjectURL(blob);
-
           setUserPicture(imageUrl);
         } else {
           // Handle the case when there is no token (e.g., display a placeholder image)
@@ -133,7 +132,7 @@ function NavBar() {
 
     // Call the fetchUserPicture function
     fetchUserPicture();
-  }, [user]);
+  }, [username]);
 
   const closeDropdown = () => {
     const timeout = setTimeout(() => {

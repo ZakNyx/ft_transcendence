@@ -17,6 +17,7 @@ interface UserData {
 
 export default function Leaderboard() {
   const [data, setData] = useState<UserData[] | null>(null);
+  const [newData, setNewData] = useState<UserData[] | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -90,12 +91,13 @@ export default function Leaderboard() {
           updatedData.push(user);
         }
 
-        setData(updatedData);
+        setNewData(updatedData);
       }
     };
     if(data && data.length)
       updateUserPictures();
   }, [data]);
+  
 
   return (
     <div className="background-image min-h-screen">
@@ -105,8 +107,8 @@ export default function Leaderboard() {
       </h1>
       <BackToTop />
       <div className="p-6 mt-6 mx-auto lg:max-w-[90%]">
-        {data &&
-          data.map((item, index) => (
+        {newData &&
+          newData.map((item, index) => (
             <div
               key={item.userID}
               className="flex rounded-2xl p-4 mb-4 justify-between bg-npc-gray shadow-[0px_2px_4px_2px_#00000006]"

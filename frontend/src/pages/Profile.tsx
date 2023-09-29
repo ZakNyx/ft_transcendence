@@ -2,6 +2,7 @@ import NavBar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
 import MatchHistory from "../components/MatchHistory";
 import Achievements from "../components/Achievements"; // Import the Achievements component
+import FriendList from "../components/FriendList";
 
 function Profile() {
   return (
@@ -16,10 +17,17 @@ function Profile() {
           <ProfileCard />
         </div>
         <div className="lg:w-[48%]">
+          <FriendList />
+        </div>
+      </div>
+      <div className="flex lg:items-center flex-col lg:flex-row">
+        <div className="lg:w-[50%]">
+          <MatchHistory />
+        </div>
+        <div className="lg:w-[48%]">
           <Achievements />
         </div>
       </div>
-      <MatchHistory />
     </div>
   );
 }

@@ -36,7 +36,6 @@ export default function SettingForm() {
               Authorization: `Bearer ${token}`,
             },
           });
-
           setUser(response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -45,7 +44,7 @@ export default function SettingForm() {
     };
 
     fetchUserData();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     // Function to fetch user picture
@@ -70,7 +69,6 @@ export default function SettingForm() {
           const contentType = response.headers["content-type"];
           const blob = new Blob([response.data], { type: contentType });
           const imageUrl = URL.createObjectURL(blob);
-
           setUserPicture(imageUrl);
         } else {
           // Handle the case when there is no token (e.g., display a placeholder image)
@@ -334,9 +332,3 @@ export default function SettingForm() {
     </div>
   );
 }
-
-//localhost:3000/profile/updateName
-//POst body name:string
-
-//localhost:3000/profile/updatePicture
-// body : any

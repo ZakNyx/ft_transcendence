@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+
 export default function Achievements() {
   const [user, setUser] = useState<any>(null);
   let { username } = useParams(); // Get the username parameter from the URL
@@ -41,20 +42,18 @@ export default function Achievements() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [user]);
+  }, [username]);
 
   let friend: boolean = false;
   let played: boolean = false;
   let won: boolean = false;
   if (user) {
-    console.log(user.gamesPlayed, user.wins);
     friend = user.friends?.length >= 1;
 
     played = user.gamesPlayed >= 1;
 
     won = user.wins >= 1;
 
-    console.log(user);
   }
   return (
     <div>
@@ -65,7 +64,7 @@ export default function Achievements() {
         <div className="">
           {(!friend && !played && !won) ? (
             <div className="">
-            <p className="text-gray-200 font-[Rubik] text-lg text-center m-28">
+            <p className="text-gray-200 font-[Rubik] text-lg text-center h-[18rem]">
               Boohoo! You haven't achieved anything yet (In life too)
             </p>
             </div>

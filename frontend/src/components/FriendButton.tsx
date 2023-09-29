@@ -40,7 +40,7 @@ function StateChangingButton(props: { username: string }) {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [jwtUser]);
+  }, []);
 
   useEffect(() => {
     // Function to fetch user data and set it in the state

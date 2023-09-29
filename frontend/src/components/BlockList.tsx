@@ -10,6 +10,7 @@ interface UserData {
 
 const BlockList = () => {
   const [blocklist, setBlockList] = useState<UserData[] | null>(null);
+  const [newBlocklist, setNewBlockList] = useState<UserData[] | null>(null);
 
   useEffect(() => {
     const fetchBlockList = async () => {
@@ -27,7 +28,7 @@ const BlockList = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
 
           setBlockList(response.data);
@@ -83,7 +84,7 @@ const BlockList = () => {
           updatedData.push(user);
         }
 
-        setBlockList(updatedData);
+        setNewBlockList(updatedData);
       }
     };
     if (blocklist && blocklist.length) updateUserPictures();
@@ -127,12 +128,14 @@ const BlockList = () => {
   };
   return (
     <div>
-      <span className="font-semibold text-gray-200 opacity-90 ml-2">Block List</span>
+      <span className="font-semibold text-gray-200 opacity-90 ml-2">
+        Block List
+      </span>
       <div className="flex justify-center items-center font-montserrat pr-3 pl-3 background-gray">
         <div className="max-w-screen-md h-[20vh] w-[50vw] lg:w-[30vw] overflow-y-auto">
           <ul className="text-gray-200">
-            {blocklist &&
-              blocklist.map((blocklist, index) => (
+            {newBlocklist &&
+              newBlocklist.map((blocklist, index) => (
                 <li className="mb-3 flex items-center" key={index}>
                   <img
                     className="w-8 md:w-10 lg:w-10 xl:w-10 h-8 md:h-10 lg:h-10 xl:h-10 rounded-full"

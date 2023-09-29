@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import FriendButton from "./FriendButton";
 import BlockButton from "./BlockButton";
 import OnlineStatus from "./OnlineStatus";
+import { initializeSocket } from "./socketManager";
 
 interface UserData {
   userID: string;
@@ -58,7 +59,7 @@ export default function ProfileCard() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [jwtUser]);
+  }, []);
 
   useEffect(() => {
     // Function to fetch user data and set it in the state
@@ -97,7 +98,7 @@ export default function ProfileCard() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [user]); // Include `username` in the dependency array
+  }, [username]); // Include `username` in the dependency array
 
   useEffect(() => {
     // Function to fetch user picture
@@ -122,7 +123,6 @@ export default function ProfileCard() {
           const contentType = response.headers["content-type"];
           const blob = new Blob([response.data], { type: contentType });
           const imageUrl = URL.createObjectURL(blob);
-
           setUserPicture(imageUrl);
         } else {
           // Handle the case when there is no token (e.g., display a placeholder image)
@@ -136,10 +136,9 @@ export default function ProfileCard() {
 
     // Call the fetchUserPicture function
     fetchUserPicture();
-  }, [user]);
-  
+  }, [username]);
   return (
-    <div className="background-gray rounded-[30px] h-auto p-6 mt-3 sm:ml-8 lg:ml-8 lg:mt-14 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
+    <div className="background-gray rounded-[30px] lg:max-w-[95%] h-auto p-6 mt-3  lg:ml-8 lg:mt-14 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
       <h1 className="text-gray-200 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-5xl">
         {user ? user.displayname : "Loading..."}'s Profile
       </h1>
@@ -153,7 +152,7 @@ export default function ProfileCard() {
               className="w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
             />
             {/* Online / Offline status */}
-            {user && <OnlineStatus status={user.status} />}
+            {user && jwtUser?.username !== user.username && <OnlineStatus status={user.status} />}
              </div>
           )}
           {jwtUser?.username !== user?.username && (
