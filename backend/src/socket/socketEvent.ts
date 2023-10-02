@@ -8,65 +8,6 @@ import { Ball, Client, Room} from './classes'
     },
 })
 
-// export class SocketEvent {
-//     @WebSocketServer()
-//     server: Server;
-
-//     RoomNum: number;
-//     connectedCli: number;
-//     Rooms: Room[];
-
-//     constructor() {
-//         // Initialize the objects here
-//         this.RoomNum = 0;
-//         this.connectedCli = 0;
-//         this.Rooms = [];
-//     }
-
-//     //Connection
-//     handleConnection = (client: Socket, auth: { token: string }) => {
-//         const {token} = auth;
-//         console.log(`client connected id : ${client.id}`);
-//         if (this.connectedCli % 2 === 0) {
-//             client.join(`${this.RoomNum}`);
-//             const newRoom = new Room(this.RoomNum);
-//             console.log(`new Room is created! ${newRoom.num}`);
-//             newRoom.client1 = new Client(1); // Initialize client1
-//             newRoom.ball = new Ball();
-//             newRoom.client1.id = client.id;
-//             newRoom.client1.token = token;
-//             this.Rooms.push(newRoom);
-//             this.connectedCli++;
-//         }
-//         else {
-//             client.join(`${this.RoomNum}`);
-//             const currentRoom = this.Rooms[this.RoomNum];
-//             if (currentRoom) {
-//                 currentRoom.client2 = new Client(2); // Initialize client2
-//                 currentRoom.client2.id = client.id;
-//                 currentRoom.client2.token = token;
-//                 this.server.to(`${currentRoom.num}`).emit('RoomNumber', { num: this.RoomNum, playerNum: 2 });
-//                 this.connectedCli++;
-//             }
-//         }
-//         if (this.Rooms[this.RoomNum].client2) {
-//             this.Rooms[this.RoomNum].IsFull = true;
-//             this.RoomNum++;
-//         }
-//     }
-
-//     @SubscribeMessage('playerPos')
-//     handlePlayerPosition(@ConnectedSocket() client: Socket, @MessageBody() data: {room: number, position: number}){
-        
-//     }
-
-//     //Disconnection
-//     handleDisconnection = (client: Socket) => {
-//         console.log(`Client Disconnected: ${client.id}`);
-//     }
-
-// }
-
 export class SocketEvent  {
     @WebSocketServer()
     server: Server;
