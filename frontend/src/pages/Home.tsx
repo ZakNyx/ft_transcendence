@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import NavBar from "../components/Navbar";
 import joystickSvg from "../../public/images/joystick.svg";
 import robotSvg from "../../public/images/robot.svg";
 import axios from "axios";
-
+import { NavLink } from "react-router-dom";
 interface UserData {
   displayname: string;
 }
@@ -61,12 +61,14 @@ function HomePage() {
             <img src={joystickSvg} alt="Joystick" className="mr-3 w-8 h-8" />
             Join the Queue
           </button>
-          <div className="text-white m-5 text-xl">- Or -</div>
-          {/* Button with robot image */}
-          <button className="relative bg-npc-purple hover:bg-purple-hover hover:translate-y-[-6px] transition-all shadow-but active:bg-purple-active hover:cursor-pointer text-black font-[Roboto] font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
-            <img src={robotSvg} alt="Robot" className="mr-3 w-8 h-8" />
-            Play against AI
-          </button>
+            <div className="text-white m-5 text-xl">- Or -</div>
+            {/* Button with robot image */}
+          <NavLink to="/game" >
+            <button className="relative bg-npc-purple hover:bg-purple-hover hover:translate-y-[-6px] transition-all shadow-but active:bg-purple-active hover:cursor-pointer text-black font-[Roboto] font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
+              <img src={robotSvg} alt="Robot" className="mr-3 w-8 h-8" />
+              Play against AI
+            </button>
+          </NavLink>
         </div>
       </div>
     </div>

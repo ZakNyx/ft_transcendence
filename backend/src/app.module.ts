@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { ProfileModule } from './profile/profile.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { SocketModule } from './socket/socket.module'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     UserModule,
     ProfileModule,
     NotificationsModule,
+    SocketModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
