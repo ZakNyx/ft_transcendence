@@ -32,42 +32,24 @@ export class SocketEvent  {
     }
 
     //Moving the players paddle
-    MovePaddles = (keycode: string, room: Room, clientId: string) => {
+    MovePaddles = (x: number, room: Room, clientId: string) => {
         /*            client1          */
         if (room.client1.id === clientId) {
-            if (keycode === 'up') {
-                // console.log("move to upWard client1");
-                if (room.client1.y >= 10)
-                    room.client1.y -= room.client1.paddleSpeed;
-            }
-            else if (keycode == 'down') {
-                // console.log("move to downWard client1");
-                if (room.client1.y + room.client1.height <= room.client1.window.height - 10)
-                    room.client1.y += room.client1.paddleSpeed;
-            }
-            // this.server.to(`${room.client1.id}`).emit('DrawPaddle', {paddle1Y: room.client1.y, paddle2Y: room.client2.y});
+            room.client1.x = x;
+            this.server.to(`${room.client2.id}`).emit('OppenentPaddlePosition', room.client1.x);
         }
 
         /*            client2          */
         if (room.client2.id === clientId) {
-            if (keycode === 'up') {
-                // console.log("move to upWard client2");
-                if (room.client2.y >= 10)
-                    room.client2.y -= room.client2.paddleSpeed;
-            }
-            else if (keycode == 'down') {
-                // console.log("move to downWard client2");
-                if (room.client2.y + room.client2.height <= room.client2.window.height - 10)
-                    room.client2.y += room.client2.paddleSpeed;
-            }
+            room.client2.x = x;
+            this.server.to(`${room.client1.id}`).emit('OppenentPaddlePosition', room.client2.x);
         }
-        this.server.to(`${room.num}`).emit('DrawPaddle', { paddle1Y: room.client1.y, paddle2Y: room.client2.y });
     }
 
     //Moving the players paddle
-    MoveEverthing = (keycode: string, room: Room, clientId: string) => {
+    MoveEverthing = (x: number, room: Room, clientId: string) => {
         if (room.IsFull) {
-            this.MovePaddles(keycode, room, clientId);
+            this.MovePaddles(x, room, clientId);
         }
     }
 
@@ -82,6 +64,7 @@ export class SocketEvent  {
             newRoom.ball = new Ball();
             newRoom.client1.id = client.id;
             this.Rooms.push(newRoom);
+            this.server.emit('joined', this.RoomNum);
             this.connectedCli++;
         }
         else {
@@ -90,12 +73,14 @@ export class SocketEvent  {
             if (currentRoom) {
                 currentRoom.client2 = new Client(2); // Initialize client2
                 currentRoom.client2.id = client.id;
-                this.server.to(`${currentRoom.num}`).emit('RoomNumber', {num: this.RoomNum, playerNum: 2});
+                this.server.emit('joined', this.RoomNum);
                 this.connectedCli++;
             }
         }
         if (this.Rooms[this.RoomNum].client2) {
             this.Rooms[this.RoomNum].IsFull = true;
+            this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
+            this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
             this.RoomNum++;
         }
     }
@@ -154,16 +139,16 @@ export class SocketEvent  {
 
     @SubscribeMessage('demand')
     handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
-        console.log('here in demand');
+        // console.log('here in demand');
         if (this.Rooms[_room].IsFull)
             this.Rooms[_room].game.IsStarted = true;
         this.BallMovements(this.Rooms[_room], client.id);
     }
 
     @SubscribeMessage('PaddleMovement')
-    handlePaddleMovement(@ConnectedSocket() client: Socket, @MessageBody() data: { _roomNum: number, keycode: string }) {
-        const {keycode, _roomNum} = data;
-        this.MoveEverthing(keycode, this.Rooms[_roomNum], client.id);
+    handlePaddleMovement(@ConnectedSocket() client: Socket, @MessageBody() data: { x: number, room: number }) {
+        const {x, room} = data;
+        this.MoveEverthing(x, this.Rooms[room], client.id);
     }
     
 }

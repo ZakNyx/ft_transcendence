@@ -92,7 +92,7 @@ function GameObjects(props:any) {
         if(Math.abs(refBall.current.position.x - cpuX) < 1.5)
         {
           direction = 1;
-          xdir = -1;
+          xdir = 1;
           xval = (refBall.current.position.x - cpuX) / 10;
           move = false;
         }
@@ -119,16 +119,16 @@ function GameObjects(props:any) {
   return (
     <>
       <mesh>
-        <RoundedBox ref={refPlayer} args={[3, 0.5, 0.3]} radius={0.2} position={[0, 0.3, 9.3]}>
+        <RoundedBox ref={refPlayer} args={[3, 0.3, 0.3]} radius={0.05} position={[0, 0.3, 9.3]}>
           <meshBasicMaterial color={props.color} />
         </RoundedBox>
       </mesh>
       <mesh>
-        <RoundedBox ref={refCpu} args={[3, 0.5, 0.3]} radius={0.2} position={[0, 0.3, -9.3]}>
+        <RoundedBox ref={refCpu} args={[3, 0.3, 0.3]} radius={0.05} position={[0, 0.3, -9.3]}>
           <meshBasicMaterial color={props.color} />
         </RoundedBox>
       </mesh>
-      <Sphere ref={refBall} args={[0.3, 10, 10]} position={[0, 1, 0]}>
+      <Sphere ref={refBall} args={[0.3, 20, 0]} position={[0, 1, 0]}>
         <meshBasicMaterial color={props.ballColor} />
       </Sphere>
     </>
@@ -136,7 +136,7 @@ function GameObjects(props:any) {
 }
 
 export default function Game() {
-  const [cameraPosition, setCameraPosition] = useState<number[] | any>([0.0005, 15, 0]);
+  const [cameraPosition, setCameraPosition] = useState<number[] | any>([0.001, 20, 0]);
   const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)")
   const [ballColor, setBallColor] = useState<string>("red")
   const [difficulty, setDifficulty] = useState<string>("0.1")
@@ -149,7 +149,7 @@ export default function Game() {
 
   return (
     <div className="flex flex-col App background-image min-h-screen w-screen h-screen">
-            <NavBar />
+      <NavBar />
       <div className="flex flex-row w-[50%] m-auto justify-between">
         <div>
           {/* <label className="dark:text-white" htmlFor="difficulty">difficulty:</label> */}
@@ -170,7 +170,7 @@ export default function Game() {
       </div>
       <div className="h-[80%] w-full" onMouseLeave={() => setPause(true)} onMouseEnter={() => setPause(false)}>
         <Canvas camera={{ position: cameraPosition}} >
-          <OrbitControls enableRotate={false} enableZoom={false} />
+          <OrbitControls enableRotate={true} enableZoom={true} />
           <Plane/>
           <GameObjects color={paddleColor} ballColor={ballColor} difficulty={difficulty} pause={pause}/>
         </Canvas>

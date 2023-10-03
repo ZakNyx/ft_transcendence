@@ -36,7 +36,7 @@ export class NotificationsGateway
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.headers.authorization.slice(7);
-      console.log(client.id);
+      // console.log(client.id);
       if (!token){
         throw new UnauthorizedException();
       }
