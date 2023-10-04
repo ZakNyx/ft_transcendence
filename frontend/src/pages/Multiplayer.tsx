@@ -41,8 +41,33 @@ const   PlayerPaddle = (props: any) => {
 }
 
 const   DrawBall = (props: any) => {
-    const   [ball, setBall] = useState<number[]>([0, 5, 0]);
-    
+    const [ball, setBall] = useState([0, 0])
+
+    useFrame(() => {
+        props.socket.emit('demand', props.room)
+    })
+
+    useEffect(() => {
+        //need to listen here for event to setBall coords
+        props.socket.on('DrawBall', (data: { x: number, z: number, pos: number }) => {
+            const { x, z, pos } = data;
+            if (pos === 1)
+                setBall([x, z]);
+            else
+                setBall([x, -z]);
+        });
+        return () => {
+            props.socket.off('DrawBall');
+        };
+    }, [props.socket]);
+
+    return (
+        <>
+            <Sphere args={[0.3, 10, 10]} position={[ball[0], 0, ball[1]]}>
+                <meshBasicMaterial color="red" />
+            </Sphere>
+        </>
+    )
 }
 
 const   OpponentPlayerPaddle = (props: any) => {
@@ -68,7 +93,7 @@ const   CallEverything = (props: any) => {
         <>
             <PlayerPaddle socket={props.socket} roomId={props.roomId} />
             <OpponentPlayerPaddle socket={props.socket} />
-            {/*I need to add ball Object here*/}
+            <DrawBall socket={props.socket} room={props.roomId} />
         </>
     );
 }

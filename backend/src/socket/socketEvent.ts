@@ -24,11 +24,13 @@ export class SocketEvent  {
     }
 
     BallReset = (room: Room) => {
-        room.ball.speedX = -room.ball.speedX;
-        if (room.client1) {
-            room.ball.x = room.client1.window.width / 2;
-            room.ball.y = room.client1.window.height / 2;
-        }
+        room.ball.move = false;
+        room.ball.zdirection = 1;
+        room.ball.speed = 0.1;
+        room.ball.xval = 0;
+        room.ball.xdirection = 1;
+        room.ball.x = 0;
+        room.ball.z = 0;
     }
 
     //Moving the players paddle
@@ -91,55 +93,51 @@ export class SocketEvent  {
     }
 
     BallMovements = (room: Room, clientId: string) => {
-        // Trying to move the ball, with each room separated.
+        // Trying to move the ball, for each room separate.
         if (room.IsFull && room.game.IsStarted) {
 
-            room.ball.x += room.ball.speedX;
-            room.ball.y += room.ball.speedY;
+            //change the ball SpeedX and ball SpeedY
+            room.ball.z += room.ball.zdirection * room.ball.speed;
+            room.ball.x += room.ball.xdirection * room.ball.xval;
 
             //If the ball touch the right side of the screen
-            if (room.ball.x > (room.client2.window.width - room.client2.thickness - 15)) {
-                if (room.ball.y > room.client2.y && room.ball.y < room.client2.y + room.client2.height) {
-                    room.ball.speedX = -room.ball.speedX;
-                    const deltaY = room.ball.y - (room.client2.y + room.client2.height / 2);
-                    room.ball.speedY = deltaY * 0.001;
-                }
-                else if (room.ball.x > room.client2.window.width - 7) {
-                    this.BallReset(room);
-                    room.client1.score++;
+            if(room.ball.z < -8.5) {
+                if (Math.abs(room.ball.x - room.client2.x) < 1.5) {
+                    room.ball.zdirection = 1;
+                    room.ball.xdirection = 1;
+                    room.ball.xval = (room.ball.x - room.client2.x) / 10;
+                    room.ball.move = false;
                 }
             }
 
             //If the ball touch left side of the screen
-            if (room.ball.x < (room.client1.thickness + 15)) {
-                if (room.ball.y > room.client1.y && room.ball.y < room.client1.y + room.client1.height) {
-                    room.ball.speedX = -room.ball.speedX;
-                    const deltaY = room.ball.y - (room.client1.y + room.client1.height / 2);
-                    room.ball.speedY = deltaY * 0.001;
-                }
-                else if (room.ball.x < 7) {
-                    this.BallReset(room);
-                    room.client2.score++;
+            if (room.ball.z > 8.5) {
+                if (Math.abs(room.ball.x - room.client1.x) < 1.5) {
+                    room.ball.zdirection = -1;
+                    room.ball.xdirection = 1;
+                    room.ball.xval = (room.ball.x - room.client1.x) / 10;
+                    room.ball.move = true;
                 }
             }
-            // If the ball touch the ceilling
-            if (room.ball.y > room.client1.window.height - 10)
-                room.ball.speedY = -room.ball.speedY;
-            // If the ball touch the floor
-            if (room.ball.y < 10)
-                room.ball.speedY = -room.ball.speedY;
+
+            // If the ball touch the ceilling or the floor
+            if ((room.ball.x > 7) || (room.ball.x < -7))
+                room.ball.xdirection *= -1;
+
+            //If the ball passes boundaries
+            if (room.ball.z > 9.3 || room.ball.z < -9.3)
+                this.BallReset(room);
 
             // Resending Ball Coords to clients
             if (clientId === room.client1.id)
-                this.server.to(`${room.client1.id}`).emit('BallCoords', { x: room.ball.x, y: room.ball.y })
+                this.server.to(`${clientId}`).emit('DrawBall', { x: room.ball.x, z: room.ball.z, pos: 1 });
             if (clientId === room.client2.id)
-                this.server.to(`${room.client2.id}`).emit('BallCoords', { x: room.ball.x, y: room.ball.y })
+                this.server.to(`${clientId}`).emit('DrawBall', { x: room.ball.x, z: room.ball.z, pos: 2 });
         }
     }
 
     @SubscribeMessage('demand')
     handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
-        // console.log('here in demand');
         if (this.Rooms[_room].IsFull)
             this.Rooms[_room].game.IsStarted = true;
         this.BallMovements(this.Rooms[_room], client.id);

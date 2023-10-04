@@ -15,19 +15,25 @@ export class Game {
 
 export class Ball{
     x: number;
-    y: number;
-    speedX: number;
-    speedY: number;
+    z: number;
+    speed: number;
     radius: number;
+    xdirection: number;
+    xval: number;
+    zdirection: number;
     IsBallEdge: Boolean;
+    move: Boolean;
 
     constructor() {
         this.x = 400;
-        this.y = 300;
+        this.z = 300;
         this.radius = 10;
-        this.speedX = 0.1;
-        this.speedY = 0.1;
+        this.zdirection = 1;
+        this.xdirection = 1;
+        this.xval = 0;
+        this.speed = 0.1;
         this.IsBallEdge = false;
+        this.move = false;
     }
 }
 

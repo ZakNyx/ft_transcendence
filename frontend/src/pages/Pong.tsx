@@ -39,7 +39,7 @@ function GameObjects(props:any) {
   const [ballX, setBallX] = useState<number>(0);
 
   useFrame(({ mouse }) => {
-    
+
     //player management
     if (refPlayer.current) {
       refPlayer.current.position.x = ((1 - mouse.y) * 15 - 15);
@@ -75,10 +75,8 @@ function GameObjects(props:any) {
     //ball management
     if (refBall.current && !props.pause) {
       //ball collision with player
-      if (refBall.current.position.z > 8.5)
-      {
-        if(Math.abs(refBall.current.position.x - playerX) < 1.5)
-        {
+      if (refBall.current.position.z > 8.5) {
+        if(Math.abs(refBall.current.position.x - playerX) < 1.5) {
           direction = -1;
           xdir = 1;
           xval = (refBall.current.position.x - playerX) / 10
@@ -87,10 +85,8 @@ function GameObjects(props:any) {
       }
       
       //ball collision with cpu
-      if(refBall.current.position.z < -8.5)
-      {
-        if(Math.abs(refBall.current.position.x - cpuX) < 1.5)
-        {
+      if(refBall.current.position.z < -8.5) {
+        if(Math.abs(refBall.current.position.x - cpuX) < 1.5) {
           direction = 1;
           xdir = 1;
           xval = (refBall.current.position.x - cpuX) / 10;
@@ -107,8 +103,7 @@ function GameObjects(props:any) {
       setBallX(refBall.current.position.x);
 
       //ball passes boundaries
-      if (refBall.current.position.z > 9.3 || refBall.current.position.z < -9.3)
-      {
+      if (refBall.current.position.z > 9.3 || refBall.current.position.z < -9.3) {
         refBall.current.position.x = 0;
         refBall.current.position.z = 0;
         init()
