@@ -113,13 +113,28 @@ export default function Multiplayer(props: any) {
     const   [IsGameEnded, setIsGameEnded] = useState<boolean>(false);
 
     const   [RoomNumber, setRoomNumber] = useState<number>(-1);
+    
+    const   [token, setToken] = useState<string | null>(null);
 
-    if (!socket) {
-        setSocket(io("http://localhost:3000/", {auth: {token: props.userId}}));
-        setIsConnected(true);
+    const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+    if (tokenCookie && !token) {
+        setToken(tokenCookie.split("=")[1]);
     }
 
     useEffect(() => {
+        if (!socket) {
+            console.log(`client token : Bearer ${token}`);
+            setSocket(io("http://localhost:3000/", {
+                extraHeaders: {
+                    Authorization: `Bearer ${token}`,
+                  },
+            }));
+            setIsConnected(true);
+        }
+
         if (socket) {
             socket.on('joined', (RoomId: number) => {
                 console.log('joined event received!')

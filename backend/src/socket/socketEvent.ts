@@ -1,26 +1,32 @@
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { Ball, Client, Room} from './classes'
+import { JwtService, JwtVerifyOptions } from "@nestjs/jwt";
+import * as jwt from 'jsonwebtoken';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+
+@Injectable()
 
 @WebSocketGateway({
     cors: {
         origin: '*',
     },
 })
-
 export class SocketEvent  {
     @WebSocketServer()
     server: Server;
 
+    SocketsByUser: Map<string, Socket[]>;
     RoomNum: number;
     connectedCli: number;
     Rooms: Room[];
 
-    constructor() {
+    constructor(private readonly jwtService: JwtService) {
         // Initialize the objects here
         this.RoomNum = 0;
         this.connectedCli = 0;
         this.Rooms = [];
+        this.SocketsByUser = new Map<string, Socket[]>();
     }
 
     BallReset = (room: Room) => {
@@ -55,35 +61,70 @@ export class SocketEvent  {
         }
     }
 
+    // async verifyToken(token: string) {
+    //     try {
+    //         const userObj = this.jwtService.verify(token);
+    //         // Your code to handle the verified userObj
+    //         return userObj;
+    //     } catch (err) {
+    //         throw new UnauthorizedException();
+    //     }
+    // }
+
     //Connection
     handleConnection = (client: Socket) => {
         console.log(`client connected id : ${client.id}`);
-        if (this.connectedCli % 2 === 0) {
-            client.join(`${this.RoomNum}`);
-            const newRoom = new Room(this.RoomNum);
-            console.log(`new Room is created! ${newRoom.num}`);
-            newRoom.client1 = new Client(1); // Initialize client1
-            newRoom.ball = new Ball();
-            newRoom.client1.id = client.id;
-            this.Rooms.push(newRoom);
-            this.server.emit('joined', this.RoomNum);
-            this.connectedCli++;
-        }
-        else {
-            client.join(`${this.RoomNum}`);
-            const currentRoom = this.Rooms[this.RoomNum];
-            if (currentRoom) {
-                currentRoom.client2 = new Client(2); // Initialize client2
-                currentRoom.client2.id = client.id;
+        try {
+            const token = client.handshake.headers.authorization.slice(7);
+            console.log(`client token : ${token}`);
+            if (!token) {
+                throw new UnauthorizedException();
+            }
+            // Verify the JWT token to get the user information
+            const userObj  = this.jwtService.verify(token);
+            console.log('test test allah allah')
+            if (this.SocketsByUser.has(userObj.username)){
+                //if the user already connected to the server
+                console.log('not the first connection');
+                this.SocketsByUser.get(userObj.username).push(client);
+            }
+            else{
+                //first connection to the server
+                console.log('the first connection to the server');
+               this.SocketsByUser.set(userObj.username, [client]);
+            }
+            if (this.connectedCli % 2 === 0) {
+                client.join(`${this.RoomNum}`);
+                const newRoom = new Room(this.RoomNum);
+                console.log(`new Room is created! ${newRoom.num}`);
+                newRoom.client1 = new Client(1); // Initialize client1
+                newRoom.ball = new Ball();
+                newRoom.client1.id = client.id;
+                this.Rooms.push(newRoom);
                 this.server.emit('joined', this.RoomNum);
                 this.connectedCli++;
             }
+            else {
+                client.join(`${this.RoomNum}`);
+                const currentRoom = this.Rooms[this.RoomNum];
+                if (currentRoom) {
+                    currentRoom.client2 = new Client(2); // Initialize client2
+                    currentRoom.client2.id = client.id;
+                    this.server.emit('joined', this.RoomNum);
+                    this.connectedCli++;
+                }
+            }
+            if (this.Rooms[this.RoomNum].client2) {
+                this.Rooms[this.RoomNum].IsFull = true;
+                this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
+                this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
+                this.RoomNum++;
+            }
         }
-        if (this.Rooms[this.RoomNum].client2) {
-            this.Rooms[this.RoomNum].IsFull = true;
-            this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
-            this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
-            this.RoomNum++;
+        catch (err) {
+            console.log(`error : ${err}`);
+            client.emit('unauthorized', 'Unauthorized'); // Send unauthorized message
+            client.disconnect(true);
         }
     }
 

@@ -48,6 +48,7 @@
     "crypto": "^1.0.1",
     "dotenv-cli": "^7.3.0",
     "hi-base32": "^0.5.1",
+    "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "otpauth": "^9.1.4",
     "passport": "^0.6.0",
