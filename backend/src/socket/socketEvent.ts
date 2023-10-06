@@ -61,38 +61,20 @@ export class SocketEvent  {
         }
     }
 
-    // async verifyToken(token: string) {
-    //     try {
-    //         const userObj = this.jwtService.verify(token);
-    //         // Your code to handle the verified userObj
-    //         return userObj;
-    //     } catch (err) {
-    //         throw new UnauthorizedException();
-    //     }
-    // }
-
     //Connection
     handleConnection = (client: Socket) => {
         console.log(`client connected id : ${client.id}`);
         try {
-            const token = client.handshake.headers.authorization.slice(7);
+            const token = client.handshake.headers.authorization.split(' ')[1];
             console.log(`client token : ${token}`);
             if (!token) {
                 throw new UnauthorizedException();
             }
-            // Verify the JWT token to get the user information
-            const userObj  = this.jwtService.verify(token);
-            console.log('test test allah allah')
-            if (this.SocketsByUser.has(userObj.username)){
-                //if the user already connected to the server
-                console.log('not the first connection');
-                this.SocketsByUser.get(userObj.username).push(client);
+            if (this.SocketsByUser.has(token)) {
+                this.SocketsByUser.get(token).push(client);
             }
-            else{
-                //first connection to the server
-                console.log('the first connection to the server');
-               this.SocketsByUser.set(userObj.username, [client]);
-            }
+            else
+                this.SocketsByUser.set(token, [client]);
             if (this.connectedCli % 2 === 0) {
                 client.join(`${this.RoomNum}`);
                 const newRoom = new Room(this.RoomNum);
