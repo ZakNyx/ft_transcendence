@@ -36,10 +36,10 @@ export class NotificationsGateway
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.headers.authorization.slice(7);
+      // console.log(client.id);
       if (!token){
         throw new UnauthorizedException();
       }
-      console.log('client connected', client.id);
       const userObj = this.jwtService.verify(token);
       if (this.socketsByUser.has(userObj.username)) {
         this.socketsByUser.get(userObj.username).push(client);

@@ -30,6 +30,7 @@ export default {
         "fade-in-top": "fade-in-top 0.6s linear both",
       },
       fontSize: {
+        td: {'min': '768px', 'max': '1023px'},
         sm: "0.875rem", // Small screens
         base: "1rem", // Default size
         lg: "1.125rem", // Large screens
@@ -49,5 +50,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins:  [],
 };

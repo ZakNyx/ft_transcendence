@@ -20,18 +20,31 @@ interface UserData {
   status2fa: boolean;
   secret2fa: boolean;
   secretAuthUrl: boolean;
+  notifications: notifData[];
 }
+
+interface notifData {
+  int :number;
+
+  reciever: string;
+  sender: string;
+  sernderDisplayName:string;
+  senderPicture: string;
+  type: string;
+  data:string;
+}
+// const apiurl = process.env.API_URL;
 
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [dropdownTimeout, setDropdownTimeout] = useState<number | undefined>(
+  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | undefined>(
     undefined,
   );
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
+  // console.log(apiurl);
   const openDropdown = () => {
     clearTimeout(dropdownTimeout);
     setIsDropdownOpen(true);
@@ -57,7 +70,7 @@ function NavBar() {
 
         try {
           // Configure Axios to send the token in the headers
-          const response = await axios.get("http://localhost:3000/profile/me", {
+          const response = await axios.get(`http://localhost:3000/profile/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -81,7 +94,7 @@ function NavBar() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [navigate, user]);
+  }, [username]);
 
   useEffect(() => {
     // Function to fetch user picture
@@ -106,7 +119,6 @@ function NavBar() {
           const contentType = response.headers["content-type"];
           const blob = new Blob([response.data], { type: contentType });
           const imageUrl = URL.createObjectURL(blob);
-
           setUserPicture(imageUrl);
         } else {
           // Handle the case when there is no token (e.g., display a placeholder image)
@@ -120,7 +132,7 @@ function NavBar() {
 
     // Call the fetchUserPicture function
     fetchUserPicture();
-  }, [user]);
+  }, [username]);
 
   const closeDropdown = () => {
     const timeout = setTimeout(() => {
@@ -183,12 +195,21 @@ function NavBar() {
                 />
               </NavLink>
             </li>
-            <li onClick={toggleNotification}>
-              <IconButton
-                imagePath="../public/images/Notification.svg"
-                isActive={isNotificationOpen}
-              />
-            </li>
+            <div>
+              <li onClick={toggleNotification} className="relative">
+                <IconButton
+                  imagePath="../public/images/Notification.svg"
+                  isActive={isNotificationOpen}
+                />
+                {/* Notification counter */}
+                {!isNotificationOpen && (user && user.notifications.length > 0) && (
+                  <div className="absolute w-4 h-4 bg-red-600 rounded-full text-white text-xs -top-1 -right-1 flex items-center justify-center">
+                    {user.notifications.length}
+                  </div>
+                )}
+              </li>
+            </div>
+
             <div className="absolute z-10 right-10 top-[4rem] origin-top-right bg-npc-gray shadow-lg rounded-2xl bg-opacity-90">
               {isNotificationOpen && <Notification />}
             </div>

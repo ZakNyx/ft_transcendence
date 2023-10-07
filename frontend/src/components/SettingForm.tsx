@@ -2,6 +2,7 @@ import Modal from "./Modal"; // Import the Modal component
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import BlockList from "./BlockList";
 
 interface UserData {
   userID: string;
@@ -35,7 +36,6 @@ export default function SettingForm() {
               Authorization: `Bearer ${token}`,
             },
           });
-
           setUser(response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -44,7 +44,7 @@ export default function SettingForm() {
     };
 
     fetchUserData();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     // Function to fetch user picture
@@ -69,7 +69,6 @@ export default function SettingForm() {
           const contentType = response.headers["content-type"];
           const blob = new Blob([response.data], { type: contentType });
           const imageUrl = URL.createObjectURL(blob);
-
           setUserPicture(imageUrl);
         } else {
           // Handle the case when there is no token (e.g., display a placeholder image)
@@ -327,12 +326,9 @@ export default function SettingForm() {
           </button>
         </div>
       </div>
+      <div className="pl-3 lg:w-1/5 rounded-lg background-gray lg:ml-4 shadow-md pt-8">
+        <BlockList />
+      </div>
     </div>
   );
 }
-
-//localhost:3000/profile/updateName
-//POst body name:string
-
-//localhost:3000/profile/updatePicture
-// body : any

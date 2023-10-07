@@ -51,7 +51,7 @@ const Validate: React.FC = () => {
     };
 
     fetchUserData();
-  }, [user]);
+  }, []);
 
   const is2faValidated = () => {
     const Cookie = document.cookie

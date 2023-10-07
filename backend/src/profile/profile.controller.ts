@@ -42,6 +42,11 @@ export class ProfileController {
     return this.profileService.getMyFriends(req.user);
   }
 
+  @Get('notifications')
+  getMyNotifs(@Req() req) {
+    return this.profileService.getMyNotifs(req.user);
+  }
+
   @Get('requests')
   getMyRequests(@Req() req) {
     return this.profileService.getMyRequests(req.user);

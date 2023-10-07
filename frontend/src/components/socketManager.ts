@@ -1,6 +1,21 @@
 import io, { Socket } from "socket.io-client";
 import { backendUrl } from "../pages/Chat/userContext";
 
+let socketInstance: any | null = null;
+
+export const initializeSocket = (token: string) => {
+  if (!socketInstance) {
+    // Create the socket instance with the token
+    socketInstance = io(`http://localhost:3000/notifications`, {
+      extraHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  return socketInstance;
+};
+
 class WebSocket {
 
     private socket: Socket | null = null;

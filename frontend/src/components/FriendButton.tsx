@@ -24,7 +24,7 @@ function StateChangingButton(props: { username: string }) {
 
         try {
           // Configure Axios to send the token in the headers
-          const response = await axios.get("http://localhost:3000/profile/me", {
+          const response = await axios.get(`http://localhost:3000/profile/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -40,7 +40,7 @@ function StateChangingButton(props: { username: string }) {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [jwtUser]);
+  }, []);
 
   useEffect(() => {
     // Function to fetch user data and set it in the state
@@ -140,7 +140,7 @@ function StateChangingButton(props: { username: string }) {
     } catch (error: any) {
       console.error("Error fetching user data:", error);
     }
-  }
+  };
 
   const unFriend = async () => {
     const tokenCookie = document.cookie

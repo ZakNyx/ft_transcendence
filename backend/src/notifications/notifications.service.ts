@@ -17,8 +17,6 @@ export class NotificationsService {
     reqUser,
     socketsByUser: Map<string, Socket[]>,
   ) {
-
-    console.log(notifBody);
     const sender = await this.prismaService.user.findUnique({
       where: {
         username: reqUser.username,
