@@ -1,0 +1,56 @@
+.creatGroupcontainer, .joinGroupcontainer, .addNewMember {
+    padding: 14vh 4vh;
+}
+.creatGroupcontainer .group-update, .joinGroupcontainer .group-update, .addNewMember .group-update {
+    border-radius: 10px;
+    padding: 2vh;
+}
+.creatGroupcontainer .group-update .input, .joinGroupcontainer .group-update .input, .addNewMember .group-update .input {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0px;
+}
+.creatGroupcontainer .group-update .input .txt-input, .joinGroupcontainer .group-update .input .txt-input, .addNewMember .group-update .input .txt-input, .creatGroupcontainer .group-update .input #typegroup, .joinGroupcontainer .group-update .input #typegroup, .addNewMember .group-update .input #typegroup {
+    padding: 10px;
+    background: none;
+    border: 1px solid #535c62;
+    border-radius: 2px;
+}
+.creatGroupcontainer .group-update .join-input, .joinGroupcontainer .group-update .join-input, .addNewMember .group-update .join-input {
+    display: grid;
+    grid-template-columns: auto 15%;
+    gap: 10px;
+}
+.creatGroupcontainer .group-update .listGroupJoin, .joinGroupcontainer .group-update .listGroupJoin, .addNewMember .group-update .listGroupJoin {
+    height: 30vh;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.creatGroupcontainer .group-update .listGroupJoin::-webkit-scrollbar, .joinGroupcontainer .group-update .listGroupJoin::-webkit-scrollbar, .addNewMember .group-update .listGroupJoin::-webkit-scrollbar {
+    display: none;
+}
+.creatGroupcontainer .group-update .listGroupJoin .scop-group, .joinGroupcontainer .group-update .listGroupJoin .scop-group, .addNewMember .group-update .listGroupJoin .scop-group {
+    padding: 3px 10px;
+    display: flex;
+}
+.creatGroupcontainer .group-update .listGroupJoin .scop-group .password-input, .joinGroupcontainer .group-update .listGroupJoin .scop-group .password-input, .addNewMember .group-update .listGroupJoin .scop-group .password-input {
+    width: 60%;
+}
+.creatGroupcontainer .group-update .listGroupJoin .scop-group .password-input input, .joinGroupcontainer .group-update .listGroupJoin .scop-group .password-input input, .addNewMember .group-update .listGroupJoin .scop-group .password-input input {
+    width: 80%;
+}
+.creatGroupcontainer .group-update .btns-create-group, .joinGroupcontainer .group-update .btns-create-group, .addNewMember .group-update .btns-create-group {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+.joinGroupcontainer, .addNewMember {
+    padding: 0vh 1vh;
+}
+@media (max-width: 768px) {
+    .chat-container .chat .creatGroupcontainer, .chat-container .chat .joinGroupcontainer, .chat-container .chat .addNewMember {
+        padding: 0vh;
+        margin: 0px 10px;
+   }
+}

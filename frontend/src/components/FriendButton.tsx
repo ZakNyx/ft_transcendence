@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { initializeSocket } from "./socketManager";
+import  webSocket  from "./socketManager";
 
 interface UserData {
   profilestatus: string;
@@ -11,7 +11,7 @@ function StateChangingButton(props: { username: string }) {
   const [user, setUser] = useState<UserData | null>(null);
   const [jwtUser, setJwtUser] = useState<UserData | null>(null);
 
-  const socket = initializeSocket('');
+  const socket = webSocket('');
   useEffect(() => {
     // Function to fetch user data and set it in the state
     const fetchUserData = async () => {

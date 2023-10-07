@@ -6,20 +6,22 @@ import Error404 from "./pages/Error404";
 import Settings from "./pages/Settings";
 import Leaderboard from "./pages/Leaderboard";
 import BlockList from "./components/BlockList";
+import { ChatConversation, ChatList, NewChat } from "./pages/Chat/Chat";
+
 
 function App() {
   return (
     <Router>
-      <Routes> 
+      <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/blocklist" element={<BlockList  />} />
+        <Route path="/blocklist" element={<BlockList />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/chat/" element={<NewChat />} /> 
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="*" element={<Error404 />} />
-       
       </Routes>
     </Router>
   );
