@@ -55,7 +55,7 @@ function Modal() {
     };
 
     fetchUserData();
-  }, [user]);
+  }, []);
 
   const handlePopupOpen = async () => {
     if (!user?.status2fa) {

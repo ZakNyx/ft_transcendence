@@ -50,6 +50,7 @@ const   DrawBall = (props: any) => {
     useEffect(() => {
         //need to listen here for event to setBall coords
         props.socket.on('DrawBall', (data: { x: number, z: number, pos: number }) => {
+            // console.log('test');
             const { x, z, pos } = data;
             if (pos === 1)
                 setBall([x, z]);
@@ -107,35 +108,37 @@ const RotatedCircle: React.FC = () => {
   };
 
 export default function Multiplayer(props: any) {
+
     const   [socket, setSocket] = useState<Socket | null>(null);
+
     const   [isConnected, setIsConnected] = useState<boolean>(false);
     const   [IsGameStarted, setIsGameStarted] = useState<boolean>(false);
     const   [IsGameEnded, setIsGameEnded] = useState<boolean>(false);
 
+    const   [result, setResult] = useState<string>("");
+
     const   [RoomNumber, setRoomNumber] = useState<number>(-1);
-    
     const   [token, setToken] = useState<string | null>(null);
 
-    const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
+    const tokenCookie = document.cookie.split("; ").find((cookie) => cookie.startsWith("token="));
 
-    if (tokenCookie && !token) {
+    if (tokenCookie && !token)
         setToken(tokenCookie.split("=")[1]);
+
+    if (!socket && token) {
+        setSocket(io("http://localhost:3000/", {
+            extraHeaders: {
+                Authorization: token,
+            },
+        }));
+        setIsConnected(true);
     }
 
-    useEffect(() => {
-        if (!socket) {
-            console.log(`client token : Bearer ${token}`);
-            setSocket(io("http://localhost:3000/", {
-                extraHeaders: {
-                    Authorization: `Bearer ${token}`,
-                  },
-            }));
-            setIsConnected(true);
-        }
 
+    useEffect(() => {
         if (socket) {
+            console.log(`check socket id : ${socket.id}`);
+            console.log(`token : ${token}`);
             socket.on('joined', (RoomId: number) => {
                 console.log('joined event received!')
                 setRoomNumber(RoomId);
@@ -148,15 +151,26 @@ export default function Multiplayer(props: any) {
             socket.on('gameEnded', () => {
                 setIsGameEnded(true);
             })
+
+            socket.on('won', () => {
+                setResult('won');
+            })
+
+            socket.on('lost', () => {
+                setResult('lost');
+            })
         }
+
         return (() => {
             if (socket){
                 socket.off('joined');
                 socket.off('gameStarted');
                 socket.off('gameEnded');
+                socket.off('won');
+                socket.off('lost');
             }
         })
-    }, [RoomNumber, IsGameStarted])
+    }, [RoomNumber, IsGameStarted, socket])
 
     if (isConnected && IsGameStarted && !IsGameEnded) {
         return (
@@ -172,7 +186,7 @@ export default function Multiplayer(props: any) {
     }
     else if (isConnected && IsGameStarted && IsGameEnded){
         return (
-            <EndGame result={""} />
+            <EndGame result={result} />
         )
     }
     else {

@@ -21,14 +21,14 @@ export class AuthService {
   //adding newuser
   async signup(newUser) {
     //first we check if the user already exists
-    let check = await this.prismaService.user.findUnique({
+    let check:any = await this.prismaService.user.findUnique({
       where: {
         email: newUser.email,
       },
     });
     //if not we create a new one
     if (!check) {
-      let user = await this.prismaService.user.create({
+      let user:any = await this.prismaService.user.create({
         data: {
           username: newUser.username,
           displayname: newUser.username,
@@ -37,9 +37,10 @@ export class AuthService {
           picture:null,
         },
       });
+      user.first = 0;
       return user;
     }
-
+    check.first = 1;
     return check;
   }
 

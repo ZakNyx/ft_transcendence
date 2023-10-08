@@ -1,6 +1,18 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+  console.log(tokenCookie);
+  useEffect(() => {
+    if (tokenCookie) {
+      navigate("/home");
+    }
+  }, [navigate, tokenCookie]);
   return (
     <div className="grid grid-cols-6 grid-rows-5 gap-0 h-screen relative custom-gradient">
       {/* Import Google Fonts */}
