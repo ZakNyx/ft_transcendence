@@ -19,6 +19,8 @@ export class AuthController {
     const user = await this.authService.signup(req.user);
     const token = await this.authService.asignJwtToken(user.username, user.email);
     res.cookie('token', token);
+    if (user.first == 0)
+      res.redirect(`http://${this.config.get('FRONT_URL')}/settings`);
     res.redirect(`http://${this.config.get('FRONT_URL')}/home`);
   }
 
