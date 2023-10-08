@@ -1,9 +1,7 @@
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { Ball, Client, Room} from './classes'
-import { JwtService, JwtVerifyOptions } from "@nestjs/jwt";
-import * as jwt from 'jsonwebtoken';
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 
@@ -12,21 +10,23 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
         origin: '*',
     },
 })
+
+
 export class SocketEvent  {
     @WebSocketServer()
     server: Server;
 
-    SocketsByUser: Map<string, Socket[]>;
+    SocketsByUser: Map<string, string>;
     RoomNum: number;
     connectedCli: number;
     Rooms: Room[];
 
-    constructor(private readonly jwtService: JwtService) {
+    constructor() {
         // Initialize the objects here
         this.RoomNum = 0;
         this.connectedCli = 0;
         this.Rooms = [];
-        this.SocketsByUser = new Map<string, Socket[]>();
+        this.SocketsByUser = new Map<string, string>();
     }
 
     BallReset = (room: Room) => {
@@ -64,49 +64,46 @@ export class SocketEvent  {
     //Connection
     handleConnection = (client: Socket) => {
         console.log(`client connected id : ${client.id}`);
-        try {
-            const token = client.handshake.headers.authorization.split(' ')[1];
-            console.log(`client token : ${token}`);
-            if (!token) {
-                throw new UnauthorizedException();
+        const token = client.handshake.headers.authorization;
+        if (this.SocketsByUser.has(token))
+        {
+            if (this.SocketsByUser.get(token) !== client.id){
+                this.SocketsByUser.set(token, client.id);
             }
-            if (this.SocketsByUser.has(token)) {
-                this.SocketsByUser.get(token).push(client);
-            }
-            else
-                this.SocketsByUser.set(token, [client]);
-            if (this.connectedCli % 2 === 0) {
-                client.join(`${this.RoomNum}`);
-                const newRoom = new Room(this.RoomNum);
-                console.log(`new Room is created! ${newRoom.num}`);
-                newRoom.client1 = new Client(1); // Initialize client1
-                newRoom.ball = new Ball();
-                newRoom.client1.id = client.id;
-                this.Rooms.push(newRoom);
+        }
+        else
+            this.SocketsByUser.set(token, client.id);
+        if (this.connectedCli % 2 === 0) {
+            client.join(`${this.RoomNum}`);
+            const newRoom = new Room(this.RoomNum);
+            console.log(`new Room is created! ${newRoom.num}`);
+            newRoom.client1 = new Client(1); // Initialize client1
+            newRoom.ball = new Ball();
+            newRoom.client1.id = client.id;
+            newRoom.client1.token = token;
+            this.Rooms.push(newRoom);
+            this.server.emit('joined', this.RoomNum);
+            this.connectedCli++;
+        }
+        else {
+            client.join(`${this.RoomNum}`);
+            const currentRoom = this.Rooms[this.RoomNum];
+            if (currentRoom) {
+                if (currentRoom.client1.token === token){
+                    console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal")
+                    return ;
+                }
+                currentRoom.client2 = new Client(2); // Initialize client2
+                currentRoom.client2.id = client.id;
                 this.server.emit('joined', this.RoomNum);
                 this.connectedCli++;
             }
-            else {
-                client.join(`${this.RoomNum}`);
-                const currentRoom = this.Rooms[this.RoomNum];
-                if (currentRoom) {
-                    currentRoom.client2 = new Client(2); // Initialize client2
-                    currentRoom.client2.id = client.id;
-                    this.server.emit('joined', this.RoomNum);
-                    this.connectedCli++;
-                }
-            }
-            if (this.Rooms[this.RoomNum].client2) {
-                this.Rooms[this.RoomNum].IsFull = true;
-                this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
-                this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
-                this.RoomNum++;
-            }
         }
-        catch (err) {
-            console.log(`error : ${err}`);
-            client.emit('unauthorized', 'Unauthorized'); // Send unauthorized message
-            client.disconnect(true);
+        if (this.Rooms[this.RoomNum].client2) {
+            this.Rooms[this.RoomNum].IsFull = true;
+            this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
+            this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
+            this.RoomNum++;
         }
     }
 
@@ -161,15 +158,24 @@ export class SocketEvent  {
 
     @SubscribeMessage('demand')
     handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
+
+        const token = client.handshake.headers.authorization;
         if (this.Rooms[_room].IsFull)
-            this.Rooms[_room].game.IsStarted = true;
-        this.BallMovements(this.Rooms[_room], client.id);
+        this.Rooms[_room].game.IsStarted = true;
+        if (this.SocketsByUser.has(token)) {
+            if (this.SocketsByUser.get(token) === client.id)
+                this.BallMovements(this.Rooms[_room], client.id);
+        }
     }
 
     @SubscribeMessage('PaddleMovement')
     handlePaddleMovement(@ConnectedSocket() client: Socket, @MessageBody() data: { x: number, room: number }) {
         const {x, room} = data;
-        this.MoveEverthing(x, this.Rooms[room], client.id);
+        const token = client.handshake.headers.authorization;
+        if (this.SocketsByUser.has(token)) {
+            if (this.SocketsByUser.get(token) === client.id)
+                this.MoveEverthing(x, this.Rooms[room], client.id);
+        }
     }
     
 }
