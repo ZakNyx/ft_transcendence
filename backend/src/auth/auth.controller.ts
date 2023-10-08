@@ -21,7 +21,8 @@ export class AuthController {
     res.cookie('token', token);
     if (user.first == 0)
       res.redirect(`http://${this.config.get('FRONT_URL')}/settings`);
-    res.redirect(`http://${this.config.get('FRONT_URL')}/home`);
+    else
+      res.redirect(`http://${this.config.get('FRONT_URL')}/home`);
   }
 
   @Get('2fa')

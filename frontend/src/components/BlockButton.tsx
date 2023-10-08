@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import axios from "axios";
 
-export default function BlockButton(props: { username: string }) {
+interface BlockButtonProps {
+  username: string;
+}
+
+export default function BlockButton(props: BlockButtonProps) {
   const blockUser = async () => {
     const tokenCookie = document.cookie
       .split("; ")
@@ -17,11 +21,11 @@ export default function BlockButton(props: { username: string }) {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
+          }
         );
         window.location.reload();
-      } catch (error: any) {
-        console.error("Error fetching user data:", error);
+      } catch (error) {
+        console.error("Error blocking user:", error);
       }
     }
   };
@@ -30,7 +34,7 @@ export default function BlockButton(props: { username: string }) {
     <div>
       <button
         onClick={blockUser}
-        className={` bg-red-500 hover:bg-red-600 transition-all rounded-3xl text-gray-200 font-montserrat p-1.5`}
+        className={`bg-red-500 hover:bg-red-600 transition-all rounded-3xl text-gray-200 font-montserrat p-1.5`}
       >
         Block
       </button>

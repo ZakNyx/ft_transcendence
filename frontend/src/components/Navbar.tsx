@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import IconButton from "./IconButton";
 import SearchBar from "./SearchBar";
 import axios from "axios";
-import {initializeSocket} from "./socketManager";
+import { initializeSocket } from "./socketManager";
 import Validate from "../components/Validate";
 import Notification from "./Notification";
 
@@ -24,16 +24,15 @@ interface UserData {
 }
 
 interface notifData {
-  int :number;
+  int: number;
 
   reciever: string;
   sender: string;
-  sernderDisplayName:string;
+  sernderDisplayName: string;
   senderPicture: string;
   type: string;
-  data:string;
+  data: string;
 }
-// const apiurl = process.env.API_URL;
 
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -44,7 +43,7 @@ function NavBar() {
 
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  // console.log(apiurl);
+
   const openDropdown = () => {
     clearTimeout(dropdownTimeout);
     setIsDropdownOpen(true);
@@ -83,6 +82,7 @@ function NavBar() {
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             navigate("/");
           } // Redirect to the root path
           console.error("Error fetching user data:", error);

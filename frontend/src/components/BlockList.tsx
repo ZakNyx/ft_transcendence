@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -8,7 +8,7 @@ interface UserData {
   displayname: string;
 }
 
-const BlockList = () => {
+const BlockList: React.FC = () => {
   const [blocklist, setBlockList] = useState<UserData[] | null>(null);
   const [newBlocklist, setNewBlockList] = useState<UserData[] | null>(null);
 
@@ -28,7 +28,7 @@ const BlockList = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            },
+            }
           );
 
           setBlockList(response.data);
@@ -57,7 +57,7 @@ const BlockList = () => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            },
+            }
           );
 
           const contentType = response.headers["content-type"];
@@ -108,7 +108,7 @@ const BlockList = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
+          }
         );
         // If validation is successful, set the 2faValidated cookie to true with a 24-hour expiration
         Swal.fire({
@@ -120,12 +120,13 @@ const BlockList = () => {
           timer: 2000,
         });
         window.location.reload();
-        close();
-      } catch (error: any) {
+        // close(); // This appears to be a missing function
+      } catch (error) {
         console.error("Error fetching user data:", error);
       }
     }
   };
+
   return (
     <div>
       <span className="font-semibold text-gray-200 opacity-90 ml-2">

@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-
 export default function Achievements() {
   const [user, setUser] = useState<any>(null);
   let { username } = useParams(); // Get the username parameter from the URL
@@ -53,7 +52,6 @@ export default function Achievements() {
     played = user.gamesPlayed >= 1;
 
     won = user.wins >= 1;
-
   }
   return (
     <div>
@@ -61,12 +59,12 @@ export default function Achievements() {
         <h2 className="text-gray-200 font-[Rubik] text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl mb-4">
           Achievements
         </h2>
-        <div className="">
-          {(!friend && !played && !won) ? (
-            <div className="">
-            <p className="text-gray-200 font-[Rubik] text-lg text-center h-[18rem]">
-              Boohoo! You haven't achieved anything yet (In life too)
-            </p>
+        <div className="h-[18rem] flex items-center justify-center">
+          {!friend && !played && !won ? (
+            <div className="text-center">
+              <p className="text-gray-200 font-[Rubik] text-lg">
+                Boohoo! You haven't achieved anything yet (In life too)
+              </p>
             </div>
           ) : (
             <ul>

@@ -11,9 +11,12 @@ interface DoughnutChartProps {
 
 const DoughnutChart: React.FC<DoughnutChartProps> = ({ wins, losses }) => {
   const totalMatches = wins + losses;
-  let winratePercentage;
-  if (totalMatches != 0) winratePercentage = (wins / totalMatches) * 100;
-  else winratePercentage = 0;
+  let winratePercentage: number;
+  if (totalMatches !== 0) {
+    winratePercentage = (wins / totalMatches) * 100;
+  } else {
+    winratePercentage = 0;
+  }
 
   const chartData = {
     labels: ["Wins", "Losses"],
