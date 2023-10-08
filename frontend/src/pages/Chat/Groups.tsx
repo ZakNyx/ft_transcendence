@@ -1,6 +1,6 @@
 import NavBar from "../../components/Navbar"
 import { useContext, useEffect, useState, useCallback } from 'react'
-import './group.scss';
+import './groups.css';
 import {  useParams } from 'react-router-dom';
 import { UserContext, currentUserType } from './userContext';
 import webSocket from '../../components/socketManager';

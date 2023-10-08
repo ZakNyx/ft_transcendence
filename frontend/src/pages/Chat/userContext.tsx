@@ -11,9 +11,9 @@ export type currentUserType = {
     fetchData: FetchData
 }
 export const UserContext = createContext<currentUserType | null>(null);
-
+console.log("<<<<HERE>>>>")
 export function UserContextProvider(props: { children: ReactNode }) {
-
+console.log("<<<<HERE2>>>>")
     const [currentUser, setCurrentUser] = useState<any>(null);
 
     // ---------------- fetch data ----------------- //

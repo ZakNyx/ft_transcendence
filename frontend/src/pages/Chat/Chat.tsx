@@ -103,7 +103,7 @@ export const ChatConversation = (props: { isGroup: boolean, reload: boolean }) =
   }, [userId, fetchData, getMsgsFriendChat]);
 
   return (
-    <div id='Conversation' className='conversation hide-scope'>
+    <div id='Conversation' className='background-image conversation hide-scope'>
       <NavBar/>
       <div className='header-chat'>
 
@@ -188,7 +188,7 @@ export const ChatConversation = (props: { isGroup: boolean, reload: boolean }) =
 }
 
 export const ChatList = (props: { reload?: boolean, isGroup?: boolean }) => {
-  // console.log("------- chat List ----------");
+  console.log("------- chat List ----------");
   const { fetchData }: any = useContext(UserContext) as currentUserType;
   const [search, setSearch] = useState('');
   const [isChatList, setChatList] = useState(true);
@@ -219,7 +219,7 @@ export const ChatList = (props: { reload?: boolean, isGroup?: boolean }) => {
         setListGroupChat([]);
         setListGroupChat([]);
       }
-      // console.log("chatlist ", data);
+      console.log("chatlist ", data);
     })
       .catch((err: any) => console.error(err));
 
@@ -239,7 +239,7 @@ export const ChatList = (props: { reload?: boolean, isGroup?: boolean }) => {
   }, [isGroup, fetchData, getListFriendChat, props?.reload])
 
   return (
-    <div className='chat-container '>
+    <div className='chat-container background-image'>
       <NavBar/>
       <div className='chat'>
         <div id='chatList' className='chat-list'>
@@ -295,11 +295,19 @@ export const NewChat = () => {
   document.getElementById('root')?.classList.add('small-side-bar')
 
   return (
-    <div id='Conversation' className='conversation hide-scope d-flex w-100 '>
+    <div id='Conversation' className='background-image conversation hide-scope d-flex w-screen h-screen '>
       <NavBar/>
-      <div className='d-flex row-center vh-75 clm-center'>
-        <NavLink to={'/chat/creatgroup'} className='btn btn-primary' > Creat Group</NavLink>
-        <NavLink to={'/chat/joingoup'} className='btn btn-primary' > Join Group</NavLink>
+      <div className='d-flex row-center vh-75 clm-center flex items-center h-[65vh]'>
+        <NavLink to={'/chat/creatgroup'} className='btn btn-primary' > 
+        <button className="relative bg-npc-purple hover:bg-purple-hover hover:translate-y-[-6px] transition-all shadow-but active:bg-purple-active hover:cursor-pointer text-black font-[Roboto] font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
+          Creat Group
+        </button>
+        </NavLink>
+        <NavLink to={'/chat/joingoup'} className='btn btn-primary' > 
+          <button className="relative bg-npc-purple hover:bg-purple-hover hover:translate-y-[-6px] transition-all shadow-but active:bg-purple-active hover:cursor-pointer text-black font-[Roboto] font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
+            Join Group
+          </button>
+        </NavLink>
       </div>
     </div>
   )
