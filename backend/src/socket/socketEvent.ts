@@ -145,8 +145,14 @@ export class SocketEvent  {
                 room.ball.xdirection *= -1;
 
             //If the ball passes boundaries
-            if (room.ball.z > 9.3 || room.ball.z < -9.3)
+            if (room.ball.z > 9.3){
+                room.client2.score++;
                 this.BallReset(room);
+            }
+            if (room.ball.z < -9.3) {
+                room.client1.score++;
+                this.BallReset(room);
+            }
 
             // Resending Ball Coords to clients
             if (clientId === room.client1.id)

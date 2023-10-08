@@ -174,7 +174,7 @@ export default function Multiplayer() {
 
     if (isConnected && IsGameStarted && !IsGameEnded) {
         return (
-            <div className="flex flex-col App background-image min-h-screen w-screen h-screen justify-center items-center h-[65vh]">
+            <div className="flex flex-col App background-image min-h-screen w-screen h-screen">
                 <NavBar />
                 <Canvas camera={{position: [0.0005, 15, 0]}}>
                     <OrbitControls enableRotate={false} enableZoom={false} />

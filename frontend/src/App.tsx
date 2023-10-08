@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useContext, lazy, Suspense, useEffect, useState } from "react";
+import { useState } from "react";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -9,35 +9,12 @@ import Leaderboard from "./pages/Leaderboard";
 import Error401 from "./pages/Error401";
 import Game from "./pages/Pong";
 import Multiplayer from "./pages/Multiplayer";
-import { Socket, io } from "socket.io-client";
 import { ChatConversation, ChatList, NewChat } from "./pages/Chat/Chat";
-import { currentUserType } from "./pages/Chat/userContext";
-import { UserContext } from "./pages/Chat/userContext";
 import { AddMemberGruop, CreatGroup, GroupSettingGruop, JoinGruop } from "./pages/Chat/Groups";
 
 
 
 function App() {
-  // const   [socket, setSocket] = useState<Socket | null>(null);
-  // const   [isConnected, setIsConnected] = useState<boolean>(false);
-  // const   [token, setToken] = useState<string | null>(null);
-
-  // const   tokenCookie = document.cookie.split("; ").find((cookie) => cookie.startsWith("token="));
-
-  // if (tokenCookie && !token)
-  //   setToken(tokenCookie.split("=")[1]);
-
-  // useEffect(() => {
-  //     if (!socket && token) {
-  //       setSocket(io("http://localhost:3000/", {
-  //         extraHeaders: {
-  //           Authorization: token,
-  //       },
-  //       }));
-  //       setIsConnected(true);
-  //     }
-  // }, [socket, isConnected]);
-
 
 	const [reload, setReload] = useState(false)
   return (
