@@ -6,6 +6,8 @@ import { DoubleSide } from "three";
 import EndGame from "./EndGame";
 import RotatingButton from './RotatingButton';
 import NavBar from "../components/Navbar";
+import { NavLink } from "react-router-dom";
+// import { useRouter } from "next/router";
 
 const  PlayArea = () => {
     return (
@@ -50,7 +52,6 @@ const   DrawBall = (props: any) => {
     useEffect(() => {
         //need to listen here for event to setBall coords
         props.socket.on('DrawBall', (data: { x: number, z: number, pos: number }) => {
-            // console.log('test');
             const { x, z, pos } = data;
             if (pos === 1)
                 setBall([x, z]);
@@ -102,10 +103,10 @@ const   CallEverything = (props: any) => {
 const RotatedCircle: React.FC = () => {
     return (
         <div className="h-screen flex items-center justify-center">
-          <RotatingButton />
+            <RotatingButton />
         </div>
-      );
-  };
+    );
+};
 
 export default function Multiplayer() {
 
@@ -119,6 +120,8 @@ export default function Multiplayer() {
 
     const   [RoomNumber, setRoomNumber] = useState<number>(-1);
     const   [token, setToken] = useState<string | null>(null);
+
+    // const   router = useRouter();
 
     const tokenCookie = document.cookie.split("; ").find((cookie) => cookie.startsWith("token="));
 
@@ -134,29 +137,39 @@ export default function Multiplayer() {
         setIsConnected(true);
     }
 
+    // const leaveQueue = () => {
+    //     if (socket) {
+    //       socket.emit('leaveQueue');
+    //       socket.disconnect();
+    //     }
+    //   };
 
     useEffect(() => {
         if (socket) {
-            console.log(`check socket id : ${socket.id}`);
-            console.log(`token : ${token}`);
+            // console.log(`check socket id : ${socket.id}`);
+            // console.log(`token : ${token}`);
             socket.on('joined', (RoomId: number) => {
                 console.log('joined event received!')
                 setRoomNumber(RoomId);
             })
 
             socket.on('gameStarted', () => {
+                console.log('game started :)');
                 setIsGameStarted(true);
             })
 
             socket.on('gameEnded', () => {
+                console.log('game ended nod tga3ad');
                 setIsGameEnded(true);
             })
 
             socket.on('won', () => {
+                console.log('you won the game!');
                 setResult('won');
             })
 
             socket.on('lost', () => {
+                console.log('you lost the game!');
                 setResult('lost');
             })
         }
@@ -168,32 +181,44 @@ export default function Multiplayer() {
                 socket.off('gameEnded');
                 socket.off('won');
                 socket.off('lost');
+                // socket.disconnect();
             }
         })
     }, [RoomNumber, IsGameStarted, socket])
 
     if (isConnected && IsGameStarted && !IsGameEnded) {
         return (
-            <div className="flex flex-col App background-image min-h-screen w-screen h-screen justify-center items-center h-[65vh]">
+            <div className="background-image">
                 <NavBar />
-                <Canvas camera={{position: [0.0005, 15, 0]}}>
-                    <OrbitControls enableRotate={false} enableZoom={false} />
-                    <PlayArea />
-                    <CallEverything socket={socket} roomId={RoomNumber} />
-                </Canvas>
+                <div className="flex flex-col App background-image min-h-screen w-screen h-screen justify-center items-center h-[65vh]">
+                    <Canvas camera={{ position: [0.0005, 15, 0] }}>
+                        <OrbitControls enableRotate={false} enableZoom={false} />
+                        <PlayArea />
+                        <CallEverything socket={socket} roomId={RoomNumber} />
+                    </Canvas>
+                </div>
             </div>
         );
     }
     else if (isConnected && IsGameStarted && IsGameEnded){
         return (
-            <EndGame result={result} />
+            <EndGame result={result}/>
         )
     }
-    else {
+    else if (isConnected && !IsGameStarted) {
         return (
-            <div className="flex flex-col App background-image min-h-screen w-screen h-screen">
+            <div className="background-image relative min-h-screen w-screen h-screen">
                 <NavBar />
-                <RotatedCircle />
+                <div className="flex flex-col App background-image">
+                    <RotatedCircle />
+                </div>
+                <NavLink to="/home">
+                    <div className="absolute left-1/2 bottom-80 transform -translate-x-1/2">
+                        <button className="bg-red-500/100 py-2 px-4 rounded">
+                            Leave the queue
+                        </button>
+                    </div>
+                </NavLink>
             </div>
         );
     }

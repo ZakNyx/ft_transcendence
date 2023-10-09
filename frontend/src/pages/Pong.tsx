@@ -123,7 +123,7 @@ function GameObjects(props:any) {
           <meshBasicMaterial color={props.color} />
         </RoundedBox>
       </mesh>
-      <Sphere ref={refBall} args={[0.3, 20, 0]} position={[0, 1, 0]}>
+      <Sphere ref={refBall} args={[0.3, 20, 20]} position={[0, 1, 0]}>
         <meshBasicMaterial color={props.ballColor} />
       </Sphere>
     </>

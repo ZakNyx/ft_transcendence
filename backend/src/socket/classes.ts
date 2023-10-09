@@ -3,6 +3,7 @@ import { Socket } from "socket.io";
 export class Game {
     IsFinish: boolean;
     Winner: number;
+    WinReq: number;
     IsStarted: boolean;
     showingWinScreen: boolean
     constructor() {
@@ -10,6 +11,7 @@ export class Game {
         this.IsFinish = false;
         this.IsStarted = false;
         this.Winner = 0;
+        this.WinReq = 5;
     }
 }
 

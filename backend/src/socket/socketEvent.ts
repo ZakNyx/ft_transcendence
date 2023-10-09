@@ -89,10 +89,11 @@ export class SocketEvent  {
             client.join(`${this.RoomNum}`);
             const currentRoom = this.Rooms[this.RoomNum];
             if (currentRoom) {
-                if (currentRoom.client1.token === token){
-                    console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal")
-                    return ;
-                }
+                // if (currentRoom.client1.token === token){
+                //     console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal")
+                //     client.leave(`${this.RoomNum}`);
+                //     return ;
+                // }
                 currentRoom.client2 = new Client(2); // Initialize client2
                 currentRoom.client2.id = client.id;
                 this.server.emit('joined', this.RoomNum);
@@ -106,6 +107,7 @@ export class SocketEvent  {
             this.RoomNum++;
         }
     }
+
 
     //Disconnection
     handleDisconnection = (client: Socket) => {
@@ -153,11 +155,26 @@ export class SocketEvent  {
                 room.client1.score++;
                 this.BallReset(room);
             }
+            if (room.client1.score === room.game.WinReq || room.client2.score === room.game.WinReq) {
+                room.game.IsFinish = true;
+                this.server.to(`${room.client1.id}`).emit('gameEnded');
+                this.server.to(`${room.client2.id}`).emit('gameEnded');
+                if (room.client1.score === room.game.WinReq) {
+                    this.server.to(`${room.client1.score}`).emit('won');
+                    this.server.to(`${room.client2.score}`).emit('lost');
+                    room.game.Winner = 1;
+                }
+                else {
+                    this.server.to(`${room.client1.score}`).emit('lost');
+                    this.server.to(`${room.client2.score}`).emit('won');
+                    room.game.Winner = 2;
+                }
+            }
 
             // Resending Ball Coords to clients
-            if (clientId === room.client1.id)
+            if (clientId === room.client1.id && !room.game.IsFinish)
                 this.server.to(`${clientId}`).emit('DrawBall', { x: room.ball.x, z: room.ball.z, pos: 1 });
-            if (clientId === room.client2.id)
+            if (clientId === room.client2.id && !room.game.IsFinish)
                 this.server.to(`${clientId}`).emit('DrawBall', { x: room.ball.x, z: room.ball.z, pos: 2 });
         }
     }
@@ -173,6 +190,16 @@ export class SocketEvent  {
                 this.BallMovements(this.Rooms[_room], client.id);
         }
     }
+
+    // @SubscribeMessage('leaveQueue')
+    // handleleavequeue(@ConnectedSocket() client: Socket, @MessageBody() room: number) {
+    //     console.log('client leaves the room');
+    //     if (this.Rooms[room] && (this.Rooms[room].client1.id === client.id || this.Rooms[room].client2.id === client.id)){
+    //         client.leave(room.toString());
+    //         delete this.Rooms[room].client1;
+    //         client.disconnect();
+    //     }
+    // }
 
     @SubscribeMessage('PaddleMovement')
     handlePaddleMovement(@ConnectedSocket() client: Socket, @MessageBody() data: { x: number, room: number }) {
