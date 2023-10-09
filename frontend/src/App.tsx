@@ -9,14 +9,13 @@ import Leaderboard from "./pages/Leaderboard";
 import Error401 from "./pages/Error401";
 import Game from "./pages/Pong";
 import Multiplayer from "./pages/Multiplayer";
-import { ChatConversation, ChatList, NewChat } from "./pages/Chat/Chat";
 import { AddMemberGruop, CreatGroup, GroupSettingGruop, JoinGruop } from "./pages/Chat/Groups";
-
+import Friends from "./pages/Chat/friends/Friends";
+import Chat from "./pages/Chat/friends/chat/Chat";
+import { DataContextProvider } from "./pages/Chat/friends/data_context/data-context";
 
 
 function App() {
-
-	const [reload, setReload] = useState(false)
   return (
     <Router>
       <Routes>
@@ -25,18 +24,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/game/singleplayer" element={<Game  />} />
         <Route path="/game/multiplayer" element={<Multiplayer />} />
-        
-        <Route path="/chat" element={<ChatList />} >
-					<Route path="/chat/" element={<NewChat />} />
-					<Route path="/chat/users" element={<ChatList isGroup={false} reload={reload}/>} />
-					<Route path="/chat/groups/:userId" element={<ChatConversation isGroup={true} reload={reload} /> } />
-					<Route path="/chat/users/:userId" element={<ChatConversation isGroup={false} reload={reload} /> } />
-					<Route path="/chat/creatgroup" element={<CreatGroup />} />
-					<Route path="/chat/joingoup" element={<JoinGruop reload={reload}/>} />					
-          <Route path="/chat/group/addmember/:id" element={<AddMemberGruop reload={reload}/>} />
-					<Route path="/chat/group/setting/:id" element={<GroupSettingGruop reload={reload}/>} />
-				</Route> 
-         
+				{/* <Route> */}
+        <Route path="/chat" element={<DataContextProvider><Friends /></DataContextProvider>} />
+        {/* </Route> */}
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
