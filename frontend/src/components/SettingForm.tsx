@@ -120,7 +120,7 @@ export default function SettingForm() {
               Authorization: `Bearer ${token}`,
               "Content-Type": "multipart/form-data",
             },
-          },   
+          },
         );
         Swal.fire({
           title:
@@ -131,7 +131,7 @@ export default function SettingForm() {
           timer: 2000,
         });
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Error uploading user picture:", error);
       if (error.response && error.response.status == 400) {
         Swal.fire({
@@ -188,30 +188,30 @@ export default function SettingForm() {
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
 
-      try {
-        if (tokenCookie && user) {
-          const token = tokenCookie.split("=")[1];
-    
-          await axios.put(
-            `http://localhost:3000/profile/updateName`,
-            { name: newDisplayName },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          Swal.fire({
-            title:
-              "<h1 style='color: rgb(229 231 235 / 1'>" + "Success" + "</h1>",
-            text: "Username has been updated.",
-            icon: "success",
-            background: "#252526",
-            timer: 2000,
-          });
-          setUserDisplayName("");
-        }
-      } catch (error:any) {
+    try {
+      if (tokenCookie && user) {
+        const token = tokenCookie.split("=")[1];
+
+        await axios.put(
+          `http://localhost:3000/profile/updateName`,
+          { name: newDisplayName },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        Swal.fire({
+          title:
+            "<h1 style='color: rgb(229 231 235 / 1'>" + "Success" + "</h1>",
+          text: "Username has been updated.",
+          icon: "success",
+          background: "#252526",
+          timer: 2000,
+        });
+        setUserDisplayName("");
+      }
+    } catch (error: any) {
       console.error("Error Changing Display Name:", error);
       if (error.response && error.response.status == 400) {
         Swal.fire({
@@ -256,7 +256,7 @@ export default function SettingForm() {
           />
           <label
             htmlFor="profilepic"
-            className="bg-blue-500 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition"
+            className="bg-blue-500 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition text-sm sm:text-base md:text-md"
           >
             Choose File
           </label>
@@ -264,7 +264,7 @@ export default function SettingForm() {
             type="submit"
             onClick={uploadProfilePicture}
             id="submit"
-            className="bg-blue-500 ml-3 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition"
+            className="bg-blue-500 ml-3 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition text-sm sm:text-base md:text-md"
           >
             Upload
           </button>
@@ -274,7 +274,7 @@ export default function SettingForm() {
             onClick={deleteProfilePicture}
             className="bg-red-500 hover:bg-red-600 text-gray-200 cursor-pointer rounded-full px-4 py-2 ml-3 transition"
           >
-            <img src="../../public/images/trash.svg" className="h-6 w-6" />
+            <img src="../../public/images/trash.svg" className="h-8 w-8" />
           </button>
         </div>
       </div>
@@ -305,7 +305,7 @@ export default function SettingForm() {
             <div className="flex items-center mt-10">
               <label
                 htmlFor="2FA"
-                className="font-semibold text-gray-200 pr-6 pb1"
+                className="font-semibold text-gray-200 pr-6 pb1 text-xs sm:text-sm md:text-base"
               >
                 Two-factor Authentication
               </label>
@@ -320,7 +320,7 @@ export default function SettingForm() {
             type="submit"
             id="submit"
             onClick={updateDisplayName}
-            className="bg-blue-500 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition"
+            className="bg-blue-500 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition text-sm sm:text-base md:text-md "
           >
             Submit
           </button>
