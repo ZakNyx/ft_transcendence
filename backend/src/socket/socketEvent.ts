@@ -160,14 +160,12 @@ export class SocketEvent  {
                 this.server.to(`${room.client1.id}`).emit('gameEnded');
                 this.server.to(`${room.client2.id}`).emit('gameEnded');
                 if (room.client1.score === room.game.WinReq) {
-                    this.server.to(`${room.client1.score}`).emit('won');
-                    this.server.to(`${room.client2.score}`).emit('lost');
-                    room.game.Winner = 1;
+                    this.server.to(`${room.client1.id}`).emit('won');
+                    this.server.to(`${room.client2.id}`).emit('lost');
                 }
                 else {
-                    this.server.to(`${room.client1.score}`).emit('lost');
-                    this.server.to(`${room.client2.score}`).emit('won');
-                    room.game.Winner = 2;
+                    this.server.to(`${room.client1.id}`).emit('lost');
+                    this.server.to(`${room.client2.id}`).emit('won');
                 }
             }
 

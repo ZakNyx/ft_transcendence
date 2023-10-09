@@ -159,7 +159,7 @@ export default function Multiplayer() {
             })
 
             socket.on('gameEnded', () => {
-                console.log('game ended nod tga3ad');
+                console.log('game ended nod tga3ad'); 
                 setIsGameEnded(true);
             })
 
