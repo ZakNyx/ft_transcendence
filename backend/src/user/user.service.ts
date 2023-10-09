@@ -2,8 +2,11 @@ import {
   HttpException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
+import { roomDTO } from "./dto/user.dto";
+import { async } from "rxjs";
 
 @Injectable()
 export class UserService {
@@ -145,4 +148,118 @@ export class UserService {
       },
     });
   }
+
+  async AddAdmin(reqUser, body:roomDTO) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: reqUser.username,
+      },
+    });
+
+    return await this.prismaService.chatRoom.update({
+      where: {
+        roomName: body.roomname,
+      },
+      data: {
+        admins: {push: body.username,},
+        },
+      },);
+  }
+
+  async RemoveAdmin(reqUser, body:roomDTO) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: reqUser.username,
+      },
+    });
+  
+    const chatRoom = await this.prismaService.chatRoom.findUnique({
+      where: {
+        roomName: body.roomname,
+      },
+    });
+  
+    // Filter out the specified admin from the admins array
+    const updatedAdmins = chatRoom.admins.filter(admin => admin !== body.username);
+  
+    // Update the chatRoom with the modified admins array
+    return await this.prismaService.chatRoom.update({
+      where: {
+        roomName: body.roomname,
+      },
+      data: {
+        admins: updatedAdmins,
+      },
+    });
+  }
+
+  async muteUser(reqUser, body:roomDTO) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: reqUser.username,
+      },
+    });
+
+    return await this.prismaService.chatRoom.update({
+      where: {
+        roomName: body.roomname,
+      },
+      data: {
+        mutedUsers: {push: body.username,},
+        },
+      },);
+  }
+
+  async unmuteUser(reqUser, body:roomDTO) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: reqUser.username,
+      },
+    });
+  
+    const chatRoom = await this.prismaService.chatRoom.findUnique({
+      where: {
+        roomName: body.roomname,
+      },
+    });
+  
+    // Filter out the specified admin from the admins array
+    const updatedmuted = chatRoom.mutedUsers.filter(muted => muted !== body.username);
+  
+    // Update the chatRoom with the modified admins array
+    return await this.prismaService.chatRoom.update({
+      where: {
+        roomName: body.roomname,
+      },
+      data: {
+        admins: updatedmuted,
+      },
+    });
+  }
+
+  async getChatRooms(reqUser) {
+    const rooms = await this.prismaService.chatRoom.findMany({
+      where: {status: {in: ['public', 'protected']}},
+      include: {
+        users:true,
+        messages:true,
+      }
+    });
+    return rooms;
+  }
+
+  async getChatRoom(reqUser, name: string) {
+    const room = await this.prismaService.chatRoom.findUnique({
+      where: {roomName: name},
+      include: {
+        users:true,
+        messages:true,
+      }
+    })
+    if (room?.status == 'private') 
+      throw new UnauthorizedException({}, '');
+    return room;
+  }
+
+  
 }

@@ -5,3 +5,13 @@ export class userDTO {
   @IsString()
   username: string;
 }
+
+export class roomDTO {
+  @IsNotEmpty()
+  @IsString()
+  username: string;
+
+  @IsNotEmpty()
+  @IsString()
+  roomname: string;
+}

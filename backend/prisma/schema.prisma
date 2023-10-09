@@ -65,7 +65,7 @@ model Notification {
 model ChatRoom {
   id         Int       @id @default(autoincrement())
 
-  roomName   String
+  roomName   String    @unique
   timeCreate DateTime  @default(now())
 
   users      User[]    @relation("userInChatRoom")
