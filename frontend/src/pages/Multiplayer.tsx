@@ -155,9 +155,12 @@ export default function Multiplayer() {
     .split("; ")
     .find((cookie) => cookie.startsWith("token="));
 
-  if (tokenCookie && !token) setToken(tokenCookie.split("=")[1]);
+  if (tokenCookie && !token) {
+    setToken(tokenCookie.split("=")[1]);
+  }
 
   if (!socket && token) {
+    console.log(`check token in the frontens: ${token}`);
     setSocket(
       io("http://localhost:3000/", {
         extraHeaders: {

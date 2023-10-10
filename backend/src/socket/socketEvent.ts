@@ -1,7 +1,8 @@
-import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { Ball, Client, Room} from './classes'
 import { Injectable } from "@nestjs/common";
+import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 
@@ -27,7 +28,7 @@ export class SocketEvent  {
         this.connectedCli = 0;
         this.Rooms = [];
         this.SocketsByUser = new Map<string, string>();
-    }
+    } 
 
     BallReset = (room: Room) => {
         room.ball.move = false;
@@ -64,7 +65,7 @@ export class SocketEvent  {
     //Connection
     handleConnection = (client: Socket) => {
         console.log(`client connected id : ${client.id}`);
-        const token = client.handshake.headers.authorization;
+        const token: string = client.handshake.headers.authorization;
         if (this.SocketsByUser.has(token))
         {
             if (this.SocketsByUser.get(token) !== client.id){
@@ -89,11 +90,12 @@ export class SocketEvent  {
             client.join(`${this.RoomNum}`);
             const currentRoom = this.Rooms[this.RoomNum];
             if (currentRoom) {
-                // if (currentRoom.client1.token === token){
-                //     console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal")
-                //     client.leave(`${this.RoomNum}`);
-                //     return ;
-                // }
+                if (currentRoom.client1.token === token){
+                    console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal")
+                    // client.leave(`${this.RoomNum}`);
+                    // this.connectedCli--;
+                    return ;
+                }
                 currentRoom.client2 = new Client(2); // Initialize client2
                 currentRoom.client2.id = client.id;
                 this.server.emit('joined', this.RoomNum);
@@ -112,6 +114,14 @@ export class SocketEvent  {
     //Disconnection
     handleDisconnection = (client: Socket) => {
         console.log(`Client Disconnected: ${client.id}`);
+        this.Rooms.forEach( (item) => {
+            delete item.client1.window;
+            delete item.client2.window;
+            delete item.client1;
+            delete item.client2;
+            delete item.game;
+        })
+        delete this.Rooms;
     }
 
     BallMovements = (room: Room, clientId: string) => {
@@ -193,15 +203,14 @@ export class SocketEvent  {
         }
     }
 
-    // @SubscribeMessage('leaveQueue')
-    // handleleavequeue(@ConnectedSocket() client: Socket, @MessageBody() room: number) {
-    //     console.log('client leaves the room');
-    //     if (this.Rooms[room] && (this.Rooms[room].client1.id === client.id || this.Rooms[room].client2.id === client.id)){
-    //         client.leave(room.toString());
-    //         delete this.Rooms[room].client1;
-    //         client.disconnect();
-    //     }
-    // }
+    @SubscribeMessage('leaveQueue')
+    handleleavequeue(@ConnectedSocket() client: Socket, @MessageBody() room: number) {
+        console.log('client leaves the room');
+        if (this.Rooms[room] && (this.Rooms[room].client1.id === client.id)){
+            client.leave(`${room}`);
+            this.Rooms[room].client1;
+        }
+    }
 
     @SubscribeMessage('PaddleMovement')
     handlePaddleMovement(@ConnectedSocket() client: Socket, @MessageBody() data: { x: number, room: number }) {
