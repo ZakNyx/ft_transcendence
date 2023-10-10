@@ -147,20 +147,23 @@ export default function Game() {
       <NavBar />
       <div className="flex flex-row w-[50%] m-auto justify-between">
         <div>
-          {/* <label className="dark:text-white" htmlFor="difficulty">difficulty:</label> */}
-          {/* <select ref={level} name="difficulty" id="difficulty" onChange={() => {setDifficulty(level.current.value)}}> */}
-            {/* <option value="0.07">sahel</option>
+        <label className="dark:text-white" htmlFor="difficulty">difficulty:</label>
+          <label className="dark:text-blue" htmlFor="difficulty">difficulty:</label>
+          <select ref={level} name="difficulty" id="difficulty" onChange={() => {setDifficulty(level.current.value)}}>
+            <option value="0.07">sahel</option>
             <option value="0.1">momkin</option>
-            <option value="0.2">imposi</option> */}
-          {/* </select> */}
+            <option value="0.2">imposi</option>
+          </select>
         </div>
         <div>
-          {/* <label className="dark:text-white" htmlFor="paddle color">paddle color:</label> */}
-          
+        <label className="dark:text-white" htmlFor="paddle color">paddle color:</label>
+          <label className="dark:text-blue" htmlFor="paddle color">paddle color:</label>
+          <input className="bg-transparent" name="paddle color" ref={paddle} type="color" onClick={() => {setPause(true)}} onChange={() => {setPaddleColor(paddle.current.value)}}></input>
         </div>
         <div>
-          {/* <label className="dark:text-white" htmlFor="ball color">ball color</label> */}
-          
+        <label className="dark:text-white" htmlFor="ball color">ball color</label>
+            <label className="dark:text-blue" htmlFor="ball color">ball color</label>
+            <input className="bg-transparent" name="ball color" ref={ball} type="color" onClick={() => {setPause(true)}} onChange={() => {setBallColor(ball.current.value)}}></input>
         </div>
       </div>
       <div className="h-[80%] w-full" onMouseLeave={() => setPause(true)} onMouseEnter={() => setPause(false)}>
