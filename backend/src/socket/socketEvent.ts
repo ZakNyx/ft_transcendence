@@ -150,24 +150,26 @@ export class SocketEvent  {
             if (room.ball.z > 9.3){
                 room.client2.score++;
                 this.BallReset(room);
+                this.server.to(`${room.client1.id}`).emit('Score', {p1: room.client1.score, p2: room.client2.score})
+                this.server.to(`${room.client2.id}`).emit('Score', {p1: room.client2.score, p2: room.client1.score})
             }
             if (room.ball.z < -9.3) {
                 room.client1.score++;
                 this.BallReset(room);
+                this.server.to(`${room.client1.id}`).emit('Score', {p1: room.client1.score, p2: room.client2.score})
+                this.server.to(`${room.client2.id}`).emit('Score', {p1: room.client2.score, p2: room.client1.score})
             }
             if (room.client1.score === room.game.WinReq || room.client2.score === room.game.WinReq) {
                 room.game.IsFinish = true;
                 this.server.to(`${room.client1.id}`).emit('gameEnded');
                 this.server.to(`${room.client2.id}`).emit('gameEnded');
                 if (room.client1.score === room.game.WinReq) {
-                    this.server.to(`${room.client1.score}`).emit('won');
-                    this.server.to(`${room.client2.score}`).emit('lost');
-                    room.game.Winner = 1;
+                    this.server.to(`${room.client1.id}`).emit('won');
+                    this.server.to(`${room.client2.id}`).emit('lost');
                 }
                 else {
-                    this.server.to(`${room.client1.score}`).emit('lost');
-                    this.server.to(`${room.client2.score}`).emit('won');
-                    room.game.Winner = 2;
+                    this.server.to(`${room.client1.id}`).emit('lost');
+                    this.server.to(`${room.client2.id}`).emit('won');
                 }
             }
 
