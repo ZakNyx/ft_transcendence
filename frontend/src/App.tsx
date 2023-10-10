@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState } from "react";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -13,6 +12,7 @@ import { AddMemberGruop, CreatGroup, GroupSettingGruop, JoinGruop } from "./page
 import Friends from "./pages/Chat/friends/Friends";
 import Chat from "./pages/Chat/friends/chat/Chat";
 import { DataContextProvider } from "./pages/Chat/friends/data_context/data-context";
+import SetColor from "./pages/SetColors";
 
 
 function App() {
@@ -22,6 +22,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/game" element={<SetColor  />} />
         <Route path="/game/singleplayer" element={<Game  />} />
         <Route path="/game/multiplayer" element={<Multiplayer />} />
 				{/* <Route> */}

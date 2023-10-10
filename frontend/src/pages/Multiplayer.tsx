@@ -47,7 +47,7 @@ const PlayerPaddle = (props: any) => {
         radius={0.2}
         position={[0, 0.3, 9.3]}
       >
-        <meshBasicMaterial color="rgb(255, 255, 255)" />
+        <meshBasicMaterial color={props.paddlecolor} />
       </RoundedBox>
     </mesh>
   );
@@ -78,7 +78,7 @@ const DrawBall = (props: any) => {
   return (
     <>
       <Sphere args={[0.3, 10, 10]} position={[ball[0], 0, ball[1]]}>
-        <meshBasicMaterial color="red" />
+        <meshBasicMaterial color={props.ballcolor} />
       </Sphere>
     </>
   );
@@ -100,7 +100,7 @@ const OpponentPlayerPaddle = (props: any) => {
         radius={0.2}
         position={[position, 0.3, -9.3]}
       >
-        <meshBasicMaterial color="rgb(255, 255, 255)" />
+        <meshBasicMaterial color={props.paddlecolor} />
       </RoundedBox>
     </mesh>
   );
@@ -109,9 +109,9 @@ const OpponentPlayerPaddle = (props: any) => {
 const CallEverything = (props: any) => {
   return (
     <>
-      <PlayerPaddle socket={props.socket} roomId={props.roomId} />
-      <OpponentPlayerPaddle socket={props.socket} />
-      <DrawBall socket={props.socket} room={props.roomId} />
+      <PlayerPaddle socket={props.socket} roomId={props.roomId} paddlecolor={props.paddlecolor} />
+      <OpponentPlayerPaddle socket={props.socket} paddlecolor={props.paddlecolor} />
+      <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} />
     </>
   );
 };
@@ -139,6 +139,8 @@ export default function Multiplayer() {
   const [IsGameEnded, setIsGameEnded] = useState<boolean>(false);
 
   const [result, setResult] = useState<string>("");
+  const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)");
+  const [ballColor, setBallColor] = useState<string>("red");
 
   const [RoomNumber, setRoomNumber] = useState<number>(-1);
   const [token, setToken] = useState<string | null>(null);
@@ -146,7 +148,8 @@ export default function Multiplayer() {
   const [myScore, setmyScore] = useState<number>(0);
   const [enemyScore, setenemyScore] = useState<number>(0);
 
-  // const   router = useRouter();
+  const paddle: any = useRef();
+  const ball: any = useRef();
 
   const tokenCookie = document.cookie
     .split("; ")
@@ -165,12 +168,6 @@ export default function Multiplayer() {
     setIsConnected(true);
   }
 
-  // const leaveQueue = () => {
-  //     if (socket) {
-  //       socket.emit('leaveQueue');
-  //       socket.disconnect();
-  //     }
-  //   };
 
   useEffect(() => {
     if (socket) {
@@ -226,11 +223,50 @@ export default function Multiplayer() {
           you="you"
           opps="enemy"
         />
-        <div className="flex flex-col App background-image min-h-screen w-screen h-screen justify-center items-center h-[65vh]">
+        <div>
+          <label className="dark:text-white" htmlFor="paddle color">
+            paddle color:
+          </label>
+          <label className="dark:text-blue" htmlFor="paddle color">
+            paddle color:
+          </label>
+          <input
+            className="bg-transparent"
+            name="paddle color"
+            ref={paddle}
+            type="color"
+            onChange={() => {
+              setPaddleColor(paddle.current.value);
+            }}
+          ></input>
+        </div>
+        <div>
+          <label className="dark:text-white" htmlFor="ball color">
+            ball color
+          </label>
+          <label className="dark:text-blue" htmlFor="ball color">
+            ball color
+          </label>
+          <input
+            className="bg-transparent"
+            name="ball color"
+            ref={ball}
+            type="color"
+            onChange={() => {
+              setBallColor(ball.current.value);
+            }}
+          ></input>
+        </div>
+        <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center h-[65vh]">
           <Canvas camera={{ position: [0.0005, 15, 0] }}>
             <OrbitControls enableRotate={false} enableZoom={false} />
             <PlayArea />
-            <CallEverything socket={socket} roomId={RoomNumber} />
+            <CallEverything
+              socket={socket}
+              roomId={RoomNumber}
+              paddlecolor={paddleColor}
+              ballcolor={ballColor}
+            />
           </Canvas>
         </div>
       </div>
