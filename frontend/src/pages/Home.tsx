@@ -66,7 +66,7 @@ function HomePage() {
             <div className="text-white m-5 text-xl">- Or -</div>
             {/* Button with robot image */}
           <NavLink to="/game/singleplayer" >
-            <button className="relative bg-npc-purple hover:bg-purple-hover hover:translate-y-[-6px] transition-all shadow-but active:bg-purple-active hover:cursor-pointer text-black font-[Roboto] font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
+            <button className=" relative bg-npc-purple hover:bg-purple-hover hover:translate-y-[-6px] transition-all shadow-but active:bg-purple-active hover:cursor-pointer text-black font-[Roboto] font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
               <img src={robotSvg} alt="Robot" className="mr-3 w-8 h-8" />
               Play against AI
             </button>

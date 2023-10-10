@@ -11,9 +11,9 @@ import Game from "./pages/Pong";
 import Multiplayer from "./pages/Multiplayer";
 import { AddMemberGruop, CreatGroup, GroupSettingGruop, JoinGruop } from "./pages/Chat/Groups";
 import Friends from "./pages/Chat/friends/Friends";
-import Chat from "./pages/Chat/friends/chat/Chat";
+import Channels from "./pages/Chat/channels/Channels";
 import { DataContextProvider } from "./pages/Chat/friends/data_context/data-context";
-
+import { DataChannelProvider } from "./pages/Chat/channels/data_context/data-context";
 
 function App() {
   return (
@@ -24,9 +24,10 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/game/singleplayer" element={<Game  />} />
         <Route path="/game/multiplayer" element={<Multiplayer />} />
-				{/* <Route> */}
-        <Route path="/chat" element={<DataContextProvider><Friends /></DataContextProvider>} />
-        {/* </Route> */}
+				<Route >
+          <Route path="/chat" element={<DataContextProvider><Friends /></DataContextProvider>} />
+          <Route path="/Chat/Channels" element={<DataChannelProvider><Channels /></DataChannelProvider>} />
+        </Route>
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
