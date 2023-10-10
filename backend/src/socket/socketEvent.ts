@@ -92,7 +92,8 @@ export class SocketEvent  {
             if (currentRoom) {
                 if (currentRoom.client1.token === token){
                     console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal")
-                    // client.leave(`${this.RoomNum}`);
+                    client.leave(`${this.RoomNum}`);
+                    currentRoom.client1.id = client.id;
                     // this.connectedCli--;
                     return ;
                 }
