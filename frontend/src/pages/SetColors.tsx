@@ -3,6 +3,7 @@ import NavBar from "../components/Navbar";
 import { NavLink } from "react-router-dom";
 
 export default function SetColor() {
+
   const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)");
   const [ballColor, setBallColor] = useState<string>("red");
   const [difficulty, setDifficulty] = useState<string>("0.1");
@@ -11,6 +12,8 @@ export default function SetColor() {
   const ball: any = useRef();
   const level: any = useRef();
 
+  
+
   return (
     <div className="flex flex-col App background-image min-h-screen w-screen h-screen bg-npc-gra">
       <NavBar />
@@ -18,7 +21,7 @@ export default function SetColor() {
         <div className="col-span-3 text-gray-200 font-montserrat font-semibold mb-1">
           Game's Settings
         </div>
-        <div className="col-span-3 h-0.5 bg-gray-200 mb-6 "></div> 
+        <div className="col-span-3 h-0.5 bg-gray-200 mb-6 "></div>
         <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
           <label
             className="dark:text-white pr-2 font-semibold"
@@ -74,7 +77,9 @@ export default function SetColor() {
           ></input>
         </div>
         <div className="col-span-3 flex justify-center items-center mt-4">
-          <NavLink to="/game/singleplayer">
+          <NavLink
+             to={`/game/singleplayer/:paddleColor=${paddleColor}&ballColor=${ballColor}&difficulty=${difficulty}`}
+          >
             <button className="p-1 bg-npc-purple hover:bg-purple-hover rounded-lg hover:translate-y-[-3px] text-white font-montserrat transition-all">
               Save changes
             </button>
@@ -84,4 +89,3 @@ export default function SetColor() {
     </div>
   );
 }
-    

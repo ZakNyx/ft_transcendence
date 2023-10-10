@@ -23,7 +23,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/game" element={<SetColor  />} />
-        <Route path="/game/singleplayer" element={<Game  />} />
+        <Route path="/game/singleplayer/:paddleColor/:ballColor/:difficulty" element={<Game />} />
         <Route path="/game/multiplayer" element={<Multiplayer />} />
 				<Route >
           <Route path="/chat" element={<DataContextProvider><Friends /></DataContextProvider>} />
@@ -40,3 +40,4 @@ function App() {
 }
 
 export default App;
+

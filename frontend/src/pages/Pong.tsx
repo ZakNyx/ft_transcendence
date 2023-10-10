@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, RoundedBox, Sphere } from "@react-three/drei";
 import { DoubleSide } from "three";
 import NavBar from "../components/Navbar";
+import { useLocation, useParams } from "react-router-dom";
 
 var direction: number;
 var speed: number;
@@ -124,75 +125,25 @@ function GameObjects(props: any) {
   );
 }
 
-export default function Game() {
+export default function Game(props: any) {
+  {
+    const { paddleColor, ballColor, difficulty } = useParams();
+
+    // Now, you can use these values in your component
+    // For example:
+    console.log("Paddle Color:", paddleColor);
+    console.log("Ball Color:", ballColor);
+    console.log("Difficulty:", difficulty);
+  }
   const [cameraPosition, setCameraPosition] = useState<number[] | any>([0.001, 20, 0]);
-  const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)")
-  const [ballColor, setBallColor] = useState<string>("red")
-  const [difficulty, setDifficulty] = useState<string>("0.1")
+  const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)");
+  const [ballColor, setBallColor] = useState<string>("red");
+  const [difficulty, setDifficulty] = useState<string>("0.1");
   const [pause, setPause] = useState<boolean>(false);
-
-  const paddle: any = useRef();
-  const ball: any = useRef();
-  const level: any = useRef();
-
 
   return (
     <div className="flex flex-col App background-image h-screen overflow-y-scroll ">
       <NavBar />
-      <div className="flex flex-col md:flex-row items-center w-full md:w-[35%] m-auto justify-between font-montserrat text-xs md:text-base">
-        <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
-          <label className="dark:text-white pr-2 font-semibold" htmlFor="difficulty">
-            Difficulty:
-          </label>
-          <select
-            ref={level}
-            name="difficulty"
-            id="difficulty"
-            onChange={() => {
-              setDifficulty(level.current.value);
-            }}
-          >
-            <option value="0.07">Easy</option>
-            <option value="0.1">Medium</option>
-            <option value="0.2">Hard</option>
-          </select>
-        </div>
-        <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
-          <label className="dark:text-white pr-2 font-semibold" htmlFor="paddle color">
-            Paddle's Color:
-          </label>
-          <input
-            className="bg-transparent"
-            name="paddle color"
-            ref={paddle}
-            type="color"
-            onClick={() => {
-              setPause(true);
-            }}
-            onChange={() => {
-              setPaddleColor(paddle.current.value);
-            }}
-          ></input>
-        </div>
-        <div className="flex flex-col md:flex-row items-center">
-          <label className="dark:text-white pr-2 font-semibold" htmlFor="ball color">
-            Ball's Color:
-          </label>
-          <input
-            className="bg-transparent rounded-lg"
-            name="ball color"
-            ref={ball}
-            type="color"
-            onClick={() => {
-              setPause(true);
-            }}
-            onChange={() => {
-              setBallColor(ball.current.value);
-            }}
-          ></input>
-        </div>
-      </div>
-  
       <div className="h-[80%] w-full" onMouseLeave={() => setPause(true)} onMouseEnter={() => setPause(false)}>
         <Canvas camera={{ position: cameraPosition }} >
           <OrbitControls enableRotate={true} enableZoom={true} />
