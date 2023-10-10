@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
-import { roomDTO, userDTO } from './dto/user.dto';
+import { body, roomDTO, userDTO } from './dto/user.dto';
 
 @Controller('user')
 @UseGuards(AuthGuard('jwt'))
@@ -29,8 +29,8 @@ export class UserController {
   }
 
   @Put('AddAdmin')
-  async AddAdmin(@Req() req, @Body() body: roomDTO) {
-    return this.userService.AddAdmin(req.user, body);
+  async AddAdmin(@Body() body: body) {
+    return this.userService.AddAdmin(body);
   }
 
   @Put('RemoveAdmin')

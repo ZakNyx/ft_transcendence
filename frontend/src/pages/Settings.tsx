@@ -4,7 +4,7 @@ import SettingForm from "../components/SettingForm";
 
 export default function Settings() {
   return (
-    <div className="background-image">
+    <div className="background-image h-screen no-scroll">
       <NavBar />
       <SettingForm />
 

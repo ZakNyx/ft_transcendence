@@ -150,10 +150,14 @@ export class SocketEvent  {
             if (room.ball.z > 9.3){
                 room.client2.score++;
                 this.BallReset(room);
+                this.server.to(`${room.client1.id}`).emit('Score', {p1: room.client1.score, p2: room.client2.score})
+                this.server.to(`${room.client2.id}`).emit('Score', {p1: room.client2.score, p2: room.client1.score})
             }
             if (room.ball.z < -9.3) {
                 room.client1.score++;
                 this.BallReset(room);
+                this.server.to(`${room.client1.id}`).emit('Score', {p1: room.client1.score, p2: room.client2.score})
+                this.server.to(`${room.client2.id}`).emit('Score', {p1: room.client2.score, p2: room.client1.score})
             }
             if (room.client1.score === room.game.WinReq || room.client2.score === room.game.WinReq) {
                 room.game.IsFinish = true;

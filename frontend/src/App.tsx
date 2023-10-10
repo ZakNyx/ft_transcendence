@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState } from "react";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/Home";
 import Profile from "./pages/Profile";
@@ -10,9 +9,10 @@ import Error401 from "./pages/Error401";
 import Game from "./pages/Pong";
 import Multiplayer from "./pages/Multiplayer";
 import { AddMemberGruop, CreatGroup, GroupSettingGruop, JoinGruop } from "./pages/Chat/Groups";
-import Friends from "./pages/Chat/friends/Friends";
 import Channels from "./pages/Chat/channels/Channels";
+import Friends from "./pages/Chat/friends/Friends";
 import { DataContextProvider } from "./pages/Chat/friends/data_context/data-context";
+import SetColor from "./pages/SetColors";
 import { DataChannelProvider } from "./pages/Chat/channels/data_context/data-context";
 
 function App() {
@@ -22,6 +22,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/game" element={<SetColor  />} />
         <Route path="/game/singleplayer" element={<Game  />} />
         <Route path="/game/multiplayer" element={<Multiplayer />} />
 				<Route >

@@ -37,7 +37,7 @@ export class NotificationsGateway
     try {
       const token = client.handshake.headers.authorization.slice(7);
       // console.log(client.id);
-      if (!token){
+      if (!token) {
         throw new UnauthorizedException();
       }
       const userObj = this.jwtService.verify(token);
@@ -55,7 +55,7 @@ export class NotificationsGateway
         },
       });
     } catch (err) {
-      client.emit('unauthorized', 'Unauthorized'); // Send unauthorized message
+      client.emit("unauthorized", "Unauthorized"); // Send unauthorized message
       client.disconnect(true);
     }
   }
@@ -63,7 +63,7 @@ export class NotificationsGateway
   async handleDisconnect(client: Socket) {
     try {
       const token = client.handshake.headers.authorization.slice(7);
-      if (!token){
+      if (!token) {
         throw new UnauthorizedException();
       }
       const userObj = this.jwtService.verify(token);
@@ -75,9 +75,24 @@ export class NotificationsGateway
           status: "OFFLINE",
         },
       });
-      this.socketsByUser.delete(user.username);
+      const userSockets = this.socketsByUser.get(user.username);
+
+      if (userSockets) {
+        // Find the index of the disconnected socket and remove it
+        const socketIndex = userSockets.indexOf(client);
+        if (socketIndex !== -1) {
+          userSockets.splice(socketIndex, 1);
+        }
+
+        // If there are no more sockets for the user, remove the user entry from the map
+        if (userSockets.length === 0) {
+          this.socketsByUser.delete(user.username);
+        }
+      }
+
+      console.log(`client ${client.id} has disconnect`);
     } catch (err) {
-      client.emit('unauthorized', 'Unauthorized'); // Send unauthorized message
+      client.emit("unauthorized", "Unauthorized"); // Send unauthorized message
       client.disconnect(true);
     }
   }
@@ -94,14 +109,16 @@ export class NotificationsGateway
 
   @SubscribeMessage("cancelNotification")
   @UseGuards(AuthGuard("websocket-jwt"))
-  async cancelNotification(@MessageBody() body: cancelNotificationDTO, @Req() req){
+  async cancelNotification(
+    @MessageBody() body: cancelNotificationDTO,
+    @Req() req,
+  ) {
     return await this.notificationsService.cancelNotification(
       body,
       req.user,
       this.socketsByUser,
     );
   }
-
 
   @SubscribeMessage("getNotifications")
   @UseGuards(AuthGuard("websocket-jwt"))
@@ -111,9 +128,7 @@ export class NotificationsGateway
 
   @SubscribeMessage("replyToFriendRequest")
   @UseGuards(AuthGuard("websocket-jwt"))
-  async replyToFriendRequest(
-    @MessageBody() body: replyToFriendRequestDTO,
-  ) {
+  async replyToFriendRequest(@MessageBody() body: replyToFriendRequestDTO) {
     return await this.notificationsService.replyToFriendRequest(
       body,
       this.socketsByUser,
