@@ -18,7 +18,7 @@ export default function SetColor() {
         <div className="col-span-3 text-gray-200 font-montserrat font-semibold mb-1">
           Game's Settings
         </div>
-        <div className="col-span-3 h-0.5 bg-gray-200 mb-6 "></div>
+        <div className="col-span-3 h-0.5 bg-gray-200 mb-6 "></div> 
         <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
           <label
             className="dark:text-white pr-2 font-semibold"
