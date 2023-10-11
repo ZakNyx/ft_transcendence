@@ -85,25 +85,14 @@ export class SocketEvent  {
             const token: string = client.handshake.headers.authorization.slice(7);
             if (!token)
                 throw new UnauthorizedException();
-            const   userObj = this.jwtService.verify(token);
-            console.log(`token verified : ${token}`);
             if (this.SocketsByUser.has(token))
             {
-                // this.IfClientInGame(client);
                 if (this.SocketsByUser.get(token) !== client.id){
                     this.SocketsByUser.set(token, client.id);
                 }
             }
             else
                 this.SocketsByUser.set(token, client.id);
-            // const   user = await this.prismaService.user.update({
-            //     where: {
-            //         username: userObj.username,
-            //     },
-            //     data : {
-            //         elo: 1,
-            //     },
-            // });
             if (this.connectedCli % 2 === 0) {
                 client.join(`${this.RoomNum}`);
                 const newRoom = new Room(this.RoomNum);
@@ -140,10 +129,16 @@ export class SocketEvent  {
                 this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
                 this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
                 this.RoomNum++;
+                const gameObj = this.prismaService.game.create({
+                    data: {
+                        player1: this.Rooms[this.RoomNum].client1.id,
+                        player2: this.Rooms[this.RoomNum].client2.id,
+                    },
+                });
             }
         }
         catch (err) {
-            console.log(`exception just thrown :.(`)
+            console.log(`Error: ${err}`);
         }
     }
 
@@ -236,15 +231,26 @@ export class SocketEvent  {
     @SubscribeMessage('demand')
     handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
 
-        const token = client.handshake.headers.authorization;
-        if (this.Rooms[_room].IsFull) {
-            this.Rooms[_room].client1.inGame = true;
-            this.Rooms[_room].client2.inGame = true;
-            this.Rooms[_room].game.IsStarted = true;
+        try {
+            const token = client.handshake.headers.authorization;
+            if (this.Rooms[_room].IsFull) {
+                this.Rooms[_room].client1.inGame = true;
+                this.Rooms[_room].client2.inGame = true;
+                this.Rooms[_room].game.IsStarted = true;
+                // this.prismaService.game.update({
+                //     data: {
+                //         ingame: true,
+                //     }
+                // })
+            }
+            if (this.SocketsByUser.has(token)) {
+                if (this.SocketsByUser.get(token) === client.id)
+                    this.BallMovements(this.Rooms[_room], client.id);
+            }
+
         }
-        if (this.SocketsByUser.has(token)) {
-            if (this.SocketsByUser.get(token) === client.id)
-                this.BallMovements(this.Rooms[_room], client.id);
+        catch (err) {
+            console.log(`Error: ${err}`);
         }
     }
 
