@@ -50,6 +50,7 @@ export class Win {
 
 export class Client {
     window: Win;
+    inGame: boolean;
     number: number;
     x: number;
     y: number;
@@ -65,6 +66,7 @@ export class Client {
         this.number = num;
         this.score = 0;
         this.winner = false;
+        this.inGame = false;
         this.paddleSpeed = 35;
         this.x = 0;
         this.y = 250;

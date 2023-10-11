@@ -8,7 +8,6 @@ import RotatingButton from "./RotatingButton";
 import NavBar from "../components/Navbar";
 import { NavLink } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
-// import { useRouter } from "next/router";
 
 const PlayArea = () => {
   return (
@@ -116,13 +115,30 @@ const CallEverything = (props: any) => {
   );
 };
 
-const RotatedCircle: React.FC = () => {
+const leaveQueue = (props: any) => {
+  if (props.socket) {
+    props.socket.emit('leaveQueue', props.roomId);
+  }
+}
+
+
+const RotatedCircle: React.FC<any> = (props) => {
+  const [isInGame] = useState<boolean>(props.inGame);
+
+  useEffect(() => {
+    if (!isInGame) {
+      console.log('rak ba9i la3b a tabi');
+    } else {
+      leaveQueue(props);
+    }
+  }, [isInGame]);
+
     return (
       <div className="h-screen flex flex-col items-center justify-center overflow-hidden">
         <RotatingButton />
         <div className="mt-4">
           <NavLink to="/home">
-            <button className="bg-red-500 hover:bg-red-600 py-2 px-4 rounded-lg transition text-white">
+            <button onClick={() => leaveQueue(props)} className="bg-red-500 hover:bg-red-600 py-2 px-4 rounded-lg transition text-white">
               Leave the queue
             </button>
           </NavLink>
@@ -137,6 +153,7 @@ export default function Multiplayer() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [IsGameStarted, setIsGameStarted] = useState<boolean>(false);
   const [IsGameEnded, setIsGameEnded] = useState<boolean>(false);
+  const [InGame, setInGame] = useState<boolean>(false);
 
   const [result, setResult] = useState<string>("");
   const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)");
@@ -151,20 +168,23 @@ export default function Multiplayer() {
   const paddle: any = useRef();
   const ball: any = useRef();
 
-  const tokenCookie = document.cookie
+  const tokenCookie: string | undefined = document.cookie
     .split("; ")
     .find((cookie) => cookie.startsWith("token="));
 
   if (tokenCookie && !token) {
     setToken(tokenCookie.split("=")[1]);
   }
+  else if (tokenCookie && token){
+    console.log('tasir jib chi dawra');
+  }
 
   if (!socket && token) {
     console.log(`check token in the frontens: ${token}`);
     setSocket(
-      io("http://localhost:3000/", {
+      io("http://localhost:3000/Game", {
         extraHeaders: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       }),
     );
@@ -181,6 +201,7 @@ export default function Multiplayer() {
 
       socket.on("gameStarted", () => {
         console.log("game started :)");
+        setInGame(true);
         setIsGameStarted(true);
       });
 
@@ -281,7 +302,7 @@ export default function Multiplayer() {
         <div className="background-image h-screen no-scroll">
           <NavBar />
           <div className="App background-image h-screen flex flex-col items-center justify-center">
-            <RotatedCircle />
+            <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
           </div>
         </div>
       );

@@ -45,6 +45,8 @@ model User {
 
   notifications Notification[]
 
+  games Game[] @relation("GamePlayers")
+
   chatRooms ChatRoom[] @relation("userInChatRoom")
   messages  Message[]
 
@@ -83,6 +85,18 @@ model ChatRoom {
   password   String?
 }
 
+model Game {
+  id  Int   @default(autoincrement()) @id
+
+  player1 String
+  player2 String
+
+  score1 Int @default(0)
+  score2 Int @default(0)
+
+  users User[] @relation("GamePlayers")
+  ingame Boolean @default(false)
+}
 
 model Message {
   id       Int      @id @default(autoincrement())

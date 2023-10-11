@@ -1,18 +1,20 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { Ball, Client, Room} from './classes'
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
+import { JwtService } from "@nestjs/jwt";
 
-@Injectable()
 
 @WebSocketGateway({
+    namespace: "Game",
     cors: {
         origin: '*',
     },
 })
 
 
+@Injectable()
 export class SocketEvent  {
     @WebSocketServer()
     server: Server;
@@ -22,7 +24,10 @@ export class SocketEvent  {
     connectedCli: number;
     Rooms: Room[];
 
-    constructor() {
+    constructor(
+        private readonly jwtService: JwtService,
+        private readonly prismaService: PrismaService,
+    ) {
         // Initialize the objects here
         this.RoomNum = 0;
         this.connectedCli = 0;
@@ -62,52 +67,83 @@ export class SocketEvent  {
         }
     }
 
-    //Connection
-    handleConnection = (client: Socket) => {
-        console.log(`client connected id : ${client.id}`);
-        const token: string = client.handshake.headers.authorization;
-        if (this.SocketsByUser.has(token))
-        {
-            if (this.SocketsByUser.get(token) !== client.id){
-                this.SocketsByUser.set(token, client.id);
+    IfClientInGame = (client) => {
+        console.log('Im here')
+        let i: number = 0;
+        for (i; i <= this.RoomNum; i++) {
+            if (this.Rooms[i].client1.id === client.id || this.Rooms[i].client2.id === client.id) {
+                if (this.Rooms[i].client1.inGame || this.Rooms[i].client2.inGame)
+                    console.log('ta sir f7alk rak deja in game a chamchoun');
             }
         }
-        else
-            this.SocketsByUser.set(token, client.id);
-        if (this.connectedCli % 2 === 0) {
-            client.join(`${this.RoomNum}`);
-            const newRoom = new Room(this.RoomNum);
-            console.log(`new Room is created! ${newRoom.num}`);
-            newRoom.client1 = new Client(1); // Initialize client1
-            newRoom.ball = new Ball();
-            newRoom.client1.id = client.id;
-            newRoom.client1.token = token;
-            this.Rooms.push(newRoom);
-            this.server.emit('joined', this.RoomNum);
-            this.connectedCli++;
-        }
-        else {
-            client.join(`${this.RoomNum}`);
-            const currentRoom = this.Rooms[this.RoomNum];
-            if (currentRoom) {
-                if (currentRoom.client1.token === token){
-                    console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal")
-                    client.leave(`${this.RoomNum}`);
-                    currentRoom.client1.id = client.id;
-                    // this.connectedCli--;
-                    return ;
+    }
+
+    //Connection
+    handleConnection = (client: Socket) => {
+        try{
+            console.log(`client connected id : ${client.id}`);
+            const token: string = client.handshake.headers.authorization.slice(7);
+            if (!token)
+                throw new UnauthorizedException();
+            const   userObj = this.jwtService.verify(token);
+            console.log(`token verified : ${token}`);
+            if (this.SocketsByUser.has(token))
+            {
+                // this.IfClientInGame(client);
+                if (this.SocketsByUser.get(token) !== client.id){
+                    this.SocketsByUser.set(token, client.id);
                 }
-                currentRoom.client2 = new Client(2); // Initialize client2
-                currentRoom.client2.id = client.id;
+            }
+            else
+                this.SocketsByUser.set(token, client.id);
+            // const   user = await this.prismaService.user.update({
+            //     where: {
+            //         username: userObj.username,
+            //     },
+            //     data : {
+            //         elo: 1,
+            //     },
+            // });
+            if (this.connectedCli % 2 === 0) {
+                client.join(`${this.RoomNum}`);
+                const newRoom = new Room(this.RoomNum);
+                console.log(`new Room is created! ${newRoom.num}`);
+                newRoom.client1 = new Client(1); // Initialize client1
+                newRoom.ball = new Ball();
+                newRoom.client1.id = client.id;
+                newRoom.client1.token = token;
+                newRoom.client1.socket = client;
+                this.Rooms.push(newRoom);
                 this.server.emit('joined', this.RoomNum);
                 this.connectedCli++;
             }
+            else {
+                client.join(`${this.RoomNum}`);
+                const currentRoom = this.Rooms[this.RoomNum];
+                if (currentRoom) {
+                    if (currentRoom.client1.token === token){
+                        console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal")
+                        client.leave(`${this.RoomNum}`);
+                        currentRoom.client1.id = client.id;
+                        return ;
+                    }
+                    currentRoom.client2 = new Client(2); // Initialize client2
+                    currentRoom.client2.id = client.id;
+                    currentRoom.client2.socket = client;
+                    this.server.emit('joined', this.RoomNum);
+                    this.connectedCli++;
+                }
+            }
+            if (this.Rooms[this.RoomNum].client2) {
+                this.Rooms[this.RoomNum].IsFull = true;
+                this.BallReset(this.Rooms[this.RoomNum]);
+                this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
+                this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
+                this.RoomNum++;
+            }
         }
-        if (this.Rooms[this.RoomNum].client2) {
-            this.Rooms[this.RoomNum].IsFull = true;
-            this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
-            this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
-            this.RoomNum++;
+        catch (err) {
+            console.log(`exception just thrown :.(`)
         }
     }
 
@@ -115,6 +151,7 @@ export class SocketEvent  {
     //Disconnection
     handleDisconnection = (client: Socket) => {
         console.log(`Client Disconnected: ${client.id}`);
+        const token: string = client.handshake.headers.authorization;
         this.Rooms.forEach( (item) => {
             delete item.client1.window;
             delete item.client2.window;
@@ -123,6 +160,8 @@ export class SocketEvent  {
             delete item.game;
         })
         delete this.Rooms;
+        if (this.SocketsByUser.has(token))
+            this.SocketsByUser.delete(token);
     }
 
     BallMovements = (room: Room, clientId: string) => {
@@ -159,8 +198,8 @@ export class SocketEvent  {
 
             //If the ball passes boundaries
             if (room.ball.z > 9.3){
-                room.client2.score++;
                 this.BallReset(room);
+                room.client2.score++;
                 this.server.to(`${room.client1.id}`).emit('Score', {p1: room.client1.score, p2: room.client2.score})
                 this.server.to(`${room.client2.id}`).emit('Score', {p1: room.client2.score, p2: room.client1.score})
             }
@@ -172,6 +211,8 @@ export class SocketEvent  {
             }
             if (room.client1.score === room.game.WinReq || room.client2.score === room.game.WinReq) {
                 room.game.IsFinish = true;
+                room.client1.inGame = false;
+                room.client1.inGame = false;
                 this.server.to(`${room.client1.id}`).emit('gameEnded');
                 this.server.to(`${room.client2.id}`).emit('gameEnded');
                 if (room.client1.score === room.game.WinReq) {
@@ -196,8 +237,11 @@ export class SocketEvent  {
     handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
 
         const token = client.handshake.headers.authorization;
-        if (this.Rooms[_room].IsFull)
-        this.Rooms[_room].game.IsStarted = true;
+        if (this.Rooms[_room].IsFull) {
+            this.Rooms[_room].client1.inGame = true;
+            this.Rooms[_room].client2.inGame = true;
+            this.Rooms[_room].game.IsStarted = true;
+        }
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id)
                 this.BallMovements(this.Rooms[_room], client.id);
@@ -207,9 +251,11 @@ export class SocketEvent  {
     @SubscribeMessage('leaveQueue')
     handleleavequeue(@ConnectedSocket() client: Socket, @MessageBody() room: number) {
         console.log('client leaves the room');
-        if (this.Rooms[room] && (this.Rooms[room].client1.id === client.id)){
-            client.leave(`${room}`);
-            this.Rooms[room].client1;
+        if (this.Rooms[room] && (this.Rooms[room].client1.id === client.id) && !this.Rooms[room].client1.inGame){
+            this.Rooms[room].client1.socket.leave(`${room}`);
+            if (this.SocketsByUser.has(this.Rooms[room].client1.token))
+                this.SocketsByUser.delete(this.Rooms[room].client1.token);
+
         }
     }
 
