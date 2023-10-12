@@ -60,6 +60,7 @@ export class Client {
     height: number;
     thickness: number;
     socket: Socket;
+    username: string;
     id: string;
     token: string;
     constructor(num: number) {
@@ -74,6 +75,7 @@ export class Client {
         this.thickness = 13;
         this.id = "";
         this.token = "";
+        this.username = "";
         this.window = new Win();
     }
 }

@@ -4,7 +4,15 @@ import { Ball, Client, Room} from './classes'
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
+
+interface GameData {
+    gameId: number;
+    player1: { playerID: string; score: string };
+    player2: { playerID: string; score: string };
+  }
 
 @WebSocketGateway({
     namespace: "Game",
@@ -23,6 +31,7 @@ export class SocketEvent  {
     RoomNum: number;
     connectedCli: number;
     Rooms: Room[];
+    private prisma: PrismaClient;
 
     constructor(
         private readonly jwtService: JwtService,
@@ -33,7 +42,37 @@ export class SocketEvent  {
         this.connectedCli = 0;
         this.Rooms = [];
         this.SocketsByUser = new Map<string, string>();
-    } 
+        this.prisma = new PrismaClient();
+    }
+    
+    getPrismaClient() {
+        return this.prisma;
+    }
+
+    createGameRecord(client1: string, client2: string) {
+        return prisma.game.create({
+            data: {
+                player1: client1, player2: client2, score1: "", score2: "", ingame: false
+            },
+        });
+    }
+
+    async updateGameResult(gameId: number, player1Score: string, player2Score: string) {
+        // Access the Prisma client directly from this.prisma
+        const prisma = this.prisma;
+
+        // Update the game record in the database
+        const updatedGame = await prisma.game.update({
+            where: { id: gameId },
+            data: {
+                score1: player1Score,
+                score2: player2Score,
+            },
+        });
+
+        return updatedGame;
+    }
+      
 
     BallReset = (room: Room) => {
         room.ball.move = false;
@@ -85,14 +124,16 @@ export class SocketEvent  {
             const token: string = client.handshake.headers.authorization.slice(7);
             if (!token)
                 throw new UnauthorizedException();
+            const userObj = this.jwtService.verify(token);
             if (this.SocketsByUser.has(token))
             {
                 if (this.SocketsByUser.get(token) !== client.id){
                     this.SocketsByUser.set(token, client.id);
                 }
             }
-            else
+            else {
                 this.SocketsByUser.set(token, client.id);
+            }
             if (this.connectedCli % 2 === 0) {
                 client.join(`${this.RoomNum}`);
                 const newRoom = new Room(this.RoomNum);
@@ -101,6 +142,7 @@ export class SocketEvent  {
                 newRoom.ball = new Ball();
                 newRoom.client1.id = client.id;
                 newRoom.client1.token = token;
+                newRoom.client1.username = userObj.username;
                 newRoom.client1.socket = client;
                 this.Rooms.push(newRoom);
                 this.server.emit('joined', this.RoomNum);
@@ -119,6 +161,7 @@ export class SocketEvent  {
                     currentRoom.client2 = new Client(2); // Initialize client2
                     currentRoom.client2.id = client.id;
                     currentRoom.client2.socket = client;
+                    currentRoom.client2.username = userObj.username;
                     this.server.emit('joined', this.RoomNum);
                     this.connectedCli++;
                 }
@@ -129,12 +172,6 @@ export class SocketEvent  {
                 this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
                 this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
                 this.RoomNum++;
-                const gameObj = this.prismaService.game.create({
-                    data: {
-                        player1: this.Rooms[this.RoomNum].client1.id,
-                        player2: this.Rooms[this.RoomNum].client2.id,
-                    },
-                });
             }
         }
         catch (err) {
@@ -159,7 +196,7 @@ export class SocketEvent  {
             this.SocketsByUser.delete(token);
     }
 
-    BallMovements = (room: Room, clientId: string) => {
+    BallMovements = async (room: Room, clientId: string, gamedata: GameData) => {
         // Trying to move the ball, for each room separate.
         if (room.IsFull && room.game.IsStarted) {
 
@@ -218,39 +255,66 @@ export class SocketEvent  {
                     this.server.to(`${room.client1.id}`).emit('lost');
                     this.server.to(`${room.client2.id}`).emit('won');
                 }
+                this.updateGameResult(gamedata.gameId, room.client1.score.toString(), room.client2.score.toString());
+                const game = await this.prismaService.game.findUnique({
+                    where: {
+                        id : gamedata.gameId,
+                    }
+                })
+                console.log(game);
             }
 
             // Resending Ball Coords to clients
-            if (clientId === room.client1.id && !room.game.IsFinish)
+            if (clientId === room.client1.id && !room.game.IsFinish){
                 this.server.to(`${clientId}`).emit('DrawBall', { x: room.ball.x, z: room.ball.z, pos: 1 });
-            if (clientId === room.client2.id && !room.game.IsFinish)
+            }
+            if (clientId === room.client2.id && !room.game.IsFinish) {
                 this.server.to(`${clientId}`).emit('DrawBall', { x: room.ball.x, z: room.ball.z, pos: 2 });
+            }
         }
     }
 
     @SubscribeMessage('demand')
-    handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
-
+    handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number, gamedata: GameData}) {
+        const {_room, gamedata} = data;
         try {
-            const token = client.handshake.headers.authorization;
+            const token = client.handshake.headers.authorization.slice(7);
             if (this.Rooms[_room].IsFull) {
                 this.Rooms[_room].client1.inGame = true;
                 this.Rooms[_room].client2.inGame = true;
                 this.Rooms[_room].game.IsStarted = true;
-                // this.prismaService.game.update({
-                //     data: {
-                //         ingame: true,
-                //     }
-                // })
             }
+
             if (this.SocketsByUser.has(token)) {
-                if (this.SocketsByUser.get(token) === client.id)
-                    this.BallMovements(this.Rooms[_room], client.id);
+                if (this.SocketsByUser.get(token) === client.id){
+                    this.BallMovements(this.Rooms[_room], client.id, gamedata);
+                    this.createGameRecord(this.Rooms[_room].client1.username, this.Rooms[_room].client2.username)
+                    .then((newGame) => {
+                        const gameData: GameData = {
+                            gameId: newGame.id,
+                            player1: {playerID: this.Rooms[_room].client1.username, score: newGame.score1.toString()},
+                            player2: {playerID: this.Rooms[_room].client2.username, score: newGame.score2.toString()},
+                        };
+                        this.server.to(`${this.Rooms[_room].client1.id}`).emit('gameStarted', gameData);
+                        this.server.to(`${this.Rooms[_room].client2.id}`).emit('gameStarted', gameData);
+                    })
+                }
             }
 
         }
         catch (err) {
             console.log(`Error: ${err}`);
+        }
+    }
+
+    @SubscribeMessage('gameEnded')
+    handleGameEnded(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
+        const token: string = client.handshake.headers.authorization.slice(7);
+        if (this.SocketsByUser.has(token)) {
+            if (this.SocketsByUser.get(token) === client.id) {
+
+                // this.updateGameResult(data.gameData.gameId, data.gameData.player1.score, data.gameData.player2.score)
+            }
         }
     }
 
@@ -268,7 +332,7 @@ export class SocketEvent  {
     @SubscribeMessage('PaddleMovement')
     handlePaddleMovement(@ConnectedSocket() client: Socket, @MessageBody() data: { x: number, room: number }) {
         const {x, room} = data;
-        const token = client.handshake.headers.authorization;
+        const token = client.handshake.headers.authorization.slice(7);
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id)
                 this.MoveEverthing(x, this.Rooms[room], client.id);

@@ -56,7 +56,7 @@ const DrawBall = (props: any) => {
   const [ball, setBall] = useState([0, 0]);
 
   useFrame(() => {
-    props.socket.emit("demand", props.room);
+    props.socket.emit("demand", {_room: props.room, gamedata: props.gameData});
   });
 
   useEffect(() => {
@@ -110,7 +110,7 @@ const CallEverything = (props: any) => {
     <>
       <PlayerPaddle socket={props.socket} roomId={props.roomId} paddlecolor={props.paddlecolor} />
       <OpponentPlayerPaddle socket={props.socket} paddlecolor={props.paddlecolor} />
-      <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} />
+      <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} gameData={props.gameData} />
     </>
   );
 };
@@ -120,7 +120,6 @@ const leaveQueue = (props: any) => {
     props.socket.emit('leaveQueue', props.roomId);
   }
 }
-
 
 const RotatedCircle: React.FC<any> = (props) => {
   const [isInGame] = useState<boolean>(props.inGame);
@@ -165,6 +164,8 @@ export default function Multiplayer() {
   const [myScore, setmyScore] = useState<number>(0);
   const [enemyScore, setenemyScore] = useState<number>(0);
 
+  const [gameData, setGameData] = useState<{}>({});
+
   const paddle: any = useRef();
   const ball: any = useRef();
 
@@ -175,12 +176,8 @@ export default function Multiplayer() {
   if (tokenCookie && !token) {
     setToken(tokenCookie.split("=")[1]);
   }
-  else if (tokenCookie && token){
-    console.log('tasir jib chi dawra');
-  }
 
   if (!socket && token) {
-    console.log(`check token in the frontens: ${token}`);
     setSocket(
       io("http://localhost:3000/Game", {
         extraHeaders: {
@@ -199,8 +196,9 @@ export default function Multiplayer() {
         setRoomNumber(RoomId);
       });
 
-      socket.on("gameStarted", () => {
+      socket.on("gameStarted", (data) => {
         console.log("game started :)");
+        setGameData(data);
         setInGame(true);
         setIsGameStarted(true);
       });
@@ -290,6 +288,7 @@ export default function Multiplayer() {
               roomId={RoomNumber}
               paddlecolor={paddleColor}
               ballcolor={ballColor}
+              gameData={gameData}
             />
           </Canvas>
         </div>
