@@ -21,6 +21,7 @@ const PlayArea = () => {
 const PlayerPaddle = (props: any) => {
   const refPlayer = useRef<MutableRefObject<undefined> | any>();
 
+  console.log(`check gameData: ${props.gamedata}`);
   useFrame(({ mouse }) => {
     if (refPlayer.current) {
       refPlayer.current.position.x = (1 - mouse.y) * 15 - 15;
@@ -56,7 +57,7 @@ const DrawBall = (props: any) => {
   const [ball, setBall] = useState([0, 0]);
 
   useFrame(() => {
-    props.socket.emit("demand", {_room: props.room, gamedata: props.gameData});
+    props.socket.emit("demand", props.room);
   });
 
   useEffect(() => {
@@ -108,12 +109,23 @@ const OpponentPlayerPaddle = (props: any) => {
 const CallEverything = (props: any) => {
   return (
     <>
-      <PlayerPaddle socket={props.socket} roomId={props.roomId} paddlecolor={props.paddlecolor} />
+      <PlayerPaddle socket={props.socket} roomId={props.roomId} paddlecolor={props.paddlecolor} gamedata={props.gameData}/>
       <OpponentPlayerPaddle socket={props.socket} paddlecolor={props.paddlecolor} />
-      <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} gameData={props.gameData} />
+      <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} />
     </>
   );
 };
+
+const InGame = () => {
+  return (
+    <div className="background-image h-screen no-scroll">
+      <NavBar />
+      <div className="App background-image h-screen flex flex-col items-center justify-center">
+        You are already in game, go finish it first.
+      </div>
+    </div>
+  );
+}
 
 const leaveQueue = (props: any) => {
   if (props.socket) {
@@ -153,6 +165,7 @@ export default function Multiplayer() {
   const [IsGameStarted, setIsGameStarted] = useState<boolean>(false);
   const [IsGameEnded, setIsGameEnded] = useState<boolean>(false);
   const [InGame, setInGame] = useState<boolean>(false);
+  const [StillInGame, setStillInGame] = useState<boolean>(false);
 
   const [result, setResult] = useState<string>("");
   const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)");
@@ -203,9 +216,14 @@ export default function Multiplayer() {
         setIsGameStarted(true);
       });
 
+      socket.on('InGame', () => {
+        setStillInGame(true);
+      })
+
       socket.on("gameEnded", () => {
         console.log("game ended nod tga3ad");
         setIsGameEnded(true);
+        setStillInGame(false);
       });
 
       socket.on("won", () => {
@@ -230,7 +248,6 @@ export default function Multiplayer() {
         socket.off("gameEnded");
         socket.off("won");
         socket.off("lost");
-        // socket.disconnect();
       }
     };
   }, [RoomNumber, IsGameStarted, socket]);
@@ -288,15 +305,29 @@ export default function Multiplayer() {
               roomId={RoomNumber}
               paddlecolor={paddleColor}
               ballcolor={ballColor}
-              gameData={gameData}
             />
           </Canvas>
         </div>
       </div>
     );
-  } else if (isConnected && IsGameStarted && IsGameEnded) {
-    return <EndGame result={result} />;
-  } else if (isConnected && !IsGameStarted) {
+  }
+  else if (isConnected && StillInGame) {
+    return (
+      <div className="background-image h-screen no-scroll">
+        <NavBar />
+        <script>
+          console.log('test test im in');
+        </script>
+        <div className="App background-image h-screen flex flex-col items-center justify-center">
+          You are already in game, go finish it first.
+        </div>
+      </div>
+    );
+  }
+  else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
+    return <EndGame result={result} socket={socket} gamedata={gameData} roomId={RoomNumber} />;
+  }
+  else if (isConnected && !IsGameStarted) {
     return (
         <div className="background-image h-screen no-scroll">
           <NavBar />

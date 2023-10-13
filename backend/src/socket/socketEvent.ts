@@ -106,15 +106,18 @@ export class SocketEvent  {
         }
     }
 
-    IfClientInGame = (client) => {
-        console.log('Im here')
+    IfClientInGame = (client): boolean => {
         let i: number = 0;
         for (i; i <= this.RoomNum; i++) {
+            // console.log('Im here')
             if (this.Rooms[i].client1.id === client.id || this.Rooms[i].client2.id === client.id) {
-                if (this.Rooms[i].client1.inGame || this.Rooms[i].client2.inGame)
+                if (this.Rooms[i].client1.inGame || this.Rooms[i].client2.inGame) {
                     console.log('ta sir f7alk rak deja in game a chamchoun');
+                    return true;
+                }
             }
         }
+        return false;
     }
 
     //Connection
@@ -124,9 +127,12 @@ export class SocketEvent  {
             const token: string = client.handshake.headers.authorization.slice(7);
             if (!token)
                 throw new UnauthorizedException();
-            const userObj = this.jwtService.verify(token);
             if (this.SocketsByUser.has(token))
             {
+                if (this.IfClientInGame(client)) {
+                    this.server.to(client.id).emit('InGame');
+                    return ;
+                }
                 if (this.SocketsByUser.get(token) !== client.id){
                     this.SocketsByUser.set(token, client.id);
                 }
@@ -134,6 +140,8 @@ export class SocketEvent  {
             else {
                 this.SocketsByUser.set(token, client.id);
             }
+            const userObj = this.jwtService.verify(token);
+            console.log('test test allah allah')
             if (this.connectedCli % 2 === 0) {
                 client.join(`${this.RoomNum}`);
                 const newRoom = new Room(this.RoomNum);
@@ -179,26 +187,13 @@ export class SocketEvent  {
             if (this.Rooms[this.RoomNum].client2) {
                 this.Rooms[this.RoomNum].IsFull = true;
                 this.BallReset(this.Rooms[this.RoomNum]);
-                this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
-                this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
-                // this.createGameRecord(this.Rooms[this.RoomNum].client1.username, this.Rooms[this.RoomNum].client2.username)
-                //     .then((newGame) => {
-                //         const gameData: GameData = {
-                //             gameId: newGame.id,
-                //             player1: { playerID: this.Rooms[this.RoomNum].client1.username, score: newGame.score1.toString() },
-                //             player2: { playerID: this.Rooms[this.RoomNum].client2.username, score: newGame.score2.toString() },
-                //         };
-                //         this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted', gameData);
-                //         this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted', gameData);
-                //     })
                 this.RoomNum++;
             }
         }
         catch (err) {
-            console.log(`Error: ${err}`);
+            console.log(`Error123: ${err}`);
         }
     }
-
 
     //Disconnection
     handleDisconnection = (client: Socket) => {
@@ -216,7 +211,7 @@ export class SocketEvent  {
             this.SocketsByUser.delete(token);
     }
 
-    BallMovements = async (room: Room, clientId: string, gamedata: GameData) => {
+    BallMovements = async (room: Room, clientId: string) => {
         // Trying to move the ball, for each room separate.
         if (room.IsFull && room.game.IsStarted) {
 
@@ -275,13 +270,15 @@ export class SocketEvent  {
                     this.server.to(`${room.client1.id}`).emit('lost');
                     this.server.to(`${room.client2.id}`).emit('won');
                 }
-                this.updateGameResult(gamedata.gameId, room.client1.score.toString(), room.client2.score.toString());
-                const game = await this.prismaService.game.findUnique({
-                    where: {
-                        id : gamedata.gameId,
-                    }
-                })
-                console.log(game);
+                if (room.client1.score > room.client2.score) {
+                    room.winner = room.client1.username;
+                    room.loser = room.client2.username;
+
+                }
+                else {
+                    room.winner = room.client2.username;
+                    room.loser = room.client1.username;
+                }
             }
 
             // Resending Ball Coords to clients
@@ -295,8 +292,7 @@ export class SocketEvent  {
     }
 
     @SubscribeMessage('demand')
-    handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number, gamedata: GameData}) {
-        const {_room, gamedata} = data;
+    handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
         try {
             const token = client.handshake.headers.authorization.slice(7);
             if (this.Rooms[_room].IsFull) {
@@ -307,33 +303,78 @@ export class SocketEvent  {
 
             if (this.SocketsByUser.has(token)) {
                 if (this.SocketsByUser.get(token) === client.id){
-                    this.BallMovements(this.Rooms[_room], client.id, gamedata);
-                    // this.createGameRecord(this.Rooms[_room].client1.username, this.Rooms[_room].client2.username)
-                    // .then((newGame) => {
-                    //     const gameData: GameData = {
-                    //         gameId: newGame.id,
-                    //         player1: {playerID: this.Rooms[_room].client1.username, score: newGame.score1.toString()},
-                    //         player2: {playerID: this.Rooms[_room].client2.username, score: newGame.score2.toString()},
-                    //     };
-                    //     this.server.to(`${this.Rooms[_room].client1.id}`).emit('gameStarted', gameData);
-                    //     this.server.to(`${this.Rooms[_room].client2.id}`).emit('gameStarted', gameData);
-                    // })
+                    this.BallMovements(this.Rooms[_room], client.id);
                 }
             }
-
         }
         catch (err) {
             console.log(`Error: ${err}`);
         }
     }
 
+    IfGameIsFinish = async (room: Room, gamedata: GameData) => {
+        if (room.client1.inGame || room.client2.inGame)
+            return ;
+        console.log('test test game salat now time for updating database');
+        this.updateGameResult(gamedata.gameId, room.client1.score.toString(), room.client2.score.toString());
+        await this.prismaService.game.findUnique({
+            where: {
+                id: gamedata.gameId,
+            }
+        })
+
+        await this.prismaService.user.update({
+            where: {
+                username: room.winner,
+            },
+            data: {
+                wins: {
+                    increment: 1,
+                },
+                elo: {
+                    increment: 10,
+                },
+            }
+        })
+        const user = await prisma.user.findUnique({
+            where: {
+                username: room.loser,
+            }
+        });
+        if (user) {
+            const data = {
+                loses: {
+                    increment: 1,
+                },
+                elo: undefined,
+            };
+
+            if (user.elo >= 10) {
+                data.elo = {
+                    decrement: 10,
+                };
+            }
+            await prisma.user.update({
+                where: {
+                    username: room.loser,
+                },
+                data,
+            });
+        }
+    }
+
     @SubscribeMessage('gameEnded')
-    handleGameEnded(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
+    handleGameEnded(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number, gamedata: GameData}) {
+        const {_room, gamedata} = data;
         const token: string = client.handshake.headers.authorization.slice(7);
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id) {
-
-                // this.updateGameResult(data.gameData.gameId, data.gameData.player1.score, data.gameData.player2.score)
+                if (client.id === this.Rooms[_room].client1.id)
+                    this.Rooms[_room].client1.inGame = false;
+                if (client.id === this.Rooms[_room].client2.id)
+                    this.Rooms[_room].client2.inGame = false;
+                // if (!this.Rooms[_room].client1.inGame || !this.Rooms[_room].client2.inGame)
+                    this.IfGameIsFinish(this.Rooms[_room], gamedata);
             }
         }
     }

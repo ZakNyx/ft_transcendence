@@ -87,6 +87,8 @@ export class Room {
     client1: Client;
     client2: Client;
     game: Game;
+    winner: string;
+    loser: string;
     constructor(Rnum: number) {
         this.num = Rnum;
         this.IsFull = false;
@@ -94,5 +96,7 @@ export class Room {
         this.client1 = null;
         this.client2 = null;
         this.ball = null;
+        this.winner = "";
+        this.loser = "";
     }
 }
