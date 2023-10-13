@@ -163,6 +163,16 @@ export class SocketEvent  {
                     currentRoom.client2.socket = client;
                     currentRoom.client2.username = userObj.username;
                     this.server.emit('joined', this.RoomNum);
+                    this.createGameRecord(currentRoom.client1.username, currentRoom.client2.username)
+                    .then((newgame) => {
+                        const gameData: GameData = {
+                            gameId: newgame.id,
+                            player1: { playerID: currentRoom.client1.username, score: newgame.score1.toString() },
+                            player2: { playerID: currentRoom.client2.username, score: newgame.score2.toString() },
+                        }
+                        this.server.to(`${currentRoom.client1.id}`).emit('gameStarted', gameData);
+                        this.server.to(`${currentRoom.client2.id}`).emit('gameStarted', gameData);
+                    })
                     this.connectedCli++;
                 }
             }
@@ -171,6 +181,16 @@ export class SocketEvent  {
                 this.BallReset(this.Rooms[this.RoomNum]);
                 this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted');
                 this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted');
+                // this.createGameRecord(this.Rooms[this.RoomNum].client1.username, this.Rooms[this.RoomNum].client2.username)
+                //     .then((newGame) => {
+                //         const gameData: GameData = {
+                //             gameId: newGame.id,
+                //             player1: { playerID: this.Rooms[this.RoomNum].client1.username, score: newGame.score1.toString() },
+                //             player2: { playerID: this.Rooms[this.RoomNum].client2.username, score: newGame.score2.toString() },
+                //         };
+                //         this.server.to(`${this.Rooms[this.RoomNum].client1.id}`).emit('gameStarted', gameData);
+                //         this.server.to(`${this.Rooms[this.RoomNum].client2.id}`).emit('gameStarted', gameData);
+                //     })
                 this.RoomNum++;
             }
         }
@@ -288,16 +308,16 @@ export class SocketEvent  {
             if (this.SocketsByUser.has(token)) {
                 if (this.SocketsByUser.get(token) === client.id){
                     this.BallMovements(this.Rooms[_room], client.id, gamedata);
-                    this.createGameRecord(this.Rooms[_room].client1.username, this.Rooms[_room].client2.username)
-                    .then((newGame) => {
-                        const gameData: GameData = {
-                            gameId: newGame.id,
-                            player1: {playerID: this.Rooms[_room].client1.username, score: newGame.score1.toString()},
-                            player2: {playerID: this.Rooms[_room].client2.username, score: newGame.score2.toString()},
-                        };
-                        this.server.to(`${this.Rooms[_room].client1.id}`).emit('gameStarted', gameData);
-                        this.server.to(`${this.Rooms[_room].client2.id}`).emit('gameStarted', gameData);
-                    })
+                    // this.createGameRecord(this.Rooms[_room].client1.username, this.Rooms[_room].client2.username)
+                    // .then((newGame) => {
+                    //     const gameData: GameData = {
+                    //         gameId: newGame.id,
+                    //         player1: {playerID: this.Rooms[_room].client1.username, score: newGame.score1.toString()},
+                    //         player2: {playerID: this.Rooms[_room].client2.username, score: newGame.score2.toString()},
+                    //     };
+                    //     this.server.to(`${this.Rooms[_room].client1.id}`).emit('gameStarted', gameData);
+                    //     this.server.to(`${this.Rooms[_room].client2.id}`).emit('gameStarted', gameData);
+                    // })
                 }
             }
 
