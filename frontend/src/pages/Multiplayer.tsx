@@ -315,9 +315,6 @@ export default function Multiplayer() {
     return (
       <div className="background-image h-screen no-scroll">
         <NavBar />
-        <script>
-          console.log('test test im in');
-        </script>
         <div className="App background-image h-screen flex flex-col items-center justify-center">
           You are already in game, go finish it first.
         </div>
