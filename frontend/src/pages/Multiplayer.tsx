@@ -316,7 +316,7 @@ export default function Multiplayer() {
       <div className="background-image h-screen no-scroll">
         <NavBar />
         <div className="App background-image h-screen flex flex-col items-center justify-center">
-          You are already in game, go finish it first.
+          <h2>You are already in game, go finish it first.</h2>
         </div>
       </div>
     );

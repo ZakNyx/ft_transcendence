@@ -108,11 +108,18 @@ export class SocketEvent  {
         }
     }
 
-    IfClientInGame = (client): boolean => {
+    IfClientInGame = (clientId: string): boolean => {
         let i: number = 0;
         for (i; i < this.RoomNum; i++) {
-            if (this.Rooms[i].client1.id === client.id || this.Rooms[i].client2.id === client.id) {
-                if (this.Rooms[i].client1.inGame || this.Rooms[i].client2.inGame) {
+            if (this.Rooms[i].client1.id === clientId) {
+
+                if (this.Rooms[i].client1.inGame) {
+                    console.log('ta sir f7alk rak deja in game a chamchoun');
+                    return true;
+                }
+            }
+            if (this.Rooms[i].client2.id === clientId) {
+                if (this.Rooms[i].client2.inGame) {
                     console.log('ta sir f7alk rak deja in game a chamchoun');
                     return true;
                 }
@@ -130,7 +137,7 @@ export class SocketEvent  {
                 throw new UnauthorizedException();
             if (this.SocketsByUser.has(token))
             {
-                if (this.IfClientInGame(client)) {
+                if (this.IfClientInGame(this.SocketsByUser.get(token))) {
                     this.server.to(client.id).emit('InGame');
                     return ;
                 }
