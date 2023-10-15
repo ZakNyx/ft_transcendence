@@ -116,17 +116,6 @@ const CallEverything = (props: any) => {
   );
 };
 
-const InGame = () => {
-  return (
-    <div className="background-image h-screen no-scroll">
-      <NavBar />
-      <div className="App background-image h-screen flex flex-col items-center justify-center">
-        You are already in game, go finish it first.
-      </div>
-    </div>
-  );
-}
-
 const leaveQueue = (props: any) => {
   if (props.socket) {
     props.socket.emit('leaveQueue', props.roomId);
@@ -138,7 +127,7 @@ const RotatedCircle: React.FC<any> = (props) => {
 
   useEffect(() => {
     if (!isInGame) {
-      console.log('rak ba9i la3b a tabi');
+      console.log('rak ba9i la3b a chamchoun');
     } else {
       leaveQueue(props);
     }

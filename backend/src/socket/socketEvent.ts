@@ -160,7 +160,7 @@ export class SocketEvent  {
                 newRoom.client1.username = userObj.username;
                 newRoom.client1.socket = client;
                 this.Rooms.push(newRoom);
-                this.server.emit('joined', this.RoomNum);
+                this.server.to(`${newRoom.client1.id}`).emit('joined', this.RoomNum);
                 this.connectedCli++;
             }
             else {
@@ -168,7 +168,7 @@ export class SocketEvent  {
                 const currentRoom = this.Rooms[this.RoomNum];
                 if (currentRoom) {
                     if (currentRoom.client1.token === token){
-                        console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal")
+                        console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal");
                         client.leave(`${this.RoomNum}`);
                         currentRoom.client1.id = client.id;
                         return ;
@@ -177,7 +177,8 @@ export class SocketEvent  {
                     currentRoom.client2.id = client.id;
                     currentRoom.client2.socket = client;
                     currentRoom.client2.username = userObj.username;
-                    this.server.emit('joined', this.RoomNum);
+                    // console.log(`this client : ${userObj.username} sending a join event`);
+                    this.server.to(`${currentRoom.client2.id}`).emit('joined', this.RoomNum);
                     this.createGameRecord(currentRoom.client1.username, currentRoom.client2.username)
                     .then((newgame) => {
                         const gameData: GameData = {
@@ -199,7 +200,7 @@ export class SocketEvent  {
             }
         }
         catch (err) {
-            console.log(`Error123hgyg: ${err}`);
+            console.log(`Error: ${err}`);
         }
     }
 
@@ -303,17 +304,20 @@ export class SocketEvent  {
     handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
         try {
             const token = client.handshake.headers.authorization.slice(7);
+            const userObj = this.jwtService.verify(token); 
             if (this.Rooms[_room].IsFull) {
                 this.Rooms[_room].client1.inGame = true;
                 this.Rooms[_room].client2.inGame = true;
                 this.Rooms[_room].game.IsStarted = true;
-            }
-
-            if (this.SocketsByUser.has(token)) {
-                if (this.SocketsByUser.get(token) === client.id){
-                    this.BallMovements(this.Rooms[_room], client.id);
+                if (this.SocketsByUser.has(token)) {
+                    if ((this.SocketsByUser.get(token) === client.id) && (_room < this.RoomNum &&
+                    (this.Rooms[_room].client1.username === userObj.username
+                    || this.Rooms[_room].client2.username === userObj.username))) {
+                        this.BallMovements(this.Rooms[_room], client.id);
+                    }
                 }
             }
+
         }
         catch (err) {
             console.log(`Error: ${err}`);
@@ -385,13 +389,6 @@ export class SocketEvent  {
         const token: string = client.handshake.headers.authorization.slice(7);
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id) {
-                // if (client.id === this.Rooms[_room].client1.id) {
-                //     this.Rooms[_room].client1.inGame = false;
-                // }
-                // if (client.id === this.Rooms[_room].client2.id) {
-                //     this.Rooms[_room].client2.inGame = false;
-                //     console.log(`client2 in this room : ${_room}, check ingame: ${this.Rooms[_room].client2.inGame}`)
-                // }
                 if (this.Rooms[_room].client1.inGame === false && this.Rooms[_room].client2.inGame === false && this.isDatabaseUpdated === false) {
                     this.isDatabaseUpdated = true;    
                     this.IfGameIsFinish(this.Rooms[_room], gamedata);
