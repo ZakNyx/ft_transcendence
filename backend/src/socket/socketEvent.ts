@@ -114,13 +114,13 @@ export class SocketEvent  {
             if (this.Rooms[i].client1.id === clientId) {
 
                 if (this.Rooms[i].client1.inGame) {
-                    console.log('ta sir f7alk rak deja in game a chamchoun');
+                    console.log('ta sir f7alk rak deja in game a chamchoun1');
                     return true;
                 }
             }
             if (this.Rooms[i].client2.id === clientId) {
                 if (this.Rooms[i].client2.inGame) {
-                    console.log('ta sir f7alk rak deja in game a chamchoun');
+                    console.log('ta sir f7alk rak deja in game a chamchoun2');
                     return true;
                 }
             }
@@ -267,7 +267,7 @@ export class SocketEvent  {
             if (room.client1.score === room.game.WinReq || room.client2.score === room.game.WinReq) {
                 room.game.IsFinish = true;
                 room.client1.inGame = false;
-                room.client1.inGame = false;
+                room.client2.inGame = false;
                 this.server.to(`${room.client1.id}`).emit('gameEnded');
                 this.server.to(`${room.client2.id}`).emit('gameEnded');
                 if (room.client1.score === room.game.WinReq) {
@@ -343,6 +343,9 @@ export class SocketEvent  {
                     elo: {
                         increment: 10,
                     },
+                    gamesPlayed: {
+                        increment: 1,
+                    }
                 }
             })
             const user = await prisma.user.findUnique({
@@ -353,6 +356,9 @@ export class SocketEvent  {
             if (user) {
                 const data = {
                     loses: {
+                        increment: 1,
+                    },
+                    gamesPlayed: {
                         increment: 1,
                     },
                     elo: undefined,
@@ -379,10 +385,13 @@ export class SocketEvent  {
         const token: string = client.handshake.headers.authorization.slice(7);
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id) {
-                if (client.id === this.Rooms[_room].client1.id)
-                    this.Rooms[_room].client1.inGame = false;
-                if (client.id === this.Rooms[_room].client2.id)
-                    this.Rooms[_room].client2.inGame = false;
+                // if (client.id === this.Rooms[_room].client1.id) {
+                //     this.Rooms[_room].client1.inGame = false;
+                // }
+                // if (client.id === this.Rooms[_room].client2.id) {
+                //     this.Rooms[_room].client2.inGame = false;
+                //     console.log(`client2 in this room : ${_room}, check ingame: ${this.Rooms[_room].client2.inGame}`)
+                // }
                 if (this.Rooms[_room].client1.inGame === false && this.Rooms[_room].client2.inGame === false && this.isDatabaseUpdated === false) {
                     this.isDatabaseUpdated = true;    
                     this.IfGameIsFinish(this.Rooms[_room], gamedata);

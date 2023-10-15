@@ -53,7 +53,7 @@ const Notifications = () => {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [jwtUser]);
+  }, []);
 
   const socket = initializeSocket('');
   useEffect(() => {
@@ -104,7 +104,7 @@ const Notifications = () => {
 
     if(notifications && notifications.length > 0)
     updateUserPictures();
-  }, [notifications]);
+  }, []);
 
   const fetchUserPicture = async (username: string) => {
     const tokenCookie = document.cookie

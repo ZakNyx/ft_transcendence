@@ -54,7 +54,7 @@ const DoughnutChart: React.FC<DoughnutChartProps> = ({ wins, losses }) => {
       </h1>
 
       <p className="text-gray-200 font-semibold text-lg">
-        {winratePercentage.toFixed(0)}%
+        {winratePercentage.toFixed(2)}%
       </p>
       <div className="mt-4">
         <div className="w-[15vw] h-auto">

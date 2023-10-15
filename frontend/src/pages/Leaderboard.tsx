@@ -37,7 +37,7 @@ export default function Leaderboard() {
               },
             }
           );
-
+            console.log(response.data);
           setData(response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -155,7 +155,7 @@ export default function Leaderboard() {
 
               <div className="flex flex-col justify-center mr-4">
                 <h2 className="font-montserrat font-semibold text-white text-sm md:text-base lg:text-xl xl:text-2xl">
-                  {item.winrate}%
+                  {(item.wins /item.gamesPlayed * 100).toFixed(2)}%
                 </h2>
                 <p className="max-w-[10rem] break-words font-montserrat text-npc-light-gray text-xs md:text-xs lg:text-sm xl:text-base">
                   Winrate
