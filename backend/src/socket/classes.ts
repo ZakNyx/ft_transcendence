@@ -89,6 +89,7 @@ export class Room {
     game: Game;
     winner: string;
     loser: string;
+    isDatabaseUpdated: boolean;
     constructor(Rnum: number) {
         this.num = Rnum;
         this.IsFull = false;
@@ -98,5 +99,6 @@ export class Room {
         this.ball = null;
         this.winner = "";
         this.loser = "";
+        this.isDatabaseUpdated = false;
     }
 }

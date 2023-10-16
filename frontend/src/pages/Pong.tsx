@@ -3,13 +3,12 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, RoundedBox, Sphere } from "@react-three/drei";
 import { DoubleSide } from "three";
 import NavBar from "../components/Navbar";
-import { useLocation, useParams } from "react-router-dom";
 
-var direction: number;
-var speed: number;
-var xval: number;
-var xdir: number;
-var move: boolean;
+let direction: number;
+let speed: number;
+let xval: number;
+let xdir: number;
+let move: boolean;
 
 function init() {
   direction = 1;
@@ -125,32 +124,132 @@ function GameObjects(props: any) {
   );
 }
 
-export default function Game(props: any) {
-  {
-    const { paddleColor, ballColor, difficulty } = useParams();
+const CallEverything = (props: any) => {
+  return (
+    <div className="flex flex-col App background-image h-screen overflow-y-scroll ">
+        <NavBar />
+        <div className="h-[80%] w-full" onMouseLeave={() => setPause(true)} onMouseEnter={() => setPause(false)}>
+          <Canvas camera={{ position: cameraPosition }} >
+            <OrbitControls enableRotate={true} enableZoom={true} />
+            <Plane />
+            <GameObjects color={paddleColor} ballColor={ballColor} difficulty={difficulty} pause={pause} />
+          </Canvas>
+        </div>
+      </div>
+  );
+}
 
-    // Now, you can use these values in your component
-    // For example:
-    console.log("Paddle Color:", paddleColor);
-    console.log("Ball Color:", ballColor);
-    console.log("Difficulty:", difficulty);
-  }
-  const [cameraPosition, setCameraPosition] = useState<number[] | any>([0.001, 20, 0]);
+const  SettingVars = (props: any) => {
+
+  const paddle: any = useRef();
+  const ball: any = useRef();
+  const level: any = useRef();
+
+  return (
+    <div className="flex flex-col App background-image min-h-screen w-screen h-screen bg-npc-gra">
+      <NavBar />
+      <div className="m-auto justify-between grid grid-cols-3 gap-4 bg-npc-gray p-8 rounded-xl">
+        <div className="col-span-3 text-gray-200 font-montserrat font-semibold mb-1">
+          Game's Settings
+        </div>
+        <div className="col-span-3 h-0.5 bg-gray-200 mb-6 "></div>
+        <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
+          <label
+            className="dark:text-white pr-2 font-semibold"
+            htmlFor="difficulty"
+          >
+            Difficulty:
+          </label>
+          <select
+            ref={level}
+            name="difficulty"
+            id="difficulty"
+            onChange={() => {
+              props.difficulty = level.current.value;
+            }}
+          >
+            <option value="0.07">Easy</option>
+            <option value="0.1">Medium</option>
+            <option value="0.2">Hard</option>
+          </select>
+        </div>
+        <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
+          <label
+            className="dark:text-white pr-2 font-semibold"
+            htmlFor="paddle color"
+          >
+            Paddle's Color:
+          </label>
+          <input
+            className="bg-transparent"
+            name="paddle color"
+            ref={paddle}
+            type="color"
+            onChange={() => {
+              props.paddleColor = paddle.current.value;
+            }}
+          ></input>
+        </div>
+        <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
+          <label
+            className="dark:text-white pr-2 font-semibold"
+            htmlFor="ball color"
+          >
+            Ball's Color:
+          </label>
+          <input
+            className="bg-transparent rounded-lg"
+            name="ball color"
+            ref={ball}
+            type="color"
+            onChange={() => {
+              props.ballColor = ball.current.value;
+              props.isGameStarted = true;
+            }}
+          ></input>
+        </div>
+        <div className="col-span-3 flex justify-center items-center mt-4">
+          <button onClick={props.isGameStarted} className="p-1 bg-npc-purple hover:bg-purple-hover rounded-lg hover:translate-y-[-3px] text-white font-montserrat transition-all">
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Game() {
+  const [cameraPosition] = useState<number[] | any>([0.001, 20, 0]);
   const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)");
   const [ballColor, setBallColor] = useState<string>("red");
   const [difficulty, setDifficulty] = useState<string>("0.1");
   const [pause, setPause] = useState<boolean>(false);
+  const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
 
-  return (
-    <div className="flex flex-col App background-image h-screen overflow-y-scroll ">
-      <NavBar />
-      <div className="h-[80%] w-full" onMouseLeave={() => setPause(true)} onMouseEnter={() => setPause(false)}>
-        <Canvas camera={{ position: cameraPosition }} >
-          <OrbitControls enableRotate={true} enableZoom={true} />
-          <Plane />
-          <GameObjects color={paddleColor} ballColor={ballColor} difficulty={difficulty} pause={pause} />
-        </Canvas>
+  useEffect(() => {
+
+  }, [isGameStarted]);
+
+  if (isGameStarted) {
+    return (
+      <div className="flex flex-col App background-image h-screen overflow-y-scroll ">
+        <NavBar />
+        <div className="h-[80%] w-full" onMouseLeave={() => setPause(true)} onMouseEnter={() => setPause(false)}>
+          <Canvas camera={{ position: cameraPosition }} >
+            <OrbitControls enableRotate={true} enableZoom={true} />
+            <Plane />
+            <GameObjects color={paddleColor} ballColor={ballColor} difficulty={difficulty} pause={pause} />
+          </Canvas>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+  else {
+    return (
+      <SettingVars paddleColor={paddleColor} ballColor={ballColor} difficulty={difficulty} isGameStarted={isGameStarted}
+      camera={camera}
+      />
+    )
+  }
+  
 }

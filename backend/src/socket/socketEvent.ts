@@ -32,7 +32,7 @@ export class SocketEvent  {
     connectedCli: number;
     Rooms: Room[];
     private prisma: PrismaClient;
-    isDatabaseUpdated: boolean;
+    // isDatabaseUpdated: boolean;
 
     constructor(
         private readonly jwtService: JwtService,
@@ -44,7 +44,6 @@ export class SocketEvent  {
         this.Rooms = [];
         this.SocketsByUser = new Map<string, string>();
         this.prisma = new PrismaClient();
-        // this.isDatabaseUpdated = false;
     }
     
     getPrismaClient() {
@@ -188,7 +187,7 @@ export class SocketEvent  {
                         }
                         this.server.to(`${currentRoom.client1.id}`).emit('gameStarted', gameData);
                         this.server.to(`${currentRoom.client2.id}`).emit('gameStarted', gameData);
-                        this.isDatabaseUpdated = false;
+                        currentRoom.isDatabaseUpdated = false;
                     })
                     this.connectedCli++;
                 }
@@ -379,6 +378,7 @@ export class SocketEvent  {
                     },
                     data,
                 });
+                room.isDatabaseUpdated = false;
             }
         }
     }
@@ -387,10 +387,11 @@ export class SocketEvent  {
     handleGameEnded(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number, gamedata: GameData}) {
         const {_room, gamedata} = data;
         const token: string = client.handshake.headers.authorization.slice(7);
+        const userObj = this.jwtService.verify(token); 
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id) {
-                if (this.Rooms[_room].client1.inGame === false && this.Rooms[_room].client2.inGame === false && this.isDatabaseUpdated === false) {
-                    this.isDatabaseUpdated = true;    
+                if (this.Rooms[_room].client1.inGame === false && this.Rooms[_room].client2.inGame === false && this.Rooms[_room].isDatabaseUpdated === false) {
+                    this.Rooms[_room].isDatabaseUpdated = true;    
                     this.IfGameIsFinish(this.Rooms[_room], gamedata);
                 }
             }
