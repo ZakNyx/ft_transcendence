@@ -10,6 +10,12 @@ let xval: number;
 let xdir: number;
 let move: boolean;
 
+interface GameSettings {
+  paddleColor: string;
+  ballColor: string;
+  difficulty: string;
+}
+
 function init() {
   direction = 1;
   speed = 0.2;
@@ -125,25 +131,67 @@ function GameObjects(props: any) {
 }
 
 const CallEverything = (props: any) => {
+  const [pause, setPause] = useState<boolean>(false);
+
+  console.log('test testasdfsadf im here');
   return (
-    <div className="flex flex-col App background-image h-screen overflow-y-scroll ">
-        <NavBar />
-        <div className="h-[80%] w-full" onMouseLeave={() => setPause(true)} onMouseEnter={() => setPause(false)}>
-          <Canvas camera={{ position: cameraPosition }} >
-            <OrbitControls enableRotate={true} enableZoom={true} />
-            <Plane />
-            <GameObjects color={paddleColor} ballColor={ballColor} difficulty={difficulty} pause={pause} />
-          </Canvas>
-        </div>
+    <div className="flex flex-col App background-image h-screen overflow-y-scroll">
+      <NavBar />
+      <div
+        className="h-[80%] w-full"
+        onMouseLeave={() => setPause(true)}
+        onMouseEnter={() => setPause(false)}
+      >
+        <Canvas camera={{ position: props.cameraPosition }}>
+          <OrbitControls enableRotate={true} enableZoom={true} />
+          <Plane />
+          <GameObjects
+            color={props.paddleColor}
+            ballColor={props.ballColor}
+            difficulty={props.difficulty}
+            pause={pause}
+          />
+        </Canvas>
       </div>
+    </div>
   );
-}
+};
 
 const  SettingVars = (props: any) => {
 
-  const paddle: any = useRef();
-  const ball: any = useRef();
-  const level: any = useRef();
+  const paddleColorRef: React.RefObject<HTMLInputElement> =
+    useRef<HTMLInputElement>(null);
+  const ballColorRef: React.RefObject<HTMLInputElement> =
+    useRef<HTMLInputElement>(null);
+  const levelRef: React.RefObject<HTMLSelectElement> =
+    useRef<HTMLSelectElement>(null);
+
+
+  const [paddleColor, setPaddleColor] = useState<string>(props.paddleColor);
+  const [ballColor, setBallColor] = useState<string>(props.ballColor);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>(props.difficulty);
+
+  const handlePaddleColorChange = () => {
+    if (paddleColorRef.current) {
+      setPaddleColor(paddleColorRef.current.value);
+    }
+  };
+
+  const handleBallColorChange = () => {
+    if (ballColorRef.current) { 
+      setBallColor(ballColorRef.current.value);
+    }
+  };
+
+  const handleDifficultyChange = () => {
+    if (levelRef.current) {
+      setSelectedDifficulty(levelRef.current.value);
+    }
+  };
+
+  const handleSaveChanges = () => {
+    props.onSettingsChange(paddleColor, ballColor, selectedDifficulty);
+  };
 
   return (
     <div className="flex flex-col App background-image min-h-screen w-screen h-screen bg-npc-gra">
@@ -161,12 +209,10 @@ const  SettingVars = (props: any) => {
             Difficulty:
           </label>
           <select
-            ref={level}
+            ref={levelRef}
             name="difficulty"
             id="difficulty"
-            onChange={() => {
-              props.difficulty = level.current.value;
-            }}
+            onChange={handleDifficultyChange}
           >
             <option value="0.07">Easy</option>
             <option value="0.1">Medium</option>
@@ -183,11 +229,9 @@ const  SettingVars = (props: any) => {
           <input
             className="bg-transparent"
             name="paddle color"
-            ref={paddle}
+            ref={paddleColorRef}
             type="color"
-            onChange={() => {
-              props.paddleColor = paddle.current.value;
-            }}
+            onChange={handlePaddleColorChange}
           ></input>
         </div>
         <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
@@ -200,16 +244,15 @@ const  SettingVars = (props: any) => {
           <input
             className="bg-transparent rounded-lg"
             name="ball color"
-            ref={ball}
+            ref={ballColorRef}
             type="color"
-            onChange={() => {
-              props.ballColor = ball.current.value;
-              props.isGameStarted = true;
-            }}
+            onChange={handleBallColorChange}
           ></input>
         </div>
         <div className="col-span-3 flex justify-center items-center mt-4">
-          <button onClick={props.isGameStarted} className="p-1 bg-npc-purple hover:bg-purple-hover rounded-lg hover:translate-y-[-3px] text-white font-montserrat transition-all">
+          <button 
+            onClick={handleSaveChanges}
+            className="p-1 bg-npc-purple hover:bg-purple-hover rounded-lg hover:translate-y-[-3px] text-white font-montserrat transition-all">
             Save changes
           </button>
         </div>
@@ -220,36 +263,41 @@ const  SettingVars = (props: any) => {
 
 export default function Game() {
   const [cameraPosition] = useState<number[] | any>([0.001, 20, 0]);
-  const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)");
-  const [ballColor, setBallColor] = useState<string>("red");
-  const [difficulty, setDifficulty] = useState<string>("0.1");
-  const [pause, setPause] = useState<boolean>(false);
   const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
 
-  useEffect(() => {
+  const [settings, setSettings] = useState<GameSettings>({
+    paddleColor: "rgb(255, 255, 255)",
+    ballColor: "red",
+    difficulty: "0.1",
+  });
 
-  }, [isGameStarted]);
+  const handleSettingsChange = (paddleColor: string, ballColor: string, difficulty: string) => {
+    setSettings({ paddleColor, ballColor, difficulty });
+    setIsGameStarted(true);
+  };
 
-  if (isGameStarted) {
+  if (!isGameStarted) {
     return (
-      <div className="flex flex-col App background-image h-screen overflow-y-scroll ">
-        <NavBar />
-        <div className="h-[80%] w-full" onMouseLeave={() => setPause(true)} onMouseEnter={() => setPause(false)}>
-          <Canvas camera={{ position: cameraPosition }} >
-            <OrbitControls enableRotate={true} enableZoom={true} />
-            <Plane />
-            <GameObjects color={paddleColor} ballColor={ballColor} difficulty={difficulty} pause={pause} />
-          </Canvas>
-        </div>
+      <div>
+        <SettingVars
+          paddleColor={settings.paddleColor}
+          ballColor={settings.ballColor}
+          difficulty={settings.difficulty}
+          onSettingsChange={handleSettingsChange}
+        />
       </div>
     );
   }
-  else {
+  if (isGameStarted) {
     return (
-      <SettingVars paddleColor={paddleColor} ballColor={ballColor} difficulty={difficulty} isGameStarted={isGameStarted}
-      camera={camera}
-      />
+      <div>
+        <CallEverything
+          cameraPosition={cameraPosition}
+          paddleColor={settings.paddleColor}
+          ballColor={settings.ballColor}
+          difficulty={settings.difficulty}
+        />
+      </div>
     )
   }
-  
 }
