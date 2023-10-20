@@ -110,6 +110,7 @@ export class SocketEvent  {
     IfClientInGame = (clientId: string): boolean => {
         let i: number = 0;
         for (i; i < this.RoomNum; i++) {
+            console.log('test test allah allah');
             if (this.Rooms[i].client1.id === clientId) {
 
                 if (this.Rooms[i].client1.inGame) {
@@ -408,23 +409,11 @@ export class SocketEvent  {
     @SubscribeMessage('leaveQueue')
     handleleavequeue(@ConnectedSocket() client: Socket, @MessageBody() room: number) {
         console.log(`checking room Number if exist: ${room}`);
-        console.log(`check also if the client1 is in game : ${this.Rooms[room].client1.inGame}`);
         if (this.Rooms[room] && !this.Rooms[room].client1.inGame) {
-            console.log(`check client.id : ${client.id}`);
-            console.log(`check if room client1.is is client.id: ${this.Rooms[room].client1.id} `);
             if (this.Rooms[room].client1.id === client.id) {
                 if (this.SocketsByUser.has(this.Rooms[room].client1.token))
                     this.SocketsByUser.delete(this.Rooms[room].client1.token);
                 this.Rooms[room].client1.socket.leave(`${room}`);
-                // delete this.Rooms[room].client1.window;
-                // this.Rooms[room].client1.window = null;
-                // delete this.Rooms[room].client1;
-                // this.Rooms[room].client1 = null;
-                // delete this.Rooms[room].game;
-                // this.Rooms[room].game = null;
-                // delete this.Rooms[room];
-                // this.Rooms[room] = null;
-                console.log(`check connectedCli before leaving the queue ${this.connectedCli}`);
                 this.connectedCli--;
                 this.RoomNum++;
                 console.log(`check connectedCli after leaving the queue ${this.connectedCli}`);
@@ -439,7 +428,6 @@ export class SocketEvent  {
         const token = client.handshake.headers.authorization.slice(7);
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id)
-                console.log(`checking room number : ${room}`);
                 this.MoveEverthing(x, this.Rooms[room], client.id);
         }
     }
