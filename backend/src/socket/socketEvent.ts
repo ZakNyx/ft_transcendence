@@ -163,9 +163,11 @@ export class SocketEvent  {
                 this.connectedCli++;
             }
             else {
+                if (!this.Rooms[this.RoomNum])
+                    return;
                 client.join(`${this.RoomNum}`);
                 const currentRoom = this.Rooms[this.RoomNum];
-                if (currentRoom) {
+                if (currentRoom && currentRoom.client1) {
                     if (currentRoom.client1.token === token){
                         console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal");
                         client.leave(`${this.RoomNum}`);
@@ -176,7 +178,6 @@ export class SocketEvent  {
                     currentRoom.client2.id = client.id;
                     currentRoom.client2.socket = client;
                     currentRoom.client2.username = userObj.username;
-                    // console.log(`this client : ${userObj.username} sending a join event`);
                     this.server.to(`${currentRoom.client2.id}`).emit('joined', this.RoomNum);
                     this.createGameRecord(currentRoom.client1.username, currentRoom.client2.username)
                     .then((newgame) => {
@@ -199,22 +200,28 @@ export class SocketEvent  {
             }
         }
         catch (err) {
-            console.log(`Error: ${err}`);
+            console.log(`Error123: ${err}`);
         }
     }
 
     //Disconnection
     handleDisconnection = (client: Socket) => {
         console.log(`Client Disconnected: ${client.id}`);
-        const token: string = client.handshake.headers.authorization;
+        const token: string = client.handshake.headers.authorization.slice(7);
         this.Rooms.forEach( (item) => {
-            delete item.client1.window;
-            delete item.client2.window;
-            delete item.client1;
-            delete item.client2;
-            delete item.game;
+            if (item.client1.id === client.id) {
+                delete item.client1.window;
+                delete item.client1;
+                item.client1 = null;
+            }
+            if (item.client2.id === client.id) {
+                delete item.client2.window;
+                delete item.client2;
+                delete item.game;
+                item.client2 = null;
+                item.game = null;
+            }
         })
-        delete this.Rooms;
         if (this.SocketsByUser.has(token))
             this.SocketsByUser.delete(token);
     }
@@ -400,12 +407,29 @@ export class SocketEvent  {
 
     @SubscribeMessage('leaveQueue')
     handleleavequeue(@ConnectedSocket() client: Socket, @MessageBody() room: number) {
-        console.log('client leaves the room');
-        if (this.Rooms[room] && (this.Rooms[room].client1.id === client.id) && !this.Rooms[room].client1.inGame){
-            this.Rooms[room].client1.socket.leave(`${room}`);
-            if (this.SocketsByUser.has(this.Rooms[room].client1.token))
-                this.SocketsByUser.delete(this.Rooms[room].client1.token);
-
+        console.log(`checking room Number if exist: ${room}`);
+        console.log(`check also if the client1 is in game : ${this.Rooms[room].client1.inGame}`);
+        if (this.Rooms[room] && !this.Rooms[room].client1.inGame) {
+            console.log(`check client.id : ${client.id}`);
+            console.log(`check if room client1.is is client.id: ${this.Rooms[room].client1.id} `);
+            if (this.Rooms[room].client1.id === client.id) {
+                if (this.SocketsByUser.has(this.Rooms[room].client1.token))
+                    this.SocketsByUser.delete(this.Rooms[room].client1.token);
+                this.Rooms[room].client1.socket.leave(`${room}`);
+                // delete this.Rooms[room].client1.window;
+                // this.Rooms[room].client1.window = null;
+                // delete this.Rooms[room].client1;
+                // this.Rooms[room].client1 = null;
+                // delete this.Rooms[room].game;
+                // this.Rooms[room].game = null;
+                // delete this.Rooms[room];
+                // this.Rooms[room] = null;
+                console.log(`check connectedCli before leaving the queue ${this.connectedCli}`);
+                this.connectedCli--;
+                this.RoomNum++;
+                console.log(`check connectedCli after leaving the queue ${this.connectedCli}`);
+                console.log('client leaves the room');
+            }
         }
     }
 
@@ -415,6 +439,7 @@ export class SocketEvent  {
         const token = client.handshake.headers.authorization.slice(7);
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id)
+                console.log(`checking room number : ${room}`);
                 this.MoveEverthing(x, this.Rooms[room], client.id);
         }
     }

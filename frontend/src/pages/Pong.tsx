@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import * as THREE from 'three'
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, RoundedBox, Sphere } from "@react-three/drei";
-import { DoubleSide } from "three";
 import NavBar from "../components/Navbar";
 
 let direction: number;
@@ -26,14 +26,14 @@ function init() {
 
 init();
 
-function Plane() {
+const PlayArea = () => {
   return (
     <mesh rotation-x={Math.PI * -0.5}>
       <planeGeometry args={[15, 20]} />
-      <meshBasicMaterial color="rgb(0, 0, 0)" side={DoubleSide} />
+      <meshBasicMaterial color="rgb(0, 0, 0)" side={THREE.DoubleSide} />
     </mesh>
   );
-}
+};
 
 function GameObjects(props: any) {
   const refPlayer: any = useRef();
@@ -133,7 +133,6 @@ function GameObjects(props: any) {
 const CallEverything = (props: any) => {
   const [pause, setPause] = useState<boolean>(false);
 
-  console.log('test testasdfsadf im here');
   return (
     <div className="flex flex-col App background-image h-screen overflow-y-scroll">
       <NavBar />
@@ -144,7 +143,7 @@ const CallEverything = (props: any) => {
       >
         <Canvas camera={{ position: props.cameraPosition }}>
           <OrbitControls enableRotate={true} enableZoom={true} />
-          <Plane />
+          <PlayArea />
           <GameObjects
             color={props.paddleColor}
             ballColor={props.ballColor}

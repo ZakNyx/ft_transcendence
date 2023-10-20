@@ -18,6 +18,11 @@ const PlayArea = () => {
   );
 };
 
+interface GameSettings {
+  paddleColor: string;
+  ballColor: string;
+}
+
 const PlayerPaddle = (props: any) => {
   const refPlayer = useRef<MutableRefObject<undefined> | any>();
 
@@ -106,6 +111,83 @@ const OpponentPlayerPaddle = (props: any) => {
   );
 };
 
+const  SettingVars = (props: any) => {
+
+  const paddleColorRef: React.RefObject<HTMLInputElement> =
+    useRef<HTMLInputElement>(null);
+  const ballColorRef: React.RefObject<HTMLInputElement> =
+    useRef<HTMLInputElement>(null);
+
+
+  const [paddleColor, setPaddleColor] = useState<string>(props.paddleColor);
+  const [ballColor, setBallColor] = useState<string>(props.ballColor);
+
+  const handlePaddleColorChange = () => {
+    if (paddleColorRef.current) {
+      setPaddleColor(paddleColorRef.current.value);
+    }
+  };
+
+  const handleBallColorChange = () => {
+    if (ballColorRef.current) { 
+      setBallColor(ballColorRef.current.value);
+    }
+  };
+
+  const handleSaveChanges = () => {
+    props.onSettingsChange(paddleColor, ballColor);
+  };
+
+  return (
+    <div className="flex flex-col App background-image min-h-screen w-screen h-screen bg-npc-gra">
+      <NavBar />
+      <div className="m-auto justify-between grid grid-cols-3 gap-4 bg-npc-gray p-8 rounded-xl">
+        <div className="col-span-3 text-gray-200 font-montserrat font-semibold mb-1">
+          Game's Settings
+        </div>
+        <div className="col-span-3 h-0.5 bg-gray-200 mb-6 "></div>
+        <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
+          <label
+            className="dark:text-white pr-2 font-semibold"
+            htmlFor="paddle color"
+          >
+            Paddle's Color:
+          </label>
+          <input
+            className="bg-transparent"
+            name="paddle color"
+            ref={paddleColorRef}
+            type="color"
+            onChange={handlePaddleColorChange}
+          ></input>
+        </div>
+        <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
+          <label
+            className="dark:text-white pr-2 font-semibold"
+            htmlFor="ball color"
+          >
+            Ball's Color:
+          </label>
+          <input
+            className="bg-transparent rounded-lg"
+            name="ball color"
+            ref={ballColorRef}
+            type="color"
+            onChange={handleBallColorChange}
+          ></input>
+        </div>
+        <div className="col-span-3 flex justify-center items-center mt-4">
+          <button 
+            onClick={handleSaveChanges}
+            className="p-1 bg-npc-purple hover:bg-purple-hover rounded-lg hover:translate-y-[-3px] text-white font-montserrat transition-all">
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const CallEverything = (props: any) => {
   return (
     <>
@@ -127,25 +209,28 @@ const RotatedCircle: React.FC<any> = (props) => {
 
   useEffect(() => {
     if (!isInGame) {
-      console.log('rak ba9i la3b a chamchoun');
+      console.log("rak ba9i la3b a chamchoun");
     } else {
       leaveQueue(props);
     }
   }, [isInGame]);
 
-    return (
-      <div className="h-screen flex flex-col items-center justify-center overflow-hidden">
-        <RotatingButton />
-        <div className="mt-4">
-          <NavLink to="/home">
-            <button onClick={() => leaveQueue(props)} className="bg-red-500 hover:bg-red-600 py-2 px-4 rounded-lg transition text-white">
-              Leave the queue
-            </button>
-          </NavLink>
-        </div>
+  return (
+    <div className="h-screen flex flex-col items-center justify-center overflow-hidden">
+      <RotatingButton />
+      <div className="mt-4">
+        <NavLink to="/home">
+          <button
+            onClick={() => leaveQueue(props)}
+            className="bg-red-500 hover:bg-red-600 py-2 px-4 rounded-lg transition text-white"
+          >
+            Leave the queue
+          </button>
+        </NavLink>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
 export default function Multiplayer() {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -155,10 +240,14 @@ export default function Multiplayer() {
   const [IsGameEnded, setIsGameEnded] = useState<boolean>(false);
   const [InGame, setInGame] = useState<boolean>(false);
   const [StillInGame, setStillInGame] = useState<boolean>(false);
+  const [changeSettings, setChangeSettings] = useState<boolean>(false);
+
+  const [settings, setSettings] = useState<GameSettings>({
+    paddleColor: "rgb(255, 255, 255)",
+    ballColor: "red",
+  });
 
   const [result, setResult] = useState<string>("");
-  const [paddleColor, setPaddleColor] = useState<string>("rgb(255, 255, 255)");
-  const [ballColor, setBallColor] = useState<string>("red");
 
   const [RoomNumber, setRoomNumber] = useState<number>(-1);
   const [token, setToken] = useState<string | null>(null);
@@ -168,9 +257,6 @@ export default function Multiplayer() {
 
   const [gameData, setGameData] = useState<{}>({});
 
-  const paddle: any = useRef();
-  const ball: any = useRef();
-
   const tokenCookie: string | undefined = document.cookie
     .split("; ")
     .find((cookie) => cookie.startsWith("token="));
@@ -179,7 +265,7 @@ export default function Multiplayer() {
     setToken(tokenCookie.split("=")[1]);
   }
 
-  if (!socket && token) {
+  if (!socket && token && changeSettings) {
     setSocket(
       io("http://localhost:3000/Game", {
         extraHeaders: {
@@ -190,6 +276,10 @@ export default function Multiplayer() {
     setIsConnected(true);
   }
 
+  const handleSettingsChange = (paddleColor: string, ballColor: string) => {
+    setSettings({ paddleColor, ballColor });
+    setChangeSettings(true);
+  };
 
   useEffect(() => {
     if (socket) {
@@ -232,6 +322,7 @@ export default function Multiplayer() {
 
     return () => {
       if (socket) {
+        console.log('game comp unmounted')
         socket.off("joined");
         socket.off("gameStarted");
         socket.off("gameEnded");
@@ -241,86 +332,65 @@ export default function Multiplayer() {
     };
   }, [RoomNumber, IsGameStarted, socket]);
 
-  if (isConnected && IsGameStarted && !IsGameEnded) {
+  if (!changeSettings) {
     return (
-      <div className="background-image">
-        <NavBar />
-        <ScoreBar
-          score={myScore}
-          enemy_score={enemyScore}
-          you="you"
-          opps="enemy"
+      <div>
+        <SettingVars
+          paddleColor={settings.paddleColor}
+          ballColor={settings.ballColor}
+          onSettingsChange={handleSettingsChange}
         />
-        <div>
-          <label className="dark:text-white" htmlFor="paddle color">
-            paddle color:
-          </label>
-          <label className="dark:text-blue" htmlFor="paddle color">
-            paddle color:
-          </label>
-          <input
-            className="bg-transparent"
-            name="paddle color"
-            ref={paddle}
-            type="color"
-            onChange={() => {
-              setPaddleColor(paddle.current.value);
-            }}
-          ></input>
-        </div>
-        <div>
-          <label className="dark:text-white" htmlFor="ball color">
-            ball color
-          </label>
-          <label className="dark:text-blue" htmlFor="ball color">
-            ball color
-          </label>
-          <input
-            className="bg-transparent"
-            name="ball color"
-            ref={ball}
-            type="color"
-            onChange={() => {
-              setBallColor(ball.current.value);
-            }}
-          ></input>
-        </div>
-        <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center">
-          <Canvas camera={{ position: [0.0005, 15, 0] }}>
-            <OrbitControls enableRotate={false} enableZoom={false} />
-            <PlayArea />
-            <CallEverything
-              socket={socket}
-              roomId={RoomNumber}
-              paddlecolor={paddleColor}
-              ballcolor={ballColor}
-            />
-          </Canvas>
-        </div>
       </div>
     );
   }
-  else if (isConnected && StillInGame) {
-    return (
-      <div className="background-image h-screen no-scroll">
-        <NavBar />
-        <div className="App background-image h-screen flex flex-col items-center justify-center">
-          <h2>You are already in game, go finish it first.</h2>
-        </div>
-      </div>
-    );
-  }
-  else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
-    return <EndGame result={result} socket={socket} gamedata={gameData} roomId={RoomNumber} />;
-  }
-  else if (isConnected && !IsGameStarted) {
-    return (
-        <div className="background-image h-screen no-scroll">
+  else {
+    if (isConnected && IsGameStarted && !IsGameEnded) {
+      return (
+        <div className="background-image">
           <NavBar />
-          <div className="App background-image h-screen flex flex-col items-center justify-center">
-            <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
+          <ScoreBar
+            score={myScore}
+            enemy_score={enemyScore}
+            you="you"
+            opps="enemy"
+          />
+          <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center">
+            <Canvas camera={{ position: [0.0005, 15, 0] }}>
+              <OrbitControls enableRotate={false} enableZoom={false} />
+              <PlayArea />
+              <CallEverything
+                socket={socket}
+                roomId={RoomNumber}
+                paddlecolor={settings.paddleColor}
+                ballcolor={settings.ballColor}
+              />
+            </Canvas>
           </div>
         </div>
       );
+    }
+    else if (isConnected && StillInGame) {
+      return (
+        <div className="background-image h-screen no-scroll">
+          <NavBar />
+          <div className="App background-image h-screen flex flex-col items-center justify-center">
+            <h2>You are already in game, go finish it first.</h2>
+          </div>
+        </div>
+      );
+    }
+    else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
+      return <EndGame result={result} socket={socket} gamedata={gameData} roomId={RoomNumber} />;
+    }
+    else if (isConnected && !IsGameStarted) {
+      return (
+          <div className="background-image h-screen no-scroll">
+            <NavBar />
+            <div className="App background-image h-screen flex flex-col items-center justify-center">
+              <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
+            </div>
+          </div>
+        );
+    }
   }
 }
