@@ -42,8 +42,7 @@ export default function LoginPage() {
           Play PONG with your friends
         </h1>
         <a
-          href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-fc5e1f6b7adf4e8a71272ed39555392c3ab4980710ae3924ec3bcec7462509b9&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fredirect&response_type=code
-"
+          href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-1673790452bf538aaef1e49f04a19251ad49e71f28904d907a7039619261c115&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fredirect&response_type=code"
         >
           <button className="relative bg-npc-purple hover:bg-purple-hover hover:translate-y-[-6px] transition-all active:bg-purple-active hover:cursor-pointer text-black font-bold shadow-but text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl sm:p-3 xl:p-4 rounded-lg flex items-center">
             {/* 42 Logo */}
