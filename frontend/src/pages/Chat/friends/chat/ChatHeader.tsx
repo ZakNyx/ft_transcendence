@@ -1,6 +1,6 @@
-import NavBar from '../../../../components/Navbar';
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import classes from './ChatHeader.module.css';
+import { NavLink } from 'react-router-dom';
 
 interface User {
   name: string;
@@ -20,9 +20,11 @@ const GameInvitation: FC<GameInvitationProps> = (props) => {
         <div className={classes.cardContent}>
           <h1>GAME INVITATION</h1>
           <div className={classes.choices}>
-            <button id={classes.check} className={classes.buttons} onClick={props.OpenClose}>
-              <i className="fa-solid fa-check"></i>
-            </button>
+            <NavLink to="/game/invited">
+              <button id={classes.check} className={classes.buttons} onClick={props.OpenClose}>
+                <i className="fa-solid fa-check"></i>
+              </button>
+            </NavLink>
             <button id={classes.cross} className={classes.buttons} onClick={props.OpenClose}>
               <i className="fa-solid fa-xmark"></i>
             </button>

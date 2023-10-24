@@ -15,7 +15,7 @@ interface GameData {
   }
 
 @WebSocketGateway({
-    namespace: "Game",
+    namespace: "Invited",
     cors: {
         origin: '*',
     },
@@ -23,7 +23,7 @@ interface GameData {
 
 
 @Injectable()
-export class SocketEvent  {
+export class InvitedEvent  {
     @WebSocketServer()
     server: Server;
 

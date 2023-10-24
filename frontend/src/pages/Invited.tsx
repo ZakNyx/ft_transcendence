@@ -26,7 +26,6 @@ interface GameSettings {
 const PlayerPaddle = (props: any) => {
   const refPlayer = useRef<MutableRefObject<undefined> | any>();
 
-  console.log(`check gameData: ${props.gamedata}`);
   useFrame(({ mouse }) => {
     if (refPlayer.current) {
       refPlayer.current.position.x = (1 - mouse.y) * 15 - 15;
@@ -232,7 +231,7 @@ const RotatedCircle: React.FC<any> = (props) => {
   );
 };
 
-export default function Multiplayer() {
+export default function Invited() {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -267,7 +266,7 @@ export default function Multiplayer() {
 
   if (!socket && token && changeSettings) {
     setSocket(
-      io("http://localhost:3000/Game", {
+      io("http://localhost:3000/Invited", {
         extraHeaders: {
           Authorization: `Bearer ${token}`,
         },
@@ -309,6 +308,11 @@ export default function Multiplayer() {
         setResult("won");
       });
 
+      socket.on("invitation", (player) => {
+        console.log(`${player} invite you to a pong game :)`);
+
+      })
+
       socket.on("lost", () => {
         setResult("lost");
       });
@@ -323,12 +327,12 @@ export default function Multiplayer() {
 
     return () => {
       if (socket) {
-        console.log('game comp unmounted')
         socket.off("joined");
         socket.off("gameStarted");
         socket.off("gameEnded");
         socket.off("won");
         socket.off("lost");
+        socket.disconnect();
       }
     };
   }, [RoomNumber, IsGameStarted, socket]);

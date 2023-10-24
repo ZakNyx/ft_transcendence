@@ -8,11 +8,11 @@ import Leaderboard from "./pages/Leaderboard";
 import Error401 from "./pages/Error401";
 import Game from "./pages/Pong";
 import Multiplayer from "./pages/Multiplayer";
-import { AddMemberGruop, CreatGroup, GroupSettingGruop, JoinGruop } from "./pages/Chat/Groups";
 import Channels from "./pages/Chat/channels/Channels";
 import Friends from "./pages/Chat/friends/Friends";
 import { DataContextProvider } from "./pages/Chat/friends/data_context/data-context";
 import { DataChannelProvider } from "./pages/Chat/channels/data_context/data-context";
+import Invited from "./pages/Invited";
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/game/invited" element={<Invited />} />
         <Route path="/game/singleplayer" element={<Game />} />
         <Route path="/game/multiplayer" element={<Multiplayer />} />
 				<Route >
@@ -38,4 +39,3 @@ function App() {
 }
 
 export default App;
-
