@@ -54,6 +54,7 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
   const navigate = useNavigate();
 
 
+
   useEffect(() => {
     // Function to fetch user data and set it in the state
     const fetchUserData = async () => {
@@ -91,6 +92,9 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
 
     // Call the fetchUserData function
     fetchUserData();
+    return (() => {
+      console.log('scoreboard is unmount')
+    })
   }, [username]);
 
   useEffect(() => {

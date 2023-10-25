@@ -226,9 +226,9 @@ export class SocketEvent  {
             this.SocketsByUser.delete(token);
     }
 
-    BallMovements = async (room: Room, clientId: string) => {
+    BallMovements = async (room: Room, clientId: string, gamedata: GameData) => {
         // Trying to move the ball, for each room separate.
-        if (room.IsFull && room.game.IsStarted) {
+        if (room.IsFull && room.game.IsStarted && !room.game.IsFinish) {
 
             //change the ball SpeedX and ball SpeedY
             room.ball.z += room.ball.zdirection * room.ball.speed;
@@ -275,6 +275,7 @@ export class SocketEvent  {
                 room.game.IsFinish = true;
                 room.client1.inGame = false;
                 room.client2.inGame = false;
+                room.isDatabaseUpdated = true;
                 this.server.to(`${room.client1.id}`).emit('gameEnded');
                 this.server.to(`${room.client2.id}`).emit('gameEnded');
                 if (room.client1.score === room.game.WinReq) {
@@ -294,6 +295,10 @@ export class SocketEvent  {
                     room.winner = room.client2.username;
                     room.loser = room.client1.username;
                 }
+                if (!room.client1.inGame && !room.client2.inGame && room.isDatabaseUpdated) {
+                    this.IfGameIsFinish(room, gamedata);
+
+                }
             }
 
             // Resending Ball Coords to clients
@@ -307,19 +312,23 @@ export class SocketEvent  {
     }
 
     @SubscribeMessage('demand')
-    handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
+    handleBallDemand(@ConnectedSocket() client: Socket,  @MessageBody() data: {_room: number, gamedata: GameData}) {
         try {
+            const {_room, gamedata} = data;
             const token = client.handshake.headers.authorization.slice(7);
             const userObj = this.jwtService.verify(token); 
             if (this.Rooms[_room].IsFull) {
-                this.Rooms[_room].client1.inGame = true;
-                this.Rooms[_room].client2.inGame = true;
-                this.Rooms[_room].game.IsStarted = true;
+                if (this.Rooms[_room].setVars === false) {
+                    this.Rooms[_room].setVars = true;
+                    this.Rooms[_room].client1.inGame = true;
+                    this.Rooms[_room].client2.inGame = true;
+                    this.Rooms[_room].game.IsStarted = true;
+                }
                 if (this.SocketsByUser.has(token)) {
                     if ((this.SocketsByUser.get(token) === client.id) && (_room < this.RoomNum &&
                     (this.Rooms[_room].client1.username === userObj.username
                     || this.Rooms[_room].client2.username === userObj.username))) {
-                        this.BallMovements(this.Rooms[_room], client.id);
+                        this.BallMovements(this.Rooms[_room], client.id, gamedata);
                     }
                 }
             }
@@ -333,8 +342,7 @@ export class SocketEvent  {
     IfGameIsFinish = async (room: Room, gamedata: GameData) => {
         if (room.client1.inGame || room.client2.inGame)
             return ;
-        else {
-            console.log('test test game salat now time for updating database');
+        else if (!room.client1.inGame && !room.client2.inGame) {
             this.updateGameResult(gamedata.gameId, room.client1.score.toString(), room.client2.score.toString());
             await this.prismaService.game.findUnique({
                 where: {
@@ -390,16 +398,21 @@ export class SocketEvent  {
         }
     }
 
-    @SubscribeMessage('gameEnded')
-    handleGameEnded(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number, gamedata: GameData}) {
+    @SubscribeMessage('leaveAndStillInGame')
+    handleLeaveGame(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number, gamedata: GameData}) {
         const {_room, gamedata} = data;
         const token: string = client.handshake.headers.authorization.slice(7);
         const userObj = this.jwtService.verify(token); 
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id) {
-                if (this.Rooms[_room].client1.inGame === false && this.Rooms[_room].client2.inGame === false && this.Rooms[_room].isDatabaseUpdated === false) {
-                    this.Rooms[_room].isDatabaseUpdated = true;    
-                    this.IfGameIsFinish(this.Rooms[_room], gamedata);
+                if (userObj.username === this.Rooms[_room].client1.username){
+                    this.Rooms[_room].client1.leave = true;
+                }
+                if (userObj.username === this.Rooms[_room].client2.username) {
+                    this.Rooms[_room].client2.leave = true;
+                }
+                if (this.Rooms[_room].client1.leave && this.Rooms[_room].client2.leave){
+                    this.Rooms[_room].game.IsFinish = true;
                 }
             }
         }

@@ -63,6 +63,7 @@ export class Client {
     username: string;
     id: string;
     token: string;
+    leave: boolean;
     constructor(num: number) {
         this.number = num;
         this.score = 0;
@@ -76,6 +77,7 @@ export class Client {
         this.id = "";
         this.token = "";
         this.username = "";
+        this.leave = false;
         this.window = new Win();
     }
 }
@@ -90,6 +92,7 @@ export class Room {
     winner: string;
     loser: string;
     isDatabaseUpdated: boolean;
+    setVars: boolean;
     constructor(Rnum: number) {
         this.num = Rnum;
         this.IsFull = false;
@@ -100,5 +103,6 @@ export class Room {
         this.winner = "";
         this.loser = "";
         this.isDatabaseUpdated = false;
+        this.setVars = false;
     }
 }

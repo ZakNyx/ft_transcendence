@@ -9,6 +9,11 @@ import NavBar from "../components/Navbar";
 import { NavLink } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
 
+interface GameSettings {
+  paddleColor: string;
+  ballColor: string;
+}
+
 const PlayArea = () => {
   return (
     <mesh rotation-x={Math.PI * -0.5}>
@@ -18,15 +23,9 @@ const PlayArea = () => {
   );
 };
 
-interface GameSettings {
-  paddleColor: string;
-  ballColor: string;
-}
-
 const PlayerPaddle = (props: any) => {
   const refPlayer = useRef<MutableRefObject<undefined> | any>();
 
-  console.log(`check gameData: ${props.gamedata}`);
   useFrame(({ mouse }) => {
     if (refPlayer.current) {
       refPlayer.current.position.x = (1 - mouse.y) * 15 - 15;
@@ -62,7 +61,7 @@ const DrawBall = (props: any) => {
   const [ball, setBall] = useState([0, 0]);
 
   useFrame(() => {
-    props.socket.emit("demand", props.room);
+    props.socket.emit("demand", {_room: props.room, gamedata: props.gamedata});
   });
 
   useEffect(() => {
@@ -193,7 +192,7 @@ const CallEverything = (props: any) => {
     <>
       <PlayerPaddle socket={props.socket} roomId={props.roomId} paddlecolor={props.paddlecolor} gamedata={props.gameData}/>
       <OpponentPlayerPaddle socket={props.socket} paddlecolor={props.paddlecolor} />
-      <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} />
+      <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} gamedata={props.gamedata}/>
     </>
   );
 };
@@ -301,6 +300,7 @@ export default function Multiplayer() {
 
       socket.on("gameEnded", () => {
         console.log("game ended nod tga3ad");
+        socket.disconnect();
         setIsGameEnded(true);
         setStillInGame(false);
       });
@@ -323,6 +323,9 @@ export default function Multiplayer() {
 
     return () => {
       if (socket) {
+        if (InGame) {
+          socket.emit('leaveAndStillInGame')
+        }
         console.log('game comp unmounted')
         socket.off("joined");
         socket.off("gameStarted");
@@ -346,6 +349,8 @@ export default function Multiplayer() {
   }
   else {
     if (isConnected && IsGameStarted && !IsGameEnded) {
+      console.log('render game comp')
+      
       return (
         <div className="background-image">
           <NavBar />
@@ -357,13 +362,14 @@ export default function Multiplayer() {
           />
           <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center">
             <Canvas camera={{ position: [0.0005, 15, 0] }}>
-              <OrbitControls enableRotate={false} enableZoom={false} />
+              <OrbitControls enableRotate={false} enableZoom={true} />
               <PlayArea />
               <CallEverything
                 socket={socket}
                 roomId={RoomNumber}
                 paddlecolor={settings.paddleColor}
                 ballcolor={settings.ballColor}
+                gamedata={gameData}
               />
             </Canvas>
           </div>
