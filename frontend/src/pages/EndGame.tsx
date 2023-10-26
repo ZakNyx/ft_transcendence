@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const Result = (props:any) => {
+  console.log(`check result: ${props.result}`);
   return(
     <div className={`${props.result === "won" ?"text-green-400" : "text-red-400"} text-center`}>
       you {props.result}

@@ -12,7 +12,7 @@ interface GameData {
     gameId: number;
     player1: { playerID: string; score: string };
     player2: { playerID: string; score: string };
-  }
+}
 
 @WebSocketGateway({
     namespace: "Game",
@@ -32,7 +32,6 @@ export class SocketEvent  {
     connectedCli: number;
     Rooms: Room[];
     private prisma: PrismaClient;
-    // isDatabaseUpdated: boolean;
 
     constructor(
         private readonly jwtService: JwtService,
@@ -113,13 +112,13 @@ export class SocketEvent  {
             if (this.Rooms[i].client1.id === clientId) {
 
                 if (this.Rooms[i].client1.inGame) {
-                    console.log('ta sir f7alk rak deja in game a chamchoun1');
+                    console.log('ta sir f7alk rak deja in game a chamchoun1: ', i);
                     return true;
                 }
             }
             if (this.Rooms[i].client2.id === clientId) {
                 if (this.Rooms[i].client2.inGame) {
-                    console.log('ta sir f7alk rak deja in game a chamchoun2');
+                    console.log('ta sir f7alk rak deja in game a chamchoun2: ', i);
                     return true;
                 }
             }
@@ -276,16 +275,18 @@ export class SocketEvent  {
                 room.client1.inGame = false;
                 room.client2.inGame = false;
                 room.isDatabaseUpdated = true;
-                this.server.to(`${room.client1.id}`).emit('gameEnded');
-                this.server.to(`${room.client2.id}`).emit('gameEnded');
                 if (room.client1.score === room.game.WinReq) {
                     this.server.to(`${room.client1.id}`).emit('won');
                     this.server.to(`${room.client2.id}`).emit('lost');
+                    console.log('client1 won the game');
                 }
                 else {
                     this.server.to(`${room.client1.id}`).emit('lost');
                     this.server.to(`${room.client2.id}`).emit('won');
+                    console.log('client2 won the game');
                 }
+                this.server.to(`${room.client1.id}`).emit('gameEnded');
+                this.server.to(`${room.client2.id}`).emit('gameEnded');
                 if (room.client1.score > room.client2.score) {
                     room.winner = room.client1.username;
                     room.loser = room.client2.username;
@@ -297,7 +298,6 @@ export class SocketEvent  {
                 }
                 if (!room.client1.inGame && !room.client2.inGame && room.isDatabaseUpdated) {
                     this.IfGameIsFinish(room, gamedata);
-
                 }
             }
 
@@ -349,7 +349,7 @@ export class SocketEvent  {
                     id: gamedata.gameId,
                 }
             })
-    
+
             await this.prismaService.user.update({
                 where: {
                     username: room.winner,
@@ -399,22 +399,33 @@ export class SocketEvent  {
     }
 
     @SubscribeMessage('leaveAndStillInGame')
-    handleLeaveGame(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number, gamedata: GameData}) {
-        const {_room, gamedata} = data;
-        const token: string = client.handshake.headers.authorization.slice(7);
-        const userObj = this.jwtService.verify(token); 
-        if (this.SocketsByUser.has(token)) {
-            if (this.SocketsByUser.get(token) === client.id) {
-                if (userObj.username === this.Rooms[_room].client1.username){
-                    this.Rooms[_room].client1.leave = true;
-                }
-                if (userObj.username === this.Rooms[_room].client2.username) {
-                    this.Rooms[_room].client2.leave = true;
-                }
-                if (this.Rooms[_room].client1.leave && this.Rooms[_room].client2.leave){
-                    this.Rooms[_room].game.IsFinish = true;
+    handleLeaveGame(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number}) {
+
+        // console.log('here!!!');
+        if (data?._room !== undefined) {
+            const {_room} = data;
+            const token: string = client.handshake.headers.authorization.slice(7);
+            const userObj = this.jwtService.verify(token); 
+            if (this.SocketsByUser.has(token)) {
+                if (this.SocketsByUser.get(token) === client.id) {
+                    if (userObj.username === this.Rooms[_room].client1.username){
+                        this.Rooms[_room].client1.leave = true;
+                        console.log('client1 leaves the game!');
+                    }
+                    if (userObj.username === this.Rooms[_room].client2.username) {
+                        this.Rooms[_room].client2.leave = true;
+                        console.log('client2 leaves the game!');
+                    }
+                    if (this.Rooms[_room].client1.leave && this.Rooms[_room].client2.leave){
+                        console.log('Both players leave the game')
+                        this.Rooms[_room].game.IsFinish = true;
+                        this.Rooms[_room].client1.inGame = false;
+                        this.Rooms[_room].client2.inGame = false;
+                        this.Rooms[_room].game.IsStarted = false;
+                    }
                 }
             }
+            // Rest of your code
         }
     }
 

@@ -14,6 +14,12 @@ interface GameSettings {
   ballColor: string;
 }
 
+interface GameData {
+  gameId: number;
+  player1: { playerID: string; score: string };
+  player2: { playerID: string; score: string };
+}
+
 const PlayArea = () => {
   return (
     <mesh rotation-x={Math.PI * -0.5}>
@@ -254,7 +260,7 @@ export default function Multiplayer() {
   const [myScore, setmyScore] = useState<number>(0);
   const [enemyScore, setenemyScore] = useState<number>(0);
 
-  const [gameData, setGameData] = useState<{}>({});
+  const [gameData, setGameData] = useState<GameData | null>(null);
 
   const tokenCookie: string | undefined = document.cookie
     .split("; ")
@@ -306,11 +312,13 @@ export default function Multiplayer() {
       });
 
       socket.on("won", () => {
+        console.log('you won the game');
         setResult("won");
       });
 
       socket.on("lost", () => {
         setResult("lost");
+        console.log('you lost the game');
       });
 
       socket.on("Score", (data: { p1: number, p2: number, oppName: string }) => {
@@ -324,7 +332,8 @@ export default function Multiplayer() {
     return () => {
       if (socket) {
         if (InGame) {
-          socket.emit('leaveAndStillInGame')
+          // console.log('leaveAndStillInGame event is sent to backend');
+          socket.emit('leaveAndStillInGame', {_room: RoomNumber});
         }
         console.log('game comp unmounted')
         socket.off("joined");
@@ -387,6 +396,7 @@ export default function Multiplayer() {
       );
     }
     else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
+      // console.log(`check result before send it to EndGame component : ${result}`);
       return <EndGame result={result} socket={socket} gamedata={gameData} roomId={RoomNumber} />;
     }
     else if (isConnected && !IsGameStarted) {
