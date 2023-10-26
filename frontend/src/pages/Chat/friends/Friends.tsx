@@ -1,7 +1,5 @@
 import React, { useContext } from 'react';
 import Chat from './chat/Chat';
-import Channels from '../channels/Channels';
-import { Link } from 'react-router-dom';
 import { DataContext } from './data_context/data-context';
 import FriendCard from './FriendCard';
 import classes from './Friends.module.css';

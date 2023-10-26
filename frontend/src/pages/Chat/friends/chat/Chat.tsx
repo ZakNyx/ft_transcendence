@@ -1,5 +1,4 @@
-import NavBar from '../../../../components/Navbar';
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import ProfileModal from './profileModal/ProfileModal';
 import classes from './Chat.module.css';
 import ChatHeader from './ChatHeader';

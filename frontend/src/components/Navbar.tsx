@@ -6,6 +6,7 @@ import axios from "axios";
 import { initializeSocket } from "./socketManager";
 import Validate from "../components/Validate";
 import Notification from "./Notification";
+import { Socket } from "socket.io-client";
 
 interface UserData {
   userID: string;
@@ -33,6 +34,8 @@ interface notifData {
   type: string;
   data: string;
 }
+
+let sock: Socket | null = null;
 
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -79,6 +82,7 @@ function NavBar() {
           setUser(response.data);
           setUsername(response.data.username);
           const socket = initializeSocket(token);
+          sock = socket;
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error
@@ -283,4 +287,5 @@ function NavBar() {
   );
 }
 
+export { sock };
 export default NavBar;

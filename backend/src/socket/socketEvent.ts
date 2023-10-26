@@ -343,6 +343,7 @@ export class SocketEvent  {
         if (room.client1.inGame || room.client2.inGame)
             return ;
         else if (!room.client1.inGame && !room.client2.inGame) {
+            console.log('game is finish and database is updated');
             this.updateGameResult(gamedata.gameId, room.client1.score.toString(), room.client2.score.toString());
             await this.prismaService.game.findUnique({
                 where: {

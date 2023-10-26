@@ -38,7 +38,7 @@ export default function FriendList() {
           );
 
           // Set the user data in the state
-          console.log(response.data.friends);
+          console.log('checking friend list : ', response.data.friends);
           setUserFriends(response.data.friends);
         } catch (error: any) {
           console.error("Error fetching user data:", error);

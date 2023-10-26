@@ -148,56 +148,57 @@ export class InvitedEvent  {
                 this.SocketsByUser.set(token, client.id);
             }
             const userObj = this.jwtService.verify(token);
-            if (this.connectedCli % 2 === 0) {
-                client.join(`${this.RoomNum}`);
-                const newRoom = new Room(this.RoomNum);
-                console.log(`new Room is created! ${newRoom.num}`);
-                newRoom.client1 = new Client(1); // Initialize client1
-                newRoom.ball = new Ball();
-                newRoom.client1.id = client.id;
-                newRoom.client1.token = token;
-                newRoom.client1.username = userObj.username;
-                newRoom.client1.socket = client;
-                this.Rooms.push(newRoom);
-                this.server.to(`${newRoom.client1.id}`).emit('joined', this.RoomNum);
-                this.connectedCli++;
-            }
-            else {
-                if (!this.Rooms[this.RoomNum])
-                    return;
-                client.join(`${this.RoomNum}`);
-                const currentRoom = this.Rooms[this.RoomNum];
-                if (currentRoom && currentRoom.client1) {
-                    if (currentRoom.client1.token === token){
-                        console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal");
-                        client.leave(`${this.RoomNum}`);
-                        currentRoom.client1.id = client.id;
-                        return ;
-                    }
-                    currentRoom.client2 = new Client(2); // Initialize client2
-                    currentRoom.client2.id = client.id;
-                    currentRoom.client2.socket = client;
-                    currentRoom.client2.username = userObj.username;
-                    this.server.to(`${currentRoom.client2.id}`).emit('joined', this.RoomNum);
-                    this.createGameRecord(currentRoom.client1.username, currentRoom.client2.username)
-                    .then((newgame) => {
-                        const gameData: GameData = {
-                            gameId: newgame.id,
-                            player1: { playerID: currentRoom.client1.username, score: newgame.score1.toString() },
-                            player2: { playerID: currentRoom.client2.username, score: newgame.score2.toString() },
-                        }
-                        this.server.to(`${currentRoom.client1.id}`).emit('gameStarted', gameData);
-                        this.server.to(`${currentRoom.client2.id}`).emit('gameStarted', gameData);
-                        currentRoom.isDatabaseUpdated = false;
-                    })
-                    this.connectedCli++;
-                }
-            }
-            if (this.Rooms[this.RoomNum].client2) {
-                this.Rooms[this.RoomNum].IsFull = true;
-                this.BallReset(this.Rooms[this.RoomNum]);
-                this.RoomNum++;
-            }
+            console.log(`username : ${userObj.username}`)
+            // if (this.connectedCli % 2 === 0) {
+            //     client.join(`${this.RoomNum}`);
+            //     const newRoom = new Room(this.RoomNum);
+            //     console.log(`new Room is created! ${newRoom.num}`);
+            //     newRoom.client1 = new Client(1); // Initialize client1
+            //     newRoom.ball = new Ball();
+            //     newRoom.client1.id = client.id;
+            //     newRoom.client1.token = token;
+            //     newRoom.client1.username = userObj.username;
+            //     newRoom.client1.socket = client;
+            //     this.Rooms.push(newRoom);
+            //     this.server.to(`${newRoom.client1.id}`).emit('joined', this.RoomNum);
+            //     this.connectedCli++;
+            // }
+            // else {
+            //     if (!this.Rooms[this.RoomNum])
+            //         return;
+            //     client.join(`${this.RoomNum}`);
+            //     const currentRoom = this.Rooms[this.RoomNum];
+            //     if (currentRoom && currentRoom.client1) {
+            //         if (currentRoom.client1.token === token){
+            //             console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal");
+            //             client.leave(`${this.RoomNum}`);
+            //             currentRoom.client1.id = client.id;
+            //             return ;
+            //         }
+            //         currentRoom.client2 = new Client(2); // Initialize client2
+            //         currentRoom.client2.id = client.id;
+            //         currentRoom.client2.socket = client;
+            //         currentRoom.client2.username = userObj.username;
+            //         this.server.to(`${currentRoom.client2.id}`).emit('joined', this.RoomNum);
+            //         this.createGameRecord(currentRoom.client1.username, currentRoom.client2.username)
+            //         .then((newgame) => {
+            //             const gameData: GameData = {
+            //                 gameId: newgame.id,
+            //                 player1: { playerID: currentRoom.client1.username, score: newgame.score1.toString() },
+            //                 player2: { playerID: currentRoom.client2.username, score: newgame.score2.toString() },
+            //             }
+            //             this.server.to(`${currentRoom.client1.id}`).emit('gameStarted', gameData);
+            //             this.server.to(`${currentRoom.client2.id}`).emit('gameStarted', gameData);
+            //             currentRoom.isDatabaseUpdated = false;
+            //         })
+            //         this.connectedCli++;
+            //     }
+            // }
+            // if (this.Rooms[this.RoomNum].client2) {
+            //     this.Rooms[this.RoomNum].IsFull = true;
+            //     this.BallReset(this.Rooms[this.RoomNum]);
+            //     this.RoomNum++;
+            // }
         }
         catch (err) {
             console.log(`Error123: ${err}`);
@@ -304,6 +305,11 @@ export class InvitedEvent  {
                 this.server.to(`${clientId}`).emit('DrawBall', { x: room.ball.x, z: room.ball.z, pos: 2 });
             }
         }
+    }
+
+    @SubscribeMessage('test')
+    handleTest(@ConnectedSocket() client: Socket, @MessageBody() id: string) {
+        console.log('test event received and this is the socket id : ', id);
     }
 
     @SubscribeMessage('demand')
