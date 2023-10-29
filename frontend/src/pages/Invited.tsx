@@ -1,13 +1,19 @@
 import { useEffect, useState, useRef, MutableRefObject } from "react";
-import { Socket, io } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, RoundedBox, Sphere } from "@react-three/drei";
+import { OrbitControls, RoundedBox, Sphere, useTrailTexture } from "@react-three/drei";
 import { DoubleSide } from "three";
 import EndGame from "./EndGame";
 import RotatingButton from "./RotatingButton";
-import NavBar from "../components/Navbar";
+import { sock, notifToken } from "../components/Navbar";
+import { yourGameOpp } from "../components/FriendList";
 import { NavLink } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
+
+interface GameSettings {
+  paddleColor: string;
+  ballColor: string;
+}
 
 const PlayArea = () => {
   return (
@@ -17,11 +23,6 @@ const PlayArea = () => {
     </mesh>
   );
 };
-
-interface GameSettings {
-  paddleColor: string;
-  ballColor: string;
-}
 
 const PlayerPaddle = (props: any) => {
   const refPlayer = useRef<MutableRefObject<undefined> | any>();
@@ -137,9 +138,10 @@ const  SettingVars = (props: any) => {
     props.onSettingsChange(paddleColor, ballColor);
   };
 
+  //background-image removed
   return (
-    <div className="flex flex-col App background-image min-h-screen w-screen h-screen bg-npc-gra">
-      <NavBar />
+    <div className="flex flex-col App min-h-screen w-screen h-screen bg-npc-gra">
+      {/* <NavBar /> */}
       <div className="m-auto justify-between grid grid-cols-3 gap-4 bg-npc-gray p-8 rounded-xl">
         <div className="col-span-3 text-gray-200 font-montserrat font-semibold mb-1">
           Game's Settings
@@ -238,9 +240,16 @@ export default function Invited() {
   const [IsGameStarted, setIsGameStarted] = useState<boolean>(false);
   const [IsGameEnded, setIsGameEnded] = useState<boolean>(false);
   const [InGame, setInGame] = useState<boolean>(false);
+
   const [StillInGame, setStillInGame] = useState<boolean>(false);
   const [changeSettings, setChangeSettings] = useState<boolean>(false);
+
+  const [acceptInvit, setAcceptInvit] = useState<boolean>(false);
+  const [declineInvit, setDeclineInvit] = useState<boolean>(false);
+  const [inviReceived, setInviReceived] = useState<boolean>(false);
+  const [enableToQueue, setEnabletoQueue] = useState<boolean>(false);
   const [oppUsername, setOppUsername] = useState<string>("");
+
   const [settings, setSettings] = useState<GameSettings>({
     paddleColor: "rgb(255, 255, 255)",
     ballColor: "red",
@@ -256,22 +265,14 @@ export default function Invited() {
 
   const [gameData, setGameData] = useState<{}>({});
 
-  const tokenCookie: string | undefined = document.cookie
-    .split("; ")
-    .find((cookie) => cookie.startsWith("token="));
 
-  if (tokenCookie && !token) {
-    setToken(tokenCookie.split("=")[1]);
+  if (!token) {
+    setToken(notifToken);
   }
-
-  if (!socket && token && changeSettings) {
-    setSocket(
-      io("http://localhost:3000/Invited", {
-        extraHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-    );
+  
+  if (!socket && token) {
+    console.log('test test allah allah')
+    setSocket(sock);
     setIsConnected(true);
   }
 
@@ -280,12 +281,21 @@ export default function Invited() {
     setChangeSettings(true);
   };
 
+  if (socket) {
+    socket.emit('sendInvitationToServer', yourGameOpp);
+  }
+
   useEffect(() => {
     if (socket) {
       socket.on("joined", (RoomId: number) => {
         console.log("joined event received!");
         setRoomNumber(RoomId);
       });
+
+      socket.on("sendInvitationToOpp", () => {
+        // console.log('alskjfsdjflsdjf465465')
+        setInviReceived(true);
+      })
 
       socket.on("gameStarted", (data) => {
         console.log("game started :)");
@@ -335,67 +345,100 @@ export default function Invited() {
         socket.disconnect();
       }
     };
-  }, [RoomNumber, IsGameStarted, socket]);
+  }, [RoomNumber, IsGameStarted, socket, inviReceived]);
 
-  if (!changeSettings) {
+  if (!enableToQueue && inviReceived) {
     return (
       <div>
-        <SettingVars
-          paddleColor={settings.paddleColor}
-          ballColor={settings.ballColor}
-          onSettingsChange={handleSettingsChange}
-        />
+        <button
+          // className="p-1 md:p-2 bg-npc-purple hover:bg-purple-hover text-gray-200 text-xs md:text-base rounded-md"
+          onClick={() => {
+            setAcceptInvit(true);
+            setEnabletoQueue(true);
+            socket?.emit("AcceptingInvitation", true);
+          }}
+        >
+          accept
+        </button>
+
+        <NavLink to="/home">
+          <button
+            // className="p-1 md:p-2 bg-npc-purple hover:bg-purple-hover text-gray-200 text-xs md:text-base rounded-md"
+            onClick={() => {
+              setDeclineInvit(true);
+              socket?.emit("AcceptingInvitation", false);
+            }}
+          >
+            decline
+          </button>
+        </NavLink>
       </div>
     );
   }
-  else {
-    if (isConnected && IsGameStarted && !IsGameEnded) {
+  if (enableToQueue) {
+    if (!changeSettings) {
       return (
-        <div className="background-image">
-          <NavBar />
-          <ScoreBar
-            score={myScore}
-            enemy_score={enemyScore}
-            you="you"
-            opps={oppUsername}
+        <div>
+          <SettingVars
+            paddleColor={settings.paddleColor}
+            ballColor={settings.ballColor}
+            onSettingsChange={handleSettingsChange}
           />
-          <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center">
-            <Canvas camera={{ position: [0.0005, 15, 0] }}>
-              <OrbitControls enableRotate={false} enableZoom={false} />
-              <PlayArea />
-              <CallEverything
-                socket={socket}
-                roomId={RoomNumber}
-                paddlecolor={settings.paddleColor}
-                ballcolor={settings.ballColor}
-              />
-            </Canvas>
-          </div>
         </div>
       );
     }
-    else if (isConnected && StillInGame) {
-      return (
-        <div className="background-image h-screen no-scroll">
-          <NavBar />
-          <div className="App background-image h-screen flex flex-col items-center justify-center">
-            <h2>You are already in game, go finish it first.</h2>
-          </div>
-        </div>
-      );
-    }
-    else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
-      return <EndGame result={result} socket={socket} gamedata={gameData} roomId={RoomNumber} />;
-    }
-    else if (isConnected && !IsGameStarted) {
-      return (
-          <div className="background-image h-screen no-scroll">
-            <NavBar />
-            <div className="App background-image h-screen flex flex-col items-center justify-center">
-              <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
+    else {
+      if (isConnected && IsGameStarted && !IsGameEnded) {
+        return (
+          //background-image removed
+          <div>
+            {/* <NavBar /> */}
+            <ScoreBar
+              score={myScore}
+              enemy_score={enemyScore}
+              you="you"
+              opps={oppUsername}
+            />
+            <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center">
+              <Canvas camera={{ position: [0.0005, 15, 0] }}>
+                <OrbitControls enableRotate={false} enableZoom={false} />
+                <PlayArea />
+                <CallEverything
+                  socket={socket}
+                  roomId={RoomNumber}
+                  paddlecolor={settings.paddleColor}
+                  ballcolor={settings.ballColor}
+                />
+              </Canvas>
             </div>
           </div>
         );
+      }
+      else if (isConnected && StillInGame) {
+        return (
+          //background-image removed
+          <div className="h-screen no-scroll">
+            {/* <NavBar /> */}
+            <div className="App h-screen flex flex-col items-center justify-center">
+              <h2>You are already in game, go finish it first.</h2>
+            </div>
+          </div>
+        );
+      }
+      else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
+        return <EndGame result={result} socket={socket} gamedata={gameData} roomId={RoomNumber} />;
+      }
+      else if (isConnected && !IsGameStarted) {
+        return (
+          //background-image removed
+            <div className="h-screen no-scroll">
+              {/* <NavBar /> */}
+              <div className="App h-screen flex flex-col items-center justify-center">
+                <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
+              </div>
+            </div>
+          );
+      }
     }
   }
 }

@@ -28,8 +28,9 @@ const Channels: React.FC<ChannelsProps> = (props) => {
   const dataChannelVar = useContext<DataChannel>(DataChannel);
 
   return (
-    <div className='background-image min-h-screen'>
-      <NavBar />
+    //background-image removed
+    <div className='min-h-screen'>
+      {/* <NavBar /> */}
     <div className={classes.mainCard}>
       <div className={classes.channelList}>
       <div className="flex">

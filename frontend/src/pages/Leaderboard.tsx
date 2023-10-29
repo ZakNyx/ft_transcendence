@@ -37,7 +37,7 @@ export default function Leaderboard() {
               },
             }
           );
-            console.log(response.data);
+            // console.log(response.data);
           setData(response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -100,8 +100,9 @@ export default function Leaderboard() {
   
 
   return (
-    <div className="background-image min-h-screen">
-      <NavBar />
+    //background-image removed
+    <div className="min-h-screen">
+      {/* <NavBar /> */}
       <h1 className="flex flex-col justify-center items-center font-montserrat font-bold text-4xl text-gray-200 mt-8">
         Leaderboard
       </h1>

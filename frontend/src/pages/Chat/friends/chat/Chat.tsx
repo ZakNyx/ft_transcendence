@@ -14,7 +14,15 @@ interface ChatProps {
 
 const Chat: FC<ChatProps> = (props) => {
   const [backdrop, setBackdrop] = useState<boolean>(false);
-  console.log(props.user)
+  const [token, setToken] = useState<string | null>(null);
+
+  const tokenCookie: string | undefined = document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith("token="));
+
+  if (tokenCookie && !token) {
+    setToken(tokenCookie.split("=")[1]);
+  }
 
   function OpenCloseModal() {
     if (backdrop === false) {
@@ -36,7 +44,7 @@ const Chat: FC<ChatProps> = (props) => {
 
   return (
     <div className={classes.chatCard}>
-      <ChatHeader user={props.user} toggle={OpenCloseModal} />
+      <ChatHeader user={props.user} toggle={OpenCloseModal} token={token}/>
       <div className={classes.chatContent}>
         <div className={classes.chatMessages}>
           {messagelist.map((message, index) => (

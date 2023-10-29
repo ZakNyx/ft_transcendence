@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import classes from './ChatHeader.module.css';
 import { NavLink } from 'react-router-dom';
 import { Socket, io } from 'socket.io-client';
-import { sock } from '../../../../components/Navbar';
+import { sock, notifToken } from '../../../../components/Navbar';
 
 
 interface User {
@@ -41,14 +41,15 @@ const GameInvitation: FC<GameInvitationProps> = (props) => {
 interface ChatHeaderProps {
   toggle: () => void;
   user: User;
+  token: string;
 }
 
 const ChatHeader: FC<ChatHeaderProps> = (props) => {
   const [backdrop1, setBackdrop1] = useState<boolean>(false);
   const [backdrop2, setBackdrop2] = useState<boolean>(false);
-  const [token, setToken] = useState<string | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [isConnected, setIsConnected] = useState<boolean>(false); 
+  // const [token, setToken] = useState<string | null>(null);
+  // const [socket, setSocket] = useState<Socket | null>(null);
+  // const [isConnected, setIsConnected] = useState<boolean>(false); 
 
   const OpenCloseModal1 = () => {
     setBackdrop1(!backdrop1);
@@ -57,32 +58,20 @@ const ChatHeader: FC<ChatHeaderProps> = (props) => {
   const OpenCloseModal2 = () => {
     setBackdrop2(!backdrop2);
   };
+  // if (!socket && token) {
+  //   setSocket(
+  //     io("http://localhost:3000/Invited", {
+  //       extraHeaders: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     }),
+  //   );
+  //   setIsConnected(true);
+  // }
 
-  const notifsocket : Socket | null = sock;
-  if (notifsocket) console.log(`check notif socket id : ${notifsocket.id}`);
-  
-  const tokenCookie: string | undefined = document.cookie
-    .split("; ")
-    .find((cookie) => cookie.startsWith("token="));
-
-  if (tokenCookie && !token) {
-    setToken(tokenCookie.split("=")[1]);
-  }
-
-  if (!socket && token) {
-    setSocket(
-      io("http://localhost:3000/Invited", {
-        extraHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-    );
-    setIsConnected(true);
-  }
-
-  if (socket) {
-    socket.emit('test', notifsocket?.id)
-  }
+  // if (socket) {
+  //   socket.emit('test', notifsocket?.id)
+  // }
 
   return (
     <div className={classes.chatWrapper}>

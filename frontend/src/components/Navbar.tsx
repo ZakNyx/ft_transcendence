@@ -6,7 +6,7 @@ import axios from "axios";
 import { initializeSocket } from "./socketManager";
 import Validate from "../components/Validate";
 import Notification from "./Notification";
-import { Socket } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 
 interface UserData {
   userID: string;
@@ -36,6 +36,7 @@ interface notifData {
 }
 
 let sock: Socket | null = null;
+let notifToken: string;
 
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -60,6 +61,33 @@ function NavBar() {
   const [user, setUser] = useState<UserData | null>(null);
   const [userPicture, setUserPicture] = useState<string | null>(null);
 
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+
+  const tokenCookie: string | undefined = document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith("token="));
+
+  if (tokenCookie && !token) {
+    setToken(tokenCookie.split("=")[1]);
+    notifToken = tokenCookie.split("=")[1];
+  }
+
+  if (!socket && token) {
+    setSocket(
+      io("http://localhost:3000/Invited", {
+        extraHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    );
+  }
+
+  if (socket) {
+    sock = socket;
+  }
+
+
   useEffect(() => {
     // Function to fetch user data and set it in the state
     const fetchUserData = async () => {
@@ -69,7 +97,6 @@ function NavBar() {
 
       if (tokenCookie) {
         const token = tokenCookie.split("=")[1];
-
         try {
           // Configure Axios to send the token in the headers
           const response = await axios.get(`http://localhost:3000/profile/me`, {
@@ -288,4 +315,5 @@ function NavBar() {
 }
 
 export { sock };
+export { notifToken };
 export default NavBar;

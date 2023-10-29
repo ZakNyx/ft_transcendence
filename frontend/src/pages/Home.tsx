@@ -42,14 +42,15 @@ function HomePage() {
     fetchUserData();
   }, []); // The empty dependency array ensures this effect runs only once
 
+  //background-image removed
   return (
-    <div className="background-image min-h-screen">
+    <div className="min-h-screen">
       {/* Import Google Fonts */}
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
       </style>
       {/* Render the navigation bar */}
-      <NavBar />
+      {/* <NavBar /> */}
       {/* Render the title */}
       <h1 className="text-white font-montserrat text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl pt-14 px-4 md:px-10 lg:px-14 relative">
         Welcome back! {user ? user.displayname : "Loading..."}.

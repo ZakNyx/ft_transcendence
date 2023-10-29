@@ -13,10 +13,10 @@ export default function SetColor() {
   const level: any = useRef();
 
   
-
+//background-image removed
   return (
-    <div className="flex flex-col App background-image min-h-screen w-screen h-screen bg-npc-gra">
-      <NavBar />
+    <div className="flex flex-col App min-h-screen w-screen h-screen bg-npc-gra">
+      {/* <NavBar /> */}
       <div className="m-auto justify-between grid grid-cols-3 gap-4 bg-npc-gray p-8 rounded-xl">
         <div className="col-span-3 text-gray-200 font-montserrat font-semibold mb-1">
           Game's Settings

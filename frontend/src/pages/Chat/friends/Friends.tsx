@@ -10,12 +10,12 @@ import group from "../../../../public/images/group.svg";
 
 function Friends() {
   const dataContextVar = useContext(DataContext);
-  console.log(dataContextVar);
 
   return (
-    <div className='background-image min-h-screen'>
-      <NavBar />
-      <div className={`${classes.mainCard} background-image min-h-screen`}>
+    //background-image removed
+    <div className='min-h-screen'>
+      {/* <NavBar /> */}
+      <div className={`${classes.mainCard} min-h-screen`}>
         <div className={classes.friendList}>
         <div className="flex">
           <NavLink to="/Chat">

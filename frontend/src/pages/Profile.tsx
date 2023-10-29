@@ -6,12 +6,13 @@ import FriendList from "../components/FriendList";
 
 function Profile() {
   return (
-    <div className="background-image min-h-screen">
+    //background-image removed
+    <div className="min-h-screen">
       <style>
         @import
         url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
       </style>
-      <NavBar />
+      {/* <NavBar /> */}
       <div className="flex lg:items-center flex-col lg:flex-row">
         <div className="mb-4 lg:mb-0 lg:pr-4 lg:flex-shrink-0 gap-6 lg:w-[50%] ">
           <ProfileCard />

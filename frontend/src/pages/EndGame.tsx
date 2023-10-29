@@ -24,8 +24,9 @@ const IsGameFinished = (props: any) => {
 }
 
 export default function EndGame(props:any) {
+  //background-image removed
   return (
-    <div className="background-image w-screen h-screen flex items-center justify-center">
+    <div className="w-screen h-screen flex items-center justify-center">
       <dialog open className="bg-transparent">
         <Result result={props.result}/>
         <IsGameFinished socket={props.socket} gamedata={props.gamedata} roomId={props.roomId} />

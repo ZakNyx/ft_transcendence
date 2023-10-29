@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { SearchNameNameDTO, updateNameDTO } from "./dto/profile.dto";
+import { updateNameDTO } from "./dto/profile.dto";
 import * as fs from "fs/promises";
 import axios from "axios";
 

@@ -144,8 +144,9 @@ const  SettingVars = (props: any) => {
   };
 
   return (
-    <div className="flex flex-col App background-image min-h-screen w-screen h-screen bg-npc-gra">
-      <NavBar />
+    //background-image removed
+    <div className="flex flex-col App min-h-screen w-screen h-screen bg-npc-gra">
+      {/* <NavBar /> */}
       <div className="m-auto justify-between grid grid-cols-3 gap-4 bg-npc-gray p-8 rounded-xl">
         <div className="col-span-3 text-gray-200 font-montserrat font-semibold mb-1">
           Game's Settings
@@ -361,8 +362,8 @@ export default function Multiplayer() {
       console.log('render game comp')
       
       return (
-        <div className="background-image">
-          <NavBar />
+        <div className="">
+          {/* <NavBar /> */}
           <ScoreBar
             score={myScore}
             enemy_score={enemyScore}
@@ -387,9 +388,10 @@ export default function Multiplayer() {
     }
     else if (isConnected && StillInGame) {
       return (
-        <div className="background-image h-screen no-scroll">
-          <NavBar />
-          <div className="App background-image h-screen flex flex-col items-center justify-center">
+        //background-image removed
+        <div className="h-screen no-scroll">
+          {/* <NavBar /> */}
+          <div className="App h-screen flex flex-col items-center justify-center">
             <h2>You are already in game, go finish it first.</h2>
           </div>
         </div>
@@ -401,9 +403,10 @@ export default function Multiplayer() {
     }
     else if (isConnected && !IsGameStarted) {
       return (
-          <div className="background-image h-screen no-scroll">
-            <NavBar />
-            <div className="App background-image h-screen flex flex-col items-center justify-center">
+        //background-image removed
+          <div className="h-screen no-scroll">
+            {/* <NavBar /> */}
+            <div className="App h-screen flex flex-col items-center justify-center">
               <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
             </div>
           </div>

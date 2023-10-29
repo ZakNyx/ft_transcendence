@@ -28,7 +28,10 @@ export class InvitedEvent  {
     server: Server;
 
     SocketsByUser: Map<string, string>;
+    connectedPlayers: Map<string, string>;
     RoomNum: number;
+    isInvitationAccepted: boolean;
+    isInvitationDeclined: boolean;
     connectedCli: number;
     Rooms: Room[];
     private prisma: PrismaClient;
@@ -43,7 +46,10 @@ export class InvitedEvent  {
         this.connectedCli = 0;
         this.Rooms = [];
         this.SocketsByUser = new Map<string, string>();
+        this.connectedPlayers = new Map<string, string>();
         this.prisma = new PrismaClient();
+        this.isInvitationAccepted = false;
+        this.isInvitationDeclined = false;
     }
     
     getPrismaClient() {
@@ -73,7 +79,6 @@ export class InvitedEvent  {
 
         return updatedGame;
     }
-      
 
     BallReset = (room: Room) => {
         room.ball.move = false;
@@ -130,7 +135,7 @@ export class InvitedEvent  {
     //Connection
     handleConnection = (client: Socket) => {
         try{
-            console.log(`client connected id : ${client.id}`);
+            console.log(`client connected in invitedGame id : ${client.id}`);
             const token: string = client.handshake.headers.authorization.slice(7);
             if (!token)
                 throw new UnauthorizedException();
@@ -148,7 +153,14 @@ export class InvitedEvent  {
                 this.SocketsByUser.set(token, client.id);
             }
             const userObj = this.jwtService.verify(token);
-            console.log(`username : ${userObj.username}`)
+            if (this.connectedPlayers.has(userObj.username)) {
+                if (this.connectedPlayers.get(userObj.username) !== client.id) {
+                    this.connectedPlayers.set(userObj.username, client.id);
+                }
+            }
+            else {
+                this.connectedPlayers.set(userObj.username, client.id);
+            }
             // if (this.connectedCli % 2 === 0) {
             //     client.join(`${this.RoomNum}`);
             //     const newRoom = new Room(this.RoomNum);
@@ -307,9 +319,24 @@ export class InvitedEvent  {
         }
     }
 
-    @SubscribeMessage('test')
+    @SubscribeMessage('sendInvitationToServer')
     handleTest(@ConnectedSocket() client: Socket, @MessageBody() id: string) {
-        console.log('test event received and this is the socket id : ', id);
+        if (this.connectedPlayers.has(id)) {
+            console.log('check check lmorphine jaybo nayzak')
+            this.server.to(`${this.connectedPlayers.get(id)}`).emit('sendInvitationToOpp');
+        }
+    }
+
+    @SubscribeMessage('AcceptingInvitation')
+    handleAccepting(@MessageBody() acceptation: boolean) {
+        if (acceptation){
+            this.isInvitationAccepted = true;
+            console.log('invitation accepted!')
+        }
+        if (!acceptation) {
+            this.isInvitationDeclined = true;
+            console.log('invitation declined');
+        }
     }
 
     @SubscribeMessage('demand')
@@ -436,5 +463,5 @@ export class InvitedEvent  {
                 this.MoveEverthing(x, this.Rooms[room], client.id);
         }
     }
-    
+
 }
