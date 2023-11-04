@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, NavLink, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { setIsSent, setMyGameOppName } from "../pages/variables";
 
 interface userData {
   username: string;
@@ -9,12 +10,9 @@ interface userData {
   friends: userData[];
 }
 
-let yourGameOpp: string;
-
 export default function FriendList() {
   const [userFriends, setUserFriends] = useState<userData[] | null>(null);
   const [newuserFriends, setnewUserFriends] = useState<userData[] | null>(null);
-
 
   let { username } = useParams(); // Get the username parameter from the URL
   if (!username) {
@@ -122,18 +120,17 @@ export default function FriendList() {
                 alt="User profile picture"
               />
               <p className="text-gray-200 text-sm sm:text-base md:text-lg xl:text-xl 2xl:text-2xl max-w-[6rem] break-words hover:text-gray-400 active :text-gray-500">
-                {friend.displayname}
+                {friend.displayname}  
               </p>
-              <NavLink to="/game/invited">
                 <button
                   className="p-1 md:p-2 bg-npc-purple hover:bg-purple-hover text-gray-200 text-xs md:text-base rounded-md"
                   onClick={() => {
-                    yourGameOpp = friend.username;
+                    setMyGameOppName(friend.username);
+                    setIsSent(true);
                   }}
                 >
                   Invite Game
                 </button>
-              </NavLink>
             </Link>
           ))}
         </div>
@@ -147,5 +144,3 @@ export default function FriendList() {
     </div>
   );
 }
-
-export { yourGameOpp }

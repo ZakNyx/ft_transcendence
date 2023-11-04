@@ -1,8 +1,8 @@
-import NavBar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
 import MatchHistory from "../components/MatchHistory";
 import Achievements from "../components/Achievements"; // Import the Achievements component
 import FriendList from "../components/FriendList";
+
 
 function Profile() {
   return (

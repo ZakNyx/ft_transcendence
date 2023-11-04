@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import NavBar from "../components/Navbar";
 import joystickSvg from "../../public/images/joystick.svg";
 import robotSvg from "../../public/images/robot.svg";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
+import { InitSocket } from "./variables";
 interface UserData {
   displayname: string;
 }
@@ -11,6 +11,7 @@ interface UserData {
 function HomePage() {
   const [user, setUser] = useState<UserData | null>(null);
 
+  InitSocket();
   useEffect(() => {
     // Function to fetch user data and set it in the state
     const fetchUserData = async () => {

@@ -163,15 +163,15 @@ export class InvitedEvent  {
             }
             // if (this.connectedCli % 2 === 0) {
             //     client.join(`${this.RoomNum}`);
-            //     const newRoom = new Room(this.RoomNum);
-            //     console.log(`new Room is created! ${newRoom.num}`);
-            //     newRoom.client1 = new Client(1); // Initialize client1
-            //     newRoom.ball = new Ball();
-            //     newRoom.client1.id = client.id;
-            //     newRoom.client1.token = token;
-            //     newRoom.client1.username = userObj.username;
-            //     newRoom.client1.socket = client;
-            //     this.Rooms.push(newRoom);
+                const newRoom = new Room(this.RoomNum);
+                console.log(`new Room is created! ${newRoom.num}`);
+                newRoom.client1 = new Client(1); // Initialize client1
+                newRoom.ball = new Ball();
+                newRoom.client1.id = client.id;
+                newRoom.client1.token = token;
+                newRoom.client1.username = userObj.username;
+                newRoom.client1.socket = client;
+                this.Rooms.push(newRoom);
             //     this.server.to(`${newRoom.client1.id}`).emit('joined', this.RoomNum);
             //     this.connectedCli++;
             // }
@@ -320,22 +320,35 @@ export class InvitedEvent  {
     }
 
     @SubscribeMessage('sendInvitationToServer')
-    handleTest(@ConnectedSocket() client: Socket, @MessageBody() id: string) {
-        if (this.connectedPlayers.has(id)) {
-            console.log('check check lmorphine jaybo nayzak')
-            this.server.to(`${this.connectedPlayers.get(id)}`).emit('sendInvitationToOpp');
+    handleTest(@ConnectedSocket() client: Socket, @MessageBody() oppUsername: string) {
+        const token: string = client.handshake.headers.authorization.slice(7);
+        const userObj = this.jwtService.verify(token);
+        if (this.connectedPlayers.has(oppUsername)) {
+            this.server.to(`${this.connectedPlayers.get(oppUsername)}`).emit('sendInvitationToOpp', userObj.username);
         }
     }
 
+    JoinPlayersToRoom = (client1: {id: string, username: string}, client2: {id: string, username: string}) => {
+
+    }
+
     @SubscribeMessage('AcceptingInvitation')
-    handleAccepting(@MessageBody() acceptation: boolean) {
+    handleAccepting(@ConnectedSocket() client: Socket, @MessageBody() data: { acceptation: boolean, OppName: string}) {
+        const   {acceptation, OppName} = data;
         if (acceptation){
+            const token: string = client.handshake.headers.authorization.slice(7);
+            const userObj = this.jwtService.verify(token);
             this.isInvitationAccepted = true;
-            console.log('invitation accepted!')
+            console.log('Invitation accepted!')
+            this.server.to(`${client.id}`).emit('IsGameAccepted');
+            this.server.to(`${this.connectedPlayers.get(OppName)}`).emit('IsGameAccepted');
+            this.JoinPlayersToRoom({id: client.id, username: userObj.username},
+                {id: this.connectedPlayers.get(OppName), username: OppName})
         }
         if (!acceptation) {
             this.isInvitationDeclined = true;
-            console.log('invitation declined');
+            this.server.to(`${this.connectedPlayers.get(OppName)}`).emit('IsGameDeclined');
+            console.log('Invitation declined');
         }
     }
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import IconButton from "./IconButton";
 import SearchBar from "./SearchBar";
@@ -6,7 +6,8 @@ import axios from "axios";
 import { initializeSocket } from "./socketManager";
 import Validate from "../components/Validate";
 import Notification from "./Notification";
-import { Socket, io } from "socket.io-client";
+import { isSent, myGameOppName, setIsSent, setMyGameOppName, sock } from "../pages/variables";
+import Swal from "sweetalert2";
 
 interface UserData {
   userID: string;
@@ -35,15 +36,14 @@ interface notifData {
   data: string;
 }
 
-let sock: Socket | null = null;
-let notifToken: string;
-
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | undefined>(
-    undefined,
-  );
+  const [isInvitationSent, setIsInvitationSent] = useState<boolean>(false);
+  const [invitationReceived, setInvitationReceived] = useState<boolean>(false);
+  const [isGameDeclined, setIsGameDeclined] = useState<boolean>(false);
+  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | undefined>(undefined);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
+  const [inviSender, setInviSender] = useState<string>("");
 
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -60,33 +60,6 @@ function NavBar() {
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
   const [userPicture, setUserPicture] = useState<string | null>(null);
-
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-
-  const tokenCookie: string | undefined = document.cookie
-    .split("; ")
-    .find((cookie) => cookie.startsWith("token="));
-
-  if (tokenCookie && !token) {
-    setToken(tokenCookie.split("=")[1]);
-    notifToken = tokenCookie.split("=")[1];
-  }
-
-  if (!socket && token) {
-    setSocket(
-      io("http://localhost:3000/Invited", {
-        extraHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-    );
-  }
-
-  if (socket) {
-    sock = socket;
-  }
-
 
   useEffect(() => {
     // Function to fetch user data and set it in the state
@@ -109,7 +82,6 @@ function NavBar() {
           setUser(response.data);
           setUsername(response.data.username);
           const socket = initializeSocket(token);
-          sock = socket;
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error
@@ -178,7 +150,67 @@ function NavBar() {
     };
   }, [dropdownTimeout]);
 
+  useEffect(() => {
+    if (sock) {
+      if (myGameOppName && isSent) {
+        sock.emit("sendInvitationToServer", myGameOppName);
+        setIsSent(false);
+      }
+
+      sock.on('sendInvitationToOpp', (inviSender: string) => {
+        setMyGameOppName(inviSender);
+        setInvitationReceived(true);
+      })
+  
+      sock.on('IsGameAccepted', () => {
+        navigate('/game/invited');
+      })
+  
+      sock.on('IsGameDeclined', () => {
+        setIsGameDeclined(true);
+      })
+    }
+
+  }, [isSent, myGameOppName, invitationReceived])
+
+  const redirectToInvitedGame = () => {
+    if (sock)
+      sock.emit('AcceptingInvitation', {acceptation: true, OppName: myGameOppName});
+  }
+
+  const invitationDenied = () => {
+    if (sock) {
+      sock.emit('AcceptingInvitation', {acceptation: false, OppName: myGameOppName});
+      navigate('/home');
+    }
+  } 
+
   // Render your Navbar JSX here, using the username and userPicture states
+  if (invitationReceived) {
+    Swal.fire({
+      title: `${myGameOppName} invited you to a game!`,
+      showDenyButton: true,
+      showCancelButton: false,
+      allowOutsideClick: false,
+      confirmButtonText: 'Accept',
+      denyButtonText: `Deny`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        redirectToInvitedGame();
+      } else if (result.isDenied) {
+        invitationDenied();
+      }
+      setInvitationReceived(false);
+    })
+  }
+
+  if (isGameDeclined) {
+    Swal.fire({
+      title: `${myGameOppName} denied your invitation!`
+    });
+    setIsGameDeclined(false);
+  }
+
   return (
     <header>
       <style>
@@ -314,6 +346,4 @@ function NavBar() {
   );
 }
 
-export { sock };
-export { notifToken };
 export default NavBar;

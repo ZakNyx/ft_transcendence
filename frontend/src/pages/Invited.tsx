@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef, MutableRefObject } from "react";
 import { Socket } from "socket.io-client";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, RoundedBox, Sphere, useTrailTexture } from "@react-three/drei";
+import { OrbitControls, RoundedBox, Sphere } from "@react-three/drei";
 import { DoubleSide } from "three";
 import EndGame from "./EndGame";
 import RotatingButton from "./RotatingButton";
-import { sock, notifToken } from "../components/Navbar";
-import { yourGameOpp } from "../components/FriendList";
+import { sock, notifToken } from "../pages/variables";
 import { NavLink } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
 
@@ -271,7 +270,6 @@ export default function Invited() {
   }
   
   if (!socket && token) {
-    console.log('test test allah allah')
     setSocket(sock);
     setIsConnected(true);
   }
@@ -281,21 +279,12 @@ export default function Invited() {
     setChangeSettings(true);
   };
 
-  if (socket) {
-    socket.emit('sendInvitationToServer', yourGameOpp);
-  }
-
   useEffect(() => {
     if (socket) {
       socket.on("joined", (RoomId: number) => {
         console.log("joined event received!");
         setRoomNumber(RoomId);
       });
-
-      socket.on("sendInvitationToOpp", () => {
-        // console.log('alskjfsdjflsdjf465465')
-        setInviReceived(true);
-      })
 
       socket.on("gameStarted", (data) => {
         console.log("game started :)");
@@ -342,40 +331,11 @@ export default function Invited() {
         socket.off("gameEnded");
         socket.off("won");
         socket.off("lost");
-        socket.disconnect();
+        // socket.disconnect();
       }
     };
   }, [RoomNumber, IsGameStarted, socket, inviReceived]);
 
-  if (!enableToQueue && inviReceived) {
-    return (
-      <div>
-        <button
-          // className="p-1 md:p-2 bg-npc-purple hover:bg-purple-hover text-gray-200 text-xs md:text-base rounded-md"
-          onClick={() => {
-            setAcceptInvit(true);
-            setEnabletoQueue(true);
-            socket?.emit("AcceptingInvitation", true);
-          }}
-        >
-          accept
-        </button>
-
-        <NavLink to="/home">
-          <button
-            // className="p-1 md:p-2 bg-npc-purple hover:bg-purple-hover text-gray-200 text-xs md:text-base rounded-md"
-            onClick={() => {
-              setDeclineInvit(true);
-              socket?.emit("AcceptingInvitation", false);
-            }}
-          >
-            decline
-          </button>
-        </NavLink>
-      </div>
-    );
-  }
-  if (enableToQueue) {
     if (!changeSettings) {
       return (
         <div>
@@ -440,5 +400,4 @@ export default function Invited() {
           );
       }
     }
-  }
 }
