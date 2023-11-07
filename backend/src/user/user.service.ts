@@ -12,7 +12,7 @@ import * as bcrypt from "bcrypt";
 @Injectable()
 export class UserService {
   constructor(private prismaService: PrismaService) {}
-
+//asdfasdfasddfasddf
   async Leaderboard() {
     const users = await this.prismaService.user.findMany({
       orderBy: {

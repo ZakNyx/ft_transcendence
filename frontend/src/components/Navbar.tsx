@@ -6,7 +6,7 @@ import axios from "axios";
 import { initializeSocket } from "./socketManager";
 import Validate from "../components/Validate";
 import Notification from "./Notification";
-import { isSent, myGameOppName, setIsSent, setMyGameOppName, sock } from "../pages/variables";
+import { InitSocket, RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../pages/variables";
 import Swal from "sweetalert2";
 
 interface UserData {
@@ -38,7 +38,7 @@ interface notifData {
 
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [isInvitationSent, setIsInvitationSent] = useState<boolean>(false);
+  const [isSocketSet, setIsSocketSet] = useState<boolean>(false);
   const [invitationReceived, setInvitationReceived] = useState<boolean>(false);
   const [isGameDeclined, setIsGameDeclined] = useState<boolean>(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | undefined>(undefined);
@@ -150,8 +150,19 @@ function NavBar() {
     };
   }, [dropdownTimeout]);
 
+  // console.log('checking roomid value in NavBar comp: ', RoomId);
+  
   useEffect(() => {
+    // console.log(`checking my socket.id in invitedGame : ${sock?.id}`);
     if (sock) {
+      // sock.on('joined', (roomNumber: number) => {
+        //   console.log('listening to joined event to set room Id');
+        //   setRoomId(roomNumber);
+        // })
+        
+      // console.log(`check myGameOppName: ${myGameOppName}`);
+      // console.log(`and check also isSent value : ${isSent}`);
+
       if (myGameOppName && isSent) {
         sock.emit("sendInvitationToServer", myGameOppName);
         setIsSent(false);
@@ -159,6 +170,7 @@ function NavBar() {
 
       sock.on('sendInvitationToOpp', (inviSender: string) => {
         setMyGameOppName(inviSender);
+        console.log('you received a game invitation from : ', inviSender);
         setInvitationReceived(true);
       })
   
@@ -171,7 +183,7 @@ function NavBar() {
       })
     }
 
-  }, [isSent, myGameOppName, invitationReceived])
+  }, [isSent, myGameOppName, invitationReceived, RoomId, sock])
 
   const redirectToInvitedGame = () => {
     if (sock)

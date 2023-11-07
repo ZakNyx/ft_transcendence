@@ -5,7 +5,7 @@ import { OrbitControls, RoundedBox, Sphere } from "@react-three/drei";
 import { DoubleSide } from "three";
 import EndGame from "./EndGame";
 import RotatingButton from "./RotatingButton";
-import { sock, notifToken } from "../pages/variables";
+import { sock, notifToken, RoomId } from "../pages/variables";
 import { NavLink } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
 
@@ -61,7 +61,7 @@ const DrawBall = (props: any) => {
   const [ball, setBall] = useState([0, 0]);
 
   useFrame(() => {
-    props.socket.emit("demand", props.room);
+    // props.socket.emit("demand", props.room);
   });
 
   useEffect(() => {
@@ -191,7 +191,7 @@ const  SettingVars = (props: any) => {
 const CallEverything = (props: any) => {
   return (
     <>
-      <PlayerPaddle socket={props.socket} roomId={props.roomId} paddlecolor={props.paddlecolor} gamedata={props.gameData}/>
+      <PlayerPaddle socket={props.socket} roomId={props.roomId} paddlecolor={props.paddlecolor}/>
       <OpponentPlayerPaddle socket={props.socket} paddlecolor={props.paddlecolor} />
       <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} />
     </>
@@ -262,9 +262,6 @@ export default function Invited() {
   const [myScore, setmyScore] = useState<number>(0);
   const [enemyScore, setenemyScore] = useState<number>(0);
 
-  const [gameData, setGameData] = useState<{}>({});
-
-
   if (!token) {
     setToken(notifToken);
   }
@@ -272,6 +269,11 @@ export default function Invited() {
   if (!socket && token) {
     setSocket(sock);
     setIsConnected(true);
+    sock?.emit('InvitedCompCalled');
+  }
+
+  if (RoomNumber === -1){
+    setRoomNumber(RoomId);
   }
 
   const handleSettingsChange = (paddleColor: string, ballColor: string) => {
@@ -281,14 +283,18 @@ export default function Invited() {
 
   useEffect(() => {
     if (socket) {
-      socket.on("joined", (RoomId: number) => {
-        console.log("joined event received!");
-        setRoomNumber(RoomId);
-      });
 
-      socket.on("gameStarted", (data) => {
-        console.log("game started :)");
-        setGameData(data);
+      if (RoomNumber !== -1) {
+        console.log('check room ID in invited.tsx : ', RoomNumber);
+      }
+      // socket.on("joined", (RoomId: number) => {
+      //   console.log("joined event received!");
+      //   console.log(`my room id is : ${RoomId}`);
+      //   setRoomNumber(RoomId);
+      // });
+
+      socket.on("gameStarted", () => {
+        console.log('game Started ;)');
         setInGame(true);
         setIsGameStarted(true);
       });
@@ -306,11 +312,6 @@ export default function Invited() {
       socket.on("won", () => {
         setResult("won");
       });
-
-      socket.on("invitation", (player) => {
-        console.log(`${player} invite you to a pong game :)`);
-
-      })
 
       socket.on("lost", () => {
         setResult("lost");
@@ -336,18 +337,18 @@ export default function Invited() {
     };
   }, [RoomNumber, IsGameStarted, socket, inviReceived]);
 
-    if (!changeSettings) {
-      return (
-        <div>
-          <SettingVars
-            paddleColor={settings.paddleColor}
-            ballColor={settings.ballColor}
-            onSettingsChange={handleSettingsChange}
-          />
-        </div>
-      );
-    }
-    else {
+    // if (!changeSettings) {
+    //   return (
+    //     <div>
+    //       <SettingVars
+    //         paddleColor={settings.paddleColor}
+    //         ballColor={settings.ballColor}
+    //         onSettingsChange={handleSettingsChange}
+    //       />
+    //     </div>
+    //   );
+    // }
+    // else {
       if (isConnected && IsGameStarted && !IsGameEnded) {
         return (
           //background-image removed
@@ -386,18 +387,18 @@ export default function Invited() {
         );
       }
       else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
-        return <EndGame result={result} socket={socket} gamedata={gameData} roomId={RoomNumber} />;
+        return <EndGame result={result} socket={socket} roomId={RoomNumber} />;
       }
-      else if (isConnected && !IsGameStarted) {
-        return (
-          //background-image removed
-            <div className="h-screen no-scroll">
-              {/* <NavBar /> */}
-              <div className="App h-screen flex flex-col items-center justify-center">
-                <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
-              </div>
-            </div>
-          );
-      }
-    }
+      // else if (isConnected && !IsGameStarted) {
+      //   return (
+      //     //background-image removed
+      //       <div className="h-screen no-scroll">
+      //         {/* <NavBar /> */}
+      //         <div className="App h-screen flex flex-col items-center justify-center">
+      //           <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
+      //         </div>
+      //       </div>
+      //     );
+      // }
+    // }
 }

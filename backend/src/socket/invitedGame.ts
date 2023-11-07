@@ -28,7 +28,7 @@ export class InvitedEvent  {
     server: Server;
 
     SocketsByUser: Map<string, string>;
-    connectedPlayers: Map<string, string>;
+    connectedPlayers: Map<string, Socket>;
     RoomNum: number;
     isInvitationAccepted: boolean;
     isInvitationDeclined: boolean;
@@ -46,7 +46,7 @@ export class InvitedEvent  {
         this.connectedCli = 0;
         this.Rooms = [];
         this.SocketsByUser = new Map<string, string>();
-        this.connectedPlayers = new Map<string, string>();
+        this.connectedPlayers = new Map<string, Socket>();
         this.prisma = new PrismaClient();
         this.isInvitationAccepted = false;
         this.isInvitationDeclined = false;
@@ -107,8 +107,14 @@ export class InvitedEvent  {
 
     //Moving the players paddle
     MoveEverthing = (x: number, room: Room, clientId: string) => {
-        if (room.IsFull) {
-            this.MovePaddles(x, room, clientId);
+        try {
+            // console.log('check room.number : ', room.num);
+            if (room && room.IsFull) {
+                this.MovePaddles(x, room, clientId);
+            }
+        }
+        catch (err) {
+            console.log(`Error in MoveEvery: ${err}`);
         }
     }
 
@@ -154,24 +160,24 @@ export class InvitedEvent  {
             }
             const userObj = this.jwtService.verify(token);
             if (this.connectedPlayers.has(userObj.username)) {
-                if (this.connectedPlayers.get(userObj.username) !== client.id) {
-                    this.connectedPlayers.set(userObj.username, client.id);
+                if (this.connectedPlayers.get(userObj.username).id !== client.id) {
+                    this.connectedPlayers.set(userObj.username, client);
                 }
             }
             else {
-                this.connectedPlayers.set(userObj.username, client.id);
+                this.connectedPlayers.set(userObj.username, client);
             }
             // if (this.connectedCli % 2 === 0) {
             //     client.join(`${this.RoomNum}`);
-                const newRoom = new Room(this.RoomNum);
-                console.log(`new Room is created! ${newRoom.num}`);
-                newRoom.client1 = new Client(1); // Initialize client1
-                newRoom.ball = new Ball();
-                newRoom.client1.id = client.id;
-                newRoom.client1.token = token;
-                newRoom.client1.username = userObj.username;
-                newRoom.client1.socket = client;
-                this.Rooms.push(newRoom);
+            //     const newRoom = new Room(this.RoomNum);
+            //     console.log(`new Room is created! ${newRoom.num}`);
+            //     newRoom.client1 = new Client(1); // Initialize client1
+            //     newRoom.ball = new Ball();
+            //     newRoom.client1.id = client.id;
+            //     newRoom.client1.token = token;
+            //     newRoom.client1.username = userObj.username;
+            //     newRoom.client1.socket = client;
+            //     this.Rooms.push(newRoom);
             //     this.server.to(`${newRoom.client1.id}`).emit('joined', this.RoomNum);
             //     this.connectedCli++;
             // }
@@ -192,17 +198,6 @@ export class InvitedEvent  {
             //         currentRoom.client2.socket = client;
             //         currentRoom.client2.username = userObj.username;
             //         this.server.to(`${currentRoom.client2.id}`).emit('joined', this.RoomNum);
-            //         this.createGameRecord(currentRoom.client1.username, currentRoom.client2.username)
-            //         .then((newgame) => {
-            //             const gameData: GameData = {
-            //                 gameId: newgame.id,
-            //                 player1: { playerID: currentRoom.client1.username, score: newgame.score1.toString() },
-            //                 player2: { playerID: currentRoom.client2.username, score: newgame.score2.toString() },
-            //             }
-            //             this.server.to(`${currentRoom.client1.id}`).emit('gameStarted', gameData);
-            //             this.server.to(`${currentRoom.client2.id}`).emit('gameStarted', gameData);
-            //             currentRoom.isDatabaseUpdated = false;
-            //         })
             //         this.connectedCli++;
             //     }
             // }
@@ -241,7 +236,8 @@ export class InvitedEvent  {
 
     BallMovements = async (room: Room, clientId: string) => {
         // Trying to move the ball, for each room separate.
-        if (room.IsFull && room.game.IsStarted) {
+        console.log(`check room.num in ballmovement: ${room.num}`);
+        if (room.IsFull && room.game.IsStarted && !room.game.IsFinish) {
 
             //change the ball SpeedX and ball SpeedY
             room.ball.z += room.ball.zdirection * room.ball.speed;
@@ -288,16 +284,19 @@ export class InvitedEvent  {
                 room.game.IsFinish = true;
                 room.client1.inGame = false;
                 room.client2.inGame = false;
-                this.server.to(`${room.client1.id}`).emit('gameEnded');
-                this.server.to(`${room.client2.id}`).emit('gameEnded');
+                room.isDatabaseUpdated = true;
                 if (room.client1.score === room.game.WinReq) {
                     this.server.to(`${room.client1.id}`).emit('won');
                     this.server.to(`${room.client2.id}`).emit('lost');
+                    console.log('client1 won the game');
                 }
                 else {
                     this.server.to(`${room.client1.id}`).emit('lost');
                     this.server.to(`${room.client2.id}`).emit('won');
+                    console.log('client2 won the game');
                 }
+                this.server.to(`${room.client1.id}`).emit('gameEnded');
+                this.server.to(`${room.client2.id}`).emit('gameEnded');
                 if (room.client1.score > room.client2.score) {
                     room.winner = room.client1.username;
                     room.loser = room.client2.username;
@@ -307,6 +306,9 @@ export class InvitedEvent  {
                     room.winner = room.client2.username;
                     room.loser = room.client1.username;
                 }
+                // if (!room.client1.inGame && !room.client2.inGame && room.isDatabaseUpdated) {
+                //     this.IfGameIsFinish(room, gamedata);
+                // }
             }
 
             // Resending Ball Coords to clients
@@ -320,47 +322,96 @@ export class InvitedEvent  {
     }
 
     @SubscribeMessage('sendInvitationToServer')
-    handleTest(@ConnectedSocket() client: Socket, @MessageBody() oppUsername: string) {
+    handleInvitationToServer(@ConnectedSocket() client: Socket, @MessageBody() oppUsername: string) {
         const token: string = client.handshake.headers.authorization.slice(7);
         const userObj = this.jwtService.verify(token);
         if (this.connectedPlayers.has(oppUsername)) {
-            this.server.to(`${this.connectedPlayers.get(oppUsername)}`).emit('sendInvitationToOpp', userObj.username);
+            console.log(`${userObj.username} want to send a game invitation to ${oppUsername} with : ${this.connectedPlayers.get(oppUsername).id}`);
+            this.server.to(`${this.connectedPlayers.get(oppUsername).id}`).emit('sendInvitationToOpp', userObj.username);
         }
     }
 
-    JoinPlayersToRoom = (client1: {id: string, username: string}, client2: {id: string, username: string}) => {
-
+    AfterIvitationAccepted = (client1: Socket, client2: Socket) => {
+        // if (this.connectedCli % 2 === 0) {
+            const token: string = client1.handshake.headers.authorization.slice(7);
+            const userObj = this.jwtService.verify(token);
+            client1.join(`${this.RoomNum}`);
+            const newRoom = new Room(this.RoomNum);
+            console.log(`new Room is created! ${newRoom.num}`);
+            newRoom.client1 = new Client(1); // Initialize client1
+            newRoom.ball = new Ball();
+            newRoom.client1.id = client1.id;
+            newRoom.client1.token = token;
+            newRoom.client1.username = userObj.username;
+            newRoom.client1.socket = client1;
+            this.Rooms.push(newRoom);
+            // console.log(`newRoom.client1.id is : ${newRoom.client1.id}`);
+            this.server.to(`${newRoom.client1.id}`).emit('joined', this.RoomNum);
+            this.connectedCli++;
+        // }
+        // else {
+        //     if (!this.Rooms[this.RoomNum])
+        //         return;
+            client2.join(`${this.RoomNum}`);
+            const currentRoom = this.Rooms[this.RoomNum];
+            console.log(`This room already created : ${currentRoom.num}`);
+            // if (currentRoom && currentRoom.client1) {
+                const token2: string = client2.handshake.headers.authorization.slice(7);
+                const userObj2 = this.jwtService.verify(token2);
+                // if (currentRoom.client1.token === token){
+                //     console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal");
+                //     client2.leave(`${this.RoomNum}`);
+                //     currentRoom.client1.id = client2.id;
+                //     return ;
+                // }
+                currentRoom.client2 = new Client(2); // Initialize client2
+                currentRoom.client2.id = client2.id;
+                currentRoom.client2.socket = client2;
+                currentRoom.client2.token = token2;
+                currentRoom.client2.username = userObj2.username;
+                // console.log(`currentRoom.client2.id is : ${currentRoom.client2.id}`);
+                this.server.to(`${currentRoom.client2.id}`).emit('joined', this.RoomNum);
+                this.connectedCli++;
+                this.Rooms[this.RoomNum].IsFull = true;
+                this.BallReset(this.Rooms[this.RoomNum]);
+                // this.RoomNum++;
+            // }
+        // }
+        // if (this.Rooms[this.RoomNum].client2) {
+        // }
     }
 
     @SubscribeMessage('AcceptingInvitation')
     handleAccepting(@ConnectedSocket() client: Socket, @MessageBody() data: { acceptation: boolean, OppName: string}) {
         const   {acceptation, OppName} = data;
         if (acceptation){
-            const token: string = client.handshake.headers.authorization.slice(7);
-            const userObj = this.jwtService.verify(token);
             this.isInvitationAccepted = true;
             console.log('Invitation accepted!')
             this.server.to(`${client.id}`).emit('IsGameAccepted');
-            this.server.to(`${this.connectedPlayers.get(OppName)}`).emit('IsGameAccepted');
-            this.JoinPlayersToRoom({id: client.id, username: userObj.username},
-                {id: this.connectedPlayers.get(OppName), username: OppName})
+            this.server.to(`${this.connectedPlayers.get(OppName).id}`).emit('IsGameAccepted');
+            this.AfterIvitationAccepted(client, this.connectedPlayers.get(OppName));
         }
         if (!acceptation) {
+            //if the opponent declined, client1 need to leave the room
             this.isInvitationDeclined = true;
-            this.server.to(`${this.connectedPlayers.get(OppName)}`).emit('IsGameDeclined');
+            this.server.to(`${this.connectedPlayers.get(OppName).id}`).emit('IsGameDeclined');
             console.log('Invitation declined');
         }
     }
 
     @SubscribeMessage('demand')
-    handleBallDemand(@ConnectedSocket() client: Socket, @MessageBody() _room: number) {
+    handleBallDemand(@ConnectedSocket() client: Socket,  @MessageBody() data: {_room: number}) {
         try {
+            const {_room} = data;
             const token = client.handshake.headers.authorization.slice(7);
             const userObj = this.jwtService.verify(token); 
-            if (this.Rooms[_room].IsFull) {
-                this.Rooms[_room].client1.inGame = true;
-                this.Rooms[_room].client2.inGame = true;
-                this.Rooms[_room].game.IsStarted = true;
+            if (this.Rooms[_room] &&  this.Rooms[_room].IsFull) {
+                if (this.Rooms[_room].setVars === false) {
+                    this.Rooms[_room].setVars = true;
+                    this.Rooms[_room].client1.inGame = true;
+                    this.Rooms[_room].client2.inGame = true;
+                    this.Rooms[_room].game.IsStarted = true;
+                }
                 if (this.SocketsByUser.has(token)) {
                     if ((this.SocketsByUser.get(token) === client.id) && (_room < this.RoomNum &&
                     (this.Rooms[_room].client1.username === userObj.username
@@ -436,21 +487,6 @@ export class InvitedEvent  {
         }
     }
 
-    @SubscribeMessage('gameEnded')
-    handleGameEnded(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number, gamedata: GameData}) {
-        const {_room, gamedata} = data;
-        const token: string = client.handshake.headers.authorization.slice(7);
-        const userObj = this.jwtService.verify(token); 
-        if (this.SocketsByUser.has(token)) {
-            if (this.SocketsByUser.get(token) === client.id) {
-                if (this.Rooms[_room].client1.inGame === false && this.Rooms[_room].client2.inGame === false && this.Rooms[_room].isDatabaseUpdated === false) {
-                    this.Rooms[_room].isDatabaseUpdated = true;    
-                    this.IfGameIsFinish(this.Rooms[_room], gamedata);
-                }
-            }
-        }
-    }
-
     @SubscribeMessage('leaveQueue')
     handleleavequeue(@ConnectedSocket() client: Socket, @MessageBody() room: number) {
         console.log(`checking room Number if exist: ${room}`);
@@ -477,4 +513,8 @@ export class InvitedEvent  {
         }
     }
 
+    @SubscribeMessage('InvitedCompCalled')
+    handleInvitedCompCalled(@ConnectedSocket() client: Socket){
+        this.server.to(`${client.id}`).emit('gameStarted');
+    }
 }

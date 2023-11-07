@@ -7,6 +7,12 @@ let isReceived: boolean = false;
 let sock: Socket | null = null;
 let notifToken: string;
 let isSocketSet: boolean = false;
+let RoomId: number = 0;
+
+
+export function setRoomId(newValue: number) {
+    RoomId = newValue;
+}
 
 export function setMyGameOppName(newValue: any){
     myGameOppName = newValue;
@@ -28,26 +34,30 @@ export  function InitSocket() {
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
 
-    if (tokenCookie && !token) {
-        setToken(tokenCookie.split("=")[1]);
-        notifToken = tokenCookie.split("=")[1];
-    }
-
-    if (!socket && token && !isSocketSet) {
-        setSocket(
-            io("http://localhost:3000/Invited", {
+        if (tokenCookie && !token) {
+            notifToken = tokenCookie.split("=")[1];
+            setToken(notifToken);
+        }
+    
+        if (!socket && token && !isSocketSet) {
+            const test: any = io("http://localhost:3000/Invited", {
                 extraHeaders: {
                     Authorization: `Bearer ${token}`,
                 },
-            }),
-        );
-    }
+            });
 
-    if (socket && !isSocketSet) {
-        console.log('checking socket if it initialize again');
-        sock = socket;
-        isSocketSet = true;
-    }
+            test.on('connect', () => {
+                sock = test;
+                console.log(`checking sock.id in variables: ${sock?.id}`);
+                setSocket(test);
+            })
+
+            test.on('joined', (roomNumber: number) => {
+                console.log('joined event received!');
+                setRoomId(roomNumber);
+            })
+            isSocketSet = true;
+        }
 }
 
 export { myGameOppName };
@@ -55,3 +65,4 @@ export { isReceived };
 export { isSent };
 export { sock };
 export { notifToken };
+export { RoomId };

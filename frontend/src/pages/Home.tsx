@@ -4,6 +4,7 @@ import robotSvg from "../../public/images/robot.svg";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { InitSocket } from "./variables";
+import { Socket, io } from "socket.io-client";
 interface UserData {
   displayname: string;
 }
@@ -12,6 +13,7 @@ function HomePage() {
   const [user, setUser] = useState<UserData | null>(null);
 
   InitSocket();
+
   useEffect(() => {
     // Function to fetch user data and set it in the state
     const fetchUserData = async () => {
