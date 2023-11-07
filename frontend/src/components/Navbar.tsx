@@ -6,7 +6,7 @@ import axios from "axios";
 import { initializeSocket } from "./socketManager";
 import Validate from "../components/Validate";
 import Notification from "./Notification";
-import { InitSocket, RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../pages/variables";
+import { RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../pages/variables";
 import Swal from "sweetalert2";
 
 interface UserData {
@@ -149,19 +149,13 @@ function NavBar() {
       clearTimeout(dropdownTimeout);
     };
   }, [dropdownTimeout]);
-
-  // console.log('checking roomid value in NavBar comp: ', RoomId);
   
   useEffect(() => {
-    // console.log(`checking my socket.id in invitedGame : ${sock?.id}`);
     if (sock) {
-      // sock.on('joined', (roomNumber: number) => {
-        //   console.log('listening to joined event to set room Id');
-        //   setRoomId(roomNumber);
-        // })
-        
-      // console.log(`check myGameOppName: ${myGameOppName}`);
-      // console.log(`and check also isSent value : ${isSent}`);
+      sock.on('joined', (roomNumber: number) => {
+          console.log('listening to joined event to set room Id in NavBar : ', roomNumber);
+          setRoomId(roomNumber);
+      })
 
       if (myGameOppName && isSent) {
         sock.emit("sendInvitationToServer", myGameOppName);
@@ -200,7 +194,7 @@ function NavBar() {
   // Render your Navbar JSX here, using the username and userPicture states
   if (invitationReceived) {
     Swal.fire({
-      title: `${myGameOppName} invited you to a game!`,
+      title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
       showDenyButton: true,
       showCancelButton: false,
       allowOutsideClick: false,

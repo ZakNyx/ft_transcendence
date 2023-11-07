@@ -52,10 +52,10 @@ export  function InitSocket() {
                 setSocket(test);
             })
 
-            test.on('joined', (roomNumber: number) => {
-                console.log('joined event received!');
-                setRoomId(roomNumber);
-            })
+            // test.on('joined', (roomNumber: number) => {
+            //     console.log('joined event received!');
+            //     setRoomId(roomNumber);
+            // })
             isSocketSet = true;
         }
 }

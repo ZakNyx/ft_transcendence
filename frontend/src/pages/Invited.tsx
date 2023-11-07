@@ -61,7 +61,7 @@ const DrawBall = (props: any) => {
   const [ball, setBall] = useState([0, 0]);
 
   useFrame(() => {
-    // props.socket.emit("demand", props.room);
+    props.socket.emit("demand", props.room);
   });
 
   useEffect(() => {
@@ -272,9 +272,10 @@ export default function Invited() {
     sock?.emit('InvitedCompCalled');
   }
 
-  if (RoomNumber === -1){
-    setRoomNumber(RoomId);
-  }
+  // if (RoomNumber === -1){
+  //   console.log('check room ID in invited.tsx : ', RoomId);
+  //   setRoomNumber(RoomId);
+  // }
 
   const handleSettingsChange = (paddleColor: string, ballColor: string) => {
     setSettings({ paddleColor, ballColor });
@@ -284,19 +285,20 @@ export default function Invited() {
   useEffect(() => {
     if (socket) {
 
-      if (RoomNumber !== -1) {
-        console.log('check room ID in invited.tsx : ', RoomNumber);
-      }
+      // if (RoomNumber !== -1) {
+      //   console.log('check room ID in invited.tsx : ', RoomNumber);
+      // }
       // socket.on("joined", (RoomId: number) => {
       //   console.log("joined event received!");
       //   console.log(`my room id is : ${RoomId}`);
       //   setRoomNumber(RoomId);
       // });
 
-      socket.on("gameStarted", () => {
+      socket.on("gameStarted", (RoomId: number) => {
         console.log('game Started ;)');
         setInGame(true);
         setIsGameStarted(true);
+        setRoomNumber(RoomId);
       });
 
       socket.on('InGame', () => {

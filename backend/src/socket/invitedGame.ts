@@ -107,14 +107,8 @@ export class InvitedEvent  {
 
     //Moving the players paddle
     MoveEverthing = (x: number, room: Room, clientId: string) => {
-        try {
-            // console.log('check room.number : ', room.num);
-            if (room && room.IsFull) {
-                this.MovePaddles(x, room, clientId);
-            }
-        }
-        catch (err) {
-            console.log(`Error in MoveEvery: ${err}`);
+        if (room.IsFull) {
+            this.MovePaddles(x, room, clientId);
         }
     }
 
@@ -236,9 +230,7 @@ export class InvitedEvent  {
 
     BallMovements = async (room: Room, clientId: string) => {
         // Trying to move the ball, for each room separate.
-        console.log(`check room.num in ballmovement: ${room.num}`);
         if (room.IsFull && room.game.IsStarted && !room.game.IsFinish) {
-
             //change the ball SpeedX and ball SpeedY
             room.ball.z += room.ball.zdirection * room.ball.speed;
             room.ball.x += room.ball.xdirection * room.ball.xval;
@@ -374,7 +366,7 @@ export class InvitedEvent  {
                 this.connectedCli++;
                 this.Rooms[this.RoomNum].IsFull = true;
                 this.BallReset(this.Rooms[this.RoomNum]);
-                // this.RoomNum++;
+                this.RoomNum++;
             // }
         // }
         // if (this.Rooms[this.RoomNum].client2) {
@@ -400,9 +392,9 @@ export class InvitedEvent  {
     }
 
     @SubscribeMessage('demand')
-    handleBallDemand(@ConnectedSocket() client: Socket,  @MessageBody() data: {_room: number}) {
+    handleBallDemand(@ConnectedSocket() client: Socket,  @MessageBody() _room: number) {
         try {
-            const {_room} = data;
+            
             const token = client.handshake.headers.authorization.slice(7);
             const userObj = this.jwtService.verify(token); 
             if (this.Rooms[_room] &&  this.Rooms[_room].IsFull) {
@@ -413,6 +405,8 @@ export class InvitedEvent  {
                     this.Rooms[_room].game.IsStarted = true;
                 }
                 if (this.SocketsByUser.has(token)) {
+                    console.log(`check _room : ${_room}`);;
+                    console.log(`check this.RoomNum : ${this.RoomNum}`);
                     if ((this.SocketsByUser.get(token) === client.id) && (_room < this.RoomNum &&
                     (this.Rooms[_room].client1.username === userObj.username
                     || this.Rooms[_room].client2.username === userObj.username))) {
@@ -515,6 +509,6 @@ export class InvitedEvent  {
 
     @SubscribeMessage('InvitedCompCalled')
     handleInvitedCompCalled(@ConnectedSocket() client: Socket){
-        this.server.to(`${client.id}`).emit('gameStarted');
+        this.server.to(`${client.id}`).emit('gameStarted', (this.RoomNum - 1));
     }
 }
