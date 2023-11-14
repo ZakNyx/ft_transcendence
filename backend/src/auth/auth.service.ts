@@ -35,6 +35,8 @@ export class AuthService {
           email: newUser.email,
           imageUrl : imageLink,
           picture:null,
+          userId:newUser.userId,
+          image: imageLink //mybe need to fix later
         },
       });
       user.first = 0;

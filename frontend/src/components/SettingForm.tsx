@@ -174,16 +174,16 @@ export default function SettingForm() {
     }
   };
 
-  const [newDisplayName, setUserDisplayName] = useState<string>("");
+  const [newdisplayname, setUserdisplayname] = useState<string>("");
 
-  const handleDisplaynameChange = (
+  const handledisplaynameChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setUserDisplayName(event.target.value);
+    setUserdisplayname(event.target.value);
   };
 
   // Change the username
-  const updateDisplayName = async () => {
+  const updatedisplayname = async () => {
     const tokenCookie = document.cookie
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
@@ -194,7 +194,7 @@ export default function SettingForm() {
 
         await axios.put(
           `http://localhost:3000/profile/updateName`,
-          { name: newDisplayName },
+          { name: newdisplayname },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -209,7 +209,7 @@ export default function SettingForm() {
           background: "#252526",
           timer: 2000,
         });
-        setUserDisplayName("");
+        setUserdisplayname("");
       }
     } catch (error: any) {
       console.error("Error Changing Display Name:", error);
@@ -295,8 +295,8 @@ export default function SettingForm() {
                 id="username"
                 className="border-1 rounded-r px-4 py-2 w-full"
                 type="text"
-                value={newDisplayName}
-                onChange={handleDisplaynameChange}
+                value={newdisplayname}
+                onChange={handledisplaynameChange}
                 placeholder={user ? user.displayname : "loading..."}
               />
             </div>
@@ -319,7 +319,7 @@ export default function SettingForm() {
           <button
             type="submit"
             id="submit"
-            onClick={updateDisplayName}
+            onClick={updatedisplayname}
             className="bg-blue-500 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition text-sm sm:text-base md:text-md "
           >
             Submit

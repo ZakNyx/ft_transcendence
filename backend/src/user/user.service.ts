@@ -406,15 +406,15 @@ export class UserService {
     const userFind = await this.prismaService.user.findUnique({
       where: { email: user.email },
     });
-    const message = await this.prismaService.message.create({
-      data: {
-        data: data,
-        time: time,
-        roomId: id,
-        userId: userFind.id,
-      },
-    });
-    return message;
+    // const message = await this.prismaService.message.create({
+    //   data: {
+    //     data: data,
+    //     time: time,
+    //     roomId: id,
+    //     userId: userFind.id,
+    //   },
+    // });
+    // return message;
   }
 
   //add data in Room { messages}
@@ -504,3 +504,12 @@ export class UserService {
     throw new NotFoundException({}, "room not found");
   }
 }
+// id       Int      @id @default(autoincrement())
+
+// data     String
+// time     String
+// roomId   Int
+// userId   Int
+
+// user     User     @relation(fields: [userId], references: [id])
+// roomData ChatRoom @relation(fields: [roomId], references: [id])

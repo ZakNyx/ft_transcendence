@@ -15,7 +15,7 @@ interface notifData {
 
   reciever: string;
   sender: string;
-  sernderDisplayName: string;
+  sernderdisplayname: string;
   senderPicture: string;
   type: string;
   data: string;

@@ -8,7 +8,7 @@ interface notifData {
 
   reciever: string;
   sender: string;
-  sernderDisplayName:string;
+  sernderdisplayname:string;
   senderPicture: string;
   type: string;
   data:string;
@@ -93,7 +93,7 @@ const Notifications = () => {
         for (const user of notifications) {
           const imageUrl = await fetchUserPicture(user.sender);
           const displayname = await fetchUserDisplay(user.sender);
-          user.sernderDisplayName = displayname;
+          user.sernderdisplayname = displayname;
           user.senderPicture = imageUrl;
           updatedData.push(user);
         }
@@ -209,7 +209,7 @@ const cancelFriendRequest = async (user: string) => {
                 alt="User profile picture"
               />
               <p className="max-w-[12rem] break-words text-xs xs:text-xs md:text-xs lg:text-sm">
-                <b>{notification.sernderDisplayName}</b> has sent you a friend request.
+                <b>{notification.sernderdisplayname}</b> has sent you a friend request.
               </p>
               <div className="space-x-2">
                 <button onClick={()=> {acceptRequest(notification.sender)}} className="rounded-md bg-npc-purple hover:bg-purple-hover p-1.5 shadow-md text-xs xs:text-xs md:text-xs lg:text-sm ">

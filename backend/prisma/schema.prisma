@@ -13,47 +13,57 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
 
-  email          String  @unique
+  email String @unique
 
-  imageUrl       String
-  picture        String?
-  pictureStatus Boolean @default(false)
+  userId            String         @unique
+  image             String?
+  dms               DM[]           @relation("participants")
+  messages          Message[]
+  friend            Json[]
+  blockedUsers      String[]
+  rooms             RoomMember[]
+  roomInvites       Json[]
+  FirstTime         Boolean        @default(true)
+  // participantNotifs Notification[] @relation(name: "ParticipantNotifsToUser")
+
+  imageUrl        String
+  picture         String?
+  pictureStatus   Boolean @default(false)
   pictureMimetype String?
 
   username    String @unique
   displayname String @unique
-  status      Status @default(OFFLINE)
+  status      Status @default(ONLINE)
 
-  wins  Int @default(0)
-  loses Int @default(0)
-  winrate Float @default(0)
-  gamesPlayed Int @default(0)
-  elo   Int @default(0)
+  wins         Int    @default(0)
+  loses        Int    @default(0)
+  winrate      Float  @default(0)
+  gamesPlayed  Int    @default(0)
+  elo          Int    @default(0)
+  matchHistory Json[]
 
   status2fa Boolean @default(false)
-  validated  Boolean @default(false)
+  validated Boolean @default(false)
 
   secret2fa     String?
   secretAuthUrl String?
 
-  friends User[] @relation("friends")
-  friendOf User[] @relation("friends")
-  blocks User[] @relation("blocked")
-  blockedBy User[] @relation("blocked")
-  requested User[] @relation("friendreq")
+  friends     User[] @relation("friends")
+  friendOf    User[] @relation("friends")
+  blocks      User[] @relation("blocked")
+  blockedBy   User[] @relation("blocked")
+  requested   User[] @relation("friendreq")
   requestedBy User[] @relation("friendreq")
 
   notifications Notification[]
+  games         Game[]         @relation("GamePlayers")
+  chatRooms     ChatRoom[]     @relation("userInChatRoom")
 
-  games Game[] @relation("GamePlayers")
-
-  chatRooms ChatRoom[] @relation("userInChatRoom")
-  messages  Message[]
-
+  achievements String[]
 }
 
 model Notification {
-  id Int @id @default(autoincrement())
+id Int @id @default(autoincrement())
 
   reciever String
   sender   String
@@ -62,31 +72,10 @@ model Notification {
   time DateTime @default(now())
 
   user User @relation(fields: [reciever], references: [username])
-}
-
-model ChatRoom {
-  id         Int       @id @default(autoincrement())
-
-  roomName   String    @unique
-  timeCreate DateTime  @default(now())
-
-  users      User[]    @relation("userInChatRoom")
-
-  messages   Message[]
-
-  admins     String[]
-  mutedUsers  String[]
-  bannedUsers   String[]
-
-  isDm      Boolean   @default(false)
-
-  status     String    @default("public")
-
-  password   String?
-}
+  }
 
 model Game {
-  id  Int   @default(autoincrement()) @id
+  id Int @id @default(autoincrement())
 
   player1 String
   player2 String
@@ -94,24 +83,110 @@ model Game {
   score1 String @default("")
   score2 String @default("")
 
-  users User[] @relation("GamePlayers")
+  users  User[]  @relation("GamePlayers")
   ingame Boolean @default(false)
-}
-
-model Message {
-  id       Int      @id @default(autoincrement())
-
-  data     String
-  time     String
-  roomId   Int
-  userId   Int
-
-  user     User     @relation(fields: [userId], references: [id])
-  roomData ChatRoom @relation(fields: [roomId], references: [id])
 }
 
 enum Status {
   ONLINE
   OFFLINE
   INGAME
+}
+
+model Message {
+  id             Int       @id @default(autoincrement())
+  sentAt         DateTime  @default(now())
+  messageContent String
+  dmId           Int?
+  senderId       String
+  data     String?
+  time     String?
+  roomId         Int?
+  dm             DM?       @relation(fields: [dmId], references: [id])
+  sender         User      @relation(fields: [senderId], references: [userId])
+  room           Room?     @relation(fields: [roomId], references: [id])
+  roomData       ChatRoom? @relation(fields: [roomId], references: [id], map: "MessageRoomData")
+}
+
+
+model DM {
+  id           Int       @id @default(autoincrement())
+  // participantId Int
+  // msgId Int
+  creatorId    String
+  participants User[]    @relation("participants")
+  // participant RoomMember @relation("participant", fields: [participantId], references: [id])
+  // participants RoomMember[]
+  msg          Message[]
+  lastUpdate   DateTime  @updatedAt
+}
+
+model BannedUser {
+  id     Int @id @default(autoincrement())
+  userId Int
+  // user User @relation(fields: [userId], references: [id])
+}
+
+model FriendList {
+  id Int @id @default(autoincrement())
+  // friends User[]
+}
+
+model friendRequest {
+  id       Int @id @default(autoincrement())
+  senderId Int
+  // sender  User @relation(fields: [senderId], references: [id])
+}
+
+model Room {
+  id          Int          @id @default(autoincrement())
+  msgs        Message[]
+  image       String
+  RoomName    String
+  visibility  String
+  password    String?
+  RoomMembers RoomMember[]
+  bannedUsers String[]
+  lastUpdate  DateTime     @updatedAt
+}
+
+model RoomMember {
+  id             Int       @id @default(autoincrement())
+  RoomId         Int
+  memberId       String
+  role           Role      @default(USER)
+  muted          Boolean   @default(false)
+  muteExpiration DateTime?
+  room           Room      @relation(fields: [RoomId], references: [id])
+  member         User      @relation(fields: [memberId], references: [userId])
+  joinTime       DateTime
+  inviterId      String?
+  // leftTime DateTime
+}
+
+enum Role {
+  USER
+  ADMIN
+  OWNER
+}
+
+model ChatRoom {
+  id Int @id @default(autoincrement())
+
+  roomName   String   @unique
+  timeCreate DateTime @default(now())
+
+  users User[] @relation("userInChatRoom")
+
+  messages Message[]
+
+  admins      String[]
+  mutedUsers  String[]
+  bannedUsers String[]
+
+  isDm Boolean @default(false)
+
+  status String @default("public")
+
+  password String?
 }
