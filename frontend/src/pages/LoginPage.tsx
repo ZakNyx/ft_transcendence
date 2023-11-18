@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { InitSocket } from "./variables";
 
 export default function LoginPage() {
   const navigate = useNavigate();

@@ -6,3 +6,10 @@
 - Redirect to / if user isnt loged it <Done>
 - Button in leaderboard leads to profile <Done>
 - /profile/{username} should be implemanted <Done>
+- need to fetch Opponent name after starting the game <Done>
+- need to merge chat with my old modifcations
+- need to fix problem in identification
+- match history problem
+- refresh in queue
+- Check if the guy is online to send game request
+- Move NavBar from Login page

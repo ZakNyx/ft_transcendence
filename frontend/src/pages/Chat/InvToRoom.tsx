@@ -107,7 +107,7 @@ export default function invToRoom(props: any) {
 
   const [dataState, setDataState] = useState<any>(null);
 
-  const token = Cookies.get('accessToken');
+  const token = Cookies.get('token');
 
   const navigate = useNavigate();
 

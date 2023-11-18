@@ -8,7 +8,16 @@ let sock: Socket | null = null;
 let notifToken: string;
 let isSocketSet: boolean = false;
 let RoomId: number = 0;
+let GameId: number = 0;
+let Playerusername: string;
 
+export function setGameId(newValue: number) {
+    GameId = newValue;
+}
+
+export function setUsername(newValue: string) {
+    Playerusername = newValue;
+}
 
 export function setRoomId(newValue: number) {
     RoomId = newValue;
@@ -66,3 +75,5 @@ export { isSent };
 export { sock };
 export { notifToken };
 export { RoomId };
+export { GameId };
+export { Playerusername };

@@ -129,7 +129,7 @@ export class SocketEvent  {
     //Connection
     handleConnection = (client: Socket) => {
         try{
-            console.log(`client connected id : ${client.id}`);
+            console.log(`client connected id in Game multi : ${client.id}`);
             const token: string = client.handshake.headers.authorization.slice(7);
             if (!token)
                 throw new UnauthorizedException();
@@ -185,8 +185,8 @@ export class SocketEvent  {
                             player1: { playerID: currentRoom.client1.username, score: newgame.score1.toString() },
                             player2: { playerID: currentRoom.client2.username, score: newgame.score2.toString() },
                         }
-                        this.server.to(`${currentRoom.client1.id}`).emit('gameStarted', gameData);
-                        this.server.to(`${currentRoom.client2.id}`).emit('gameStarted', gameData);
+                        this.server.to(`${currentRoom.client1.id}`).emit('gameStarted', {gamedata: gameData, OppName: currentRoom.client2.username});
+                        this.server.to(`${currentRoom.client2.id}`).emit('gameStarted', {gamedata: gameData, OppName: currentRoom.client1.username});
                         currentRoom.isDatabaseUpdated = false;
                     })
                     this.connectedCli++;
@@ -205,7 +205,7 @@ export class SocketEvent  {
 
     //Disconnection
     handleDisconnection = (client: Socket) => {
-        console.log(`Client Disconnected: ${client.id}`);
+        console.log(`Client game Disconnected: ${client.id}`);
         const token: string = client.handshake.headers.authorization.slice(7);
         this.Rooms.forEach( (item) => {
             if (item.client1.id === client.id) {

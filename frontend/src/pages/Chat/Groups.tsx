@@ -9,68 +9,67 @@ function GroupsComponent(props:any) {
   const userId = props.userId;
   const [convData, setConvData] = useState<any>(null);
 
-  const token = Cookies.get('accessToken');
+  const token = Cookies.get('token');
 
   const navigate = useNavigate();
 
 
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/chat/groups', {
-        params: {
-          userId: props.userId,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 200) {
-        setConvData(response.data)
-    }
-    } catch (error) {
-      navigate('/chat' , {replace: true});
-    }
-  };
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/chat/groups', {
+          params: {
+            userId: props.userId,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 200) {
+          setConvData(response.data);
+        }
+      } catch (error) {
+        navigate("/chat", { replace: true });
+      }
+    };
 
     fetchData();
 
     props?.socket?.on("blocked", () => {
       fetchData();
-    })
+    });
     props?.socket?.on("leftRoom", () => {
       fetchData();
-    })
+    });
     props?.socket?.on("unblocked", () => {
       fetchData();
-    })
+    });
     props?.socket?.on("createdRoom", () => {
       fetchData();
-    })
+    });
     props?.socket?.on("kicked", () => {
       fetchData();
-    })
+    });
     props?.socket?.on("joinedChatRoom", () => {
       fetchData();
-    })
+    });
     props?.socket?.on("banned", () => {
       fetchData();
-    })
+    });
     props?.socket?.on("createdMessage", () => {
       fetchData();
-    })
-    return ( () => {
-      props.socket.off('createdMessage')
-      props.socket.off('banned')
-      props.socket.off('joinedChatRoom')
+    });
+    return () => {
+      props.socket.off("createdMessage");
+      props.socket.off("banned");
+      props.socket.off("joinedChatRoom");
       // props.socket.off('createdMessage')
-      props.socket.off('kicked')
-      props.socket.off('createdRoom')
-      props.socket.off('unblocked')
+      props.socket.off("kicked");
+      props.socket.off("createdRoom");
+      props.socket.off("unblocked");
       // props.socket.off('leftRoom')
-      props.socket.off('blocked')
-    })
-  
+      props.socket.off("blocked");
+    };
   }, []);
 
   const [display, setDisplay] = useState(true);

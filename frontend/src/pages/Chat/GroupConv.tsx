@@ -129,7 +129,7 @@ const ContactBar = (barData:any) => {
   
   const [message, setMessage] = useState('');
 
-  const token = Cookies.get('accessToken');
+  const token = Cookies.get('token');
 
   const [componentKey, setComponentKey] = useState(0);
   const [hasNavigated, setHasNavigated] = useState(false);

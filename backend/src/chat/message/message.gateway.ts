@@ -25,6 +25,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @UseFilters(new AllExceptionFilter())
 @WebSocketGateway({
+  namespace: "Chat",
   cors: {
     origin: '*',
   },
@@ -208,7 +209,7 @@ export class MessageGateway
   //   this.messageService.friendRequestAccept(clientId.sub, this.server ,body, this.mapy, client);
   // }
 
-  @SubscribeMessage('declinedFriendInvite')
+  // @SubscribeMessage('declinedFriendInvite')
   // async handleFriendNotifDecline(@ConnectedSocket() client: Socket, @MessageBody() body: any,)
   // {
   //   const clientId = this.validateToken(client.handshake.auth.token);
@@ -216,7 +217,6 @@ export class MessageGateway
   // }
 
   // end
-
 
 
   @SubscribeMessage('joinRoom')
@@ -248,23 +248,21 @@ export class MessageGateway
 
   validateToken(token : string) {
     const payload = this.jwtservice.decode(token);
+    // console.log(payload);
     if (!payload)
       return null;
     return payload;
   }
 
   async handleConnection(client: Socket) {
+    console.log(`client: ${client.id} connected in Chat gateway!`)
 
-    let {token} = client.handshake.auth;
-    
-    const userId = this.validateToken(token);
-    
+    const userId = this.validateToken(client.handshake.auth.token);
+
     if (!userId) {
       client.disconnect();
       return ;
     }
-
-    this.mapy.set(userId.sub, client);
-    await this.messageService.fetchState(client, userId.sub);
+    await this.messageService.fetchState(client, userId["username"]);
   }
 }

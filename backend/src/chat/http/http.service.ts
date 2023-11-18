@@ -90,7 +90,7 @@ export class HttpService {
     let accessCheck: boolean = false;
     const user = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
       select: {
         image: true,
@@ -117,7 +117,7 @@ export class HttpService {
       if (!(await this.checkBlocked(userId, msg.senderId))) {
         const sender = await this.prismaService.user.findUnique({
           where: {
-            userId: msg.senderId,
+            username: msg.senderId,
           },
         });
         customArray.push([msg, sender.image]);
@@ -215,7 +215,7 @@ export class HttpService {
 
     const currentUser = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
     });
     let customArray: [number, Message[], User[]][] = [];
@@ -234,7 +234,7 @@ export class HttpService {
   async fetchDMContent(dmId: number, userId: string) {
     const currentUser = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
       include: {
         dms: true,
@@ -271,7 +271,7 @@ export class HttpService {
     });
     const ownImage = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
       select: {
         image: true,
@@ -284,7 +284,7 @@ export class HttpService {
   async addPeopleFetch(userId: string) {
     const currentUser = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
       include: {
         dms: true,
@@ -298,7 +298,7 @@ export class HttpService {
     const users = await this.prismaService.user.findMany({
       where: {
         NOT: {
-          userId: {
+          username: {
             in: blockedUserIds,
           },
         },
@@ -315,7 +315,7 @@ export class HttpService {
             },
           },
         ],
-        userId: {
+        username: {
           not: userId,
         },
       },
@@ -331,7 +331,7 @@ export class HttpService {
   async fetchRoomSuggestions(roomId: number, userId: string) {
     const currentUser = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
       include: {
         rooms: true,
@@ -375,7 +375,7 @@ export class HttpService {
         AND: [
           {
             NOT: {
-              userId: {
+              username: {
                 in: currentUser.blockedUsers,
               },
             },
@@ -398,7 +398,8 @@ export class HttpService {
         return true;
       for (let i = 0; i < currentUser.roomInvites.length; i++) {
         if (
-          currentUser.roomInvites[i][0] == user.userId &&
+          // I changed user.userId to user.username
+          currentUser.roomInvites[i][0] == user.username &&
           currentUser.roomInvites[i][1] == roomId
         ) {
           return false;
@@ -429,7 +430,7 @@ export class HttpService {
   async fetchRoomDashboard(roomId: number, userId: string) {
     const currentUser = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
       include: {
         rooms: true,
@@ -470,7 +471,7 @@ export class HttpService {
     });
     const fetcher = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
       include: {
         rooms: true,
@@ -499,7 +500,7 @@ export class HttpService {
     let accessCheck: boolean = false;
     const user = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
       select: {
         rooms: true,
@@ -520,7 +521,7 @@ export class HttpService {
     });
     const members = await this.prismaService.user.findMany({
       where: {
-        userId : {
+        username : {
           in: room.bannedUsers,
         },
       },

@@ -1,8 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
-import Cookies from "js-cookie";
-// import * as jwtDecode from "jwt-decode"
 import  { jwtDecode } from 'jwt-decode';
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/Home";
@@ -26,7 +24,6 @@ import GroupConv from "./pages/Chat/GroupConv";
 import InvToRoom from "./pages/Chat/InvToRoom";
 import RoomSettings from "./pages/Chat/RoomSettings";
 import BannedList from "./pages/Chat/BannedList";
-import user_data from "./utilities/data_fetching";
 
 export interface Token {
   sub: string;
@@ -35,39 +32,31 @@ export interface Token {
 
 function App() {
   const [socket, setSocket] = useState<any>(null);
-  // const [enabled2FA, setEnabled2FA] = useState<any>();
-  // const [validated2FA, setValidated2FA] = useState<any>();
-  // const [firstTime, setFirstTime] = useState<any>();
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>("");
 
 
   useEffect(() => {
+    let SecondToken: string | null = null;
     const tokenCookie: string | undefined = document.cookie
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
     if (tokenCookie && !token) {
       setToken(tokenCookie.split("=")[1]);
-      if (token) {
-        const decode: Token = jwtDecode(token);
-        setUserId(decode.sub);
-        if (socket === null)
+      SecondToken = tokenCookie.split("=")[1];
+      if (SecondToken) {
+        const decode: Token = jwtDecode(SecondToken);
+        setUserId(decode["username"]);
+        if (socket === null) {
           setSocket(
             io("http://localhost:3000/Chat", {
-              auth: { token: token },
+              auth: { token: SecondToken },
             }),
           );
+        }
       }
     }
   }, [token, socket, userId]);
-      // This expression is not callable. Type 'typeof import("frontend/node_modules/jwt-decode/build/esm/index")' has no call signatures.
-    // useEffect(() => {
-    //   user_data().then((data: any) => {
-    //     // setEnabled2FA(data.user.otp_enabled)
-    //     // setValidated2FA(data.user.otp_validated)
-    //     setFirstTime(data.user.FirstTime);
-    //   });
-    // }, []);
 
     return (
       <div className="background-image min-h-screen">

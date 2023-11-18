@@ -19,6 +19,7 @@ interface UserData {
   loses: number;
   winrate: number;
   elo: number;
+  status: string;
   status2fa: boolean;
   secret2fa: boolean;
   secretAuthUrl: boolean;
@@ -30,10 +31,49 @@ interface notifData {
 
   reciever: string;
   sender: string;
-  sernderdisplayname: string;
+  sernderDisplayName: string;
   senderPicture: string;
   type: string;
   data: string;
+}
+
+const IsGameOppOnline = (GameOppName: string) => {
+  const [user, setUser] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    // Function to fetch user data and set it in the state
+    const fetchUserData = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+        try {
+          // Configure Axios to send the token in the headers
+          const response = await axios.get(`http://localhost:3000/profile/${GameOppName}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          // Set the user data in the state
+          setUser(response.data);
+          // initializeSocket(token);
+        } catch (error: any) {
+          if (error.response && error.response.status === 401) {
+            // Redirect to localhost:5137/ if Axios returns a 401 error
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            // navigate("/");
+          } // Redirect to the root path
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+    // Call the fetchUserData function
+    fetchUserData();
+    if (user) console.log(`checking opp status : ${user.status}`);
+  }, [user]);
 }
 
 function NavBar() {
@@ -60,6 +100,7 @@ function NavBar() {
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
   const [userPicture, setUserPicture] = useState<string | null>(null);
+  const [opponent, setOpponent] = useState<UserData | null>(null);
 
   useEffect(() => {
     // Function to fetch user data and set it in the state
@@ -98,6 +139,39 @@ function NavBar() {
     // Call the fetchUserData function
     fetchUserData();
   }, [username]);
+
+  useEffect(() => {
+      const fetchUserData = async () => {
+        const tokenCookie = document.cookie
+          .split("; ")
+          .find((cookie) => cookie.startsWith("token="));
+  
+        if (tokenCookie) {
+          const token = tokenCookie.split("=")[1];
+          try {
+            // Configure Axios to send the token in the headers
+            const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            // Set the user data in the state
+            setOpponent(response.data);
+            console.log('check Opponent status : ', response.data.status);
+          } catch (error: any) {
+            if (error.response && error.response.status === 401) {
+              // Redirect to localhost:5137/ if Axios returns a 401 error
+              document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+              navigate("/");
+            } // Redirect to the root path
+            console.error("Error fetching user data:", error);
+          }
+        }
+      };
+
+      // Call the fetchUserData function
+      fetchUserData();
+  }, [opponent]);
 
   useEffect(() => {
     // Function to fetch user picture
@@ -151,6 +225,35 @@ function NavBar() {
   }, [dropdownTimeout]);
   
   useEffect(() => {
+
+    const fetchUserData = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+        try {
+          // Configure Axios to send the token in the headers
+          const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          // Set the user data in the state
+          setOpponent(response.data);
+          console.log('check Opponent status : ', response.data.status);
+        } catch (error: any) {
+          if (error.response && error.response.status === 401) {
+            // Redirect to localhost:5137/ if Axios returns a 401 error
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            navigate("/");
+          } // Redirect to the root path
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
     if (sock) {
       sock.on('joined', (roomNumber: number) => {
           console.log('listening to joined event to set room Id in NavBar : ', roomNumber);
@@ -158,8 +261,17 @@ function NavBar() {
       })
 
       if (myGameOppName && isSent) {
-        sock.emit("sendInvitationToServer", myGameOppName);
-        setIsSent(false);
+        fetchUserData();
+        if (opponent?.status == 'ONLINE') {
+          sock.emit("sendInvitationToServer", myGameOppName);
+            setIsSent(false);
+        }
+        else if (opponent?.status == 'OFFLINE') {
+          Swal.fire({
+            title: `${myGameOppName} is Offline!`
+          });
+        }
+        
       }
 
       sock.on('sendInvitationToOpp', (inviSender: string) => {

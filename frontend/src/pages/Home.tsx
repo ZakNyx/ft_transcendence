@@ -3,14 +3,20 @@ import joystickSvg from "../../public/images/joystick.svg";
 import robotSvg from "../../public/images/robot.svg";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
-import { InitSocket } from "./variables";
-import { Socket, io } from "socket.io-client";
+import { InitSocket, setUsername } from "./variables";
+
+
 interface UserData {
   displayname: string;
 }
 
+interface UserName {
+  username: string;
+}
+
 function HomePage() {
   const [user, setUser] = useState<UserData | null>(null);
+  const [name, setName] = useState<UserName | null>(null);
 
   InitSocket();
 
@@ -44,6 +50,39 @@ function HomePage() {
     // Call the fetchUserData function
     fetchUserData();
   }, []); // The empty dependency array ensures this effect runs only once
+
+  useEffect(() => {
+    // Function to fetch user data and set it in the state
+    const fetchUserName = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+
+        try {
+          // Configure Axios to send the token in the headers
+          const response = await axios.get<UserName>(`http://localhost:3000/profile/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          // Set the user data in the state
+          setName(response.data);
+          // setUsername(response.data);
+        } catch (error) {
+          // Handle errors
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+    // Call the fetchUserData function
+    fetchUserName();
+    if (name){
+      setUsername(name.username);
+    }
+  }, [name]); // The empty dependency array ensures this effect runs only once
 
   //background-image removed
   return (

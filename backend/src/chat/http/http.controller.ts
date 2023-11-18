@@ -2,23 +2,16 @@ import {
   Controller,
   Get,
   UseGuards,
-  Req,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  Res,
   Query,
   Param,
   ParseIntPipe,
   UseFilters,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
 import { HttpService } from './http.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AllExceptionFilter } from './exception.filter';
 
-@UseFilters(new AllExceptionFilter())
+// @UseFilters(new AllExceptionFilter())
 @UseGuards(AuthGuard('jwt'))
 @Controller('chat')
 export class HttpController {

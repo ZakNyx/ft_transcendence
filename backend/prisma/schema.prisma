@@ -83,6 +83,8 @@ model Game {
   score1 String @default("")
   score2 String @default("")
 
+  createdAt   DateTime   @default(now())
+
   users  User[]  @relation("GamePlayers")
   ingame Boolean @default(false)
 }

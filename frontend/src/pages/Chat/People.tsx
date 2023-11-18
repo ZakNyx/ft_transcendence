@@ -9,7 +9,7 @@ function DMsComponent (props:any)
 {
     const [dmData, setDmData] = useState<any>(null);
 
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('token');
 
   const navigate = useNavigate();
   useEffect(() => {

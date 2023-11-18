@@ -106,7 +106,7 @@ function BannedList (props:any)
   const params = new URLSearchParams(search);
   const receivedData = params.get('id');
 
-  const token = Cookies.get('accessToken');
+  const token = Cookies.get('token');
 
 
   //console.log("oprps in banned list", props);

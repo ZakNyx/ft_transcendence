@@ -8,6 +8,7 @@ import RotatingButton from "./RotatingButton";
 import NavBar from "../components/Navbar";
 import { NavLink } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
+import { setGameId } from "./variables";
 
 interface GameSettings {
   paddleColor: string;
@@ -214,12 +215,15 @@ const RotatedCircle: React.FC<any> = (props) => {
   const [isInGame] = useState<boolean>(props.inGame);
 
   useEffect(() => {
-    if (!isInGame) {
-      console.log("rak ba9i la3b a chamchoun");
-    } else {
-      leaveQueue(props);
-    }
-  }, [isInGame]);
+    // if (!isInGame) {
+    //   console.log("rak ba9i la3b a chamchoun");
+    // } else {
+    //   leaveQueue(props);
+    // }
+    return(
+      console.log('Queue comp unmounted!')
+    )
+  }, []);
 
   return (
     <div className="h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -294,9 +298,12 @@ export default function Multiplayer() {
         setRoomNumber(RoomId);
       });
 
-      socket.on("gameStarted", (data) => {
+      socket.on("gameStarted", (data: {gamedata: GameData, OppName: string}) => {
+        const {gamedata, OppName} = data;
         console.log("game started :)");
-        setGameData(data);
+        setGameId(gamedata.gameId);
+        setGameData(gamedata);
+        setOppUsername(OppName);
         setInGame(true);
         setIsGameStarted(true);
       });
@@ -342,6 +349,7 @@ export default function Multiplayer() {
         socket.off("gameEnded");
         socket.off("won");
         socket.off("lost");
+        // socket.disconnect();
       }
     };
   }, [RoomNumber, IsGameStarted, socket]);

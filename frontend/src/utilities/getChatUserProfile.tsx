@@ -5,7 +5,7 @@ const getChatUserProfile = async (endpoint: any, userId: string) => {
 
 
     try {
-        const token = Cookies.get('accessToken');
+        const token = Cookies.get('token');
         if (token) {
 
             const response = await axios.get(endpoint,

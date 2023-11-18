@@ -145,7 +145,7 @@ const ContactBar = (barData:any) => {
 
     const [message, setMessage] = useState('');
 
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('token');
 
     useEffect(() => {
       if (receivedData)

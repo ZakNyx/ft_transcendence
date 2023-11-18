@@ -58,6 +58,7 @@ export class ProfileService {
       },
       include: {
         friends:true,
+        games:true,
         notifications:true,
       },
     });
@@ -131,6 +132,7 @@ export class ProfileService {
       },
       include: {
         friends: true,
+        games: true,
         requested: true,
       },
     });

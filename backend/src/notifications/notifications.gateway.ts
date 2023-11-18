@@ -91,7 +91,7 @@ export class NotificationsGateway
         }
       }
 
-      console.log(`client ${client.id} has disconnect`);
+      console.log(`client ${client.id} has disconnect in notif Gateway`);
     } catch (err) {
       client.emit("unauthorized", "Unauthorized"); // Send unauthorized message
       client.disconnect(true);

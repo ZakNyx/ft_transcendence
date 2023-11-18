@@ -1,34 +1,108 @@
-import React from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Playerusername } from "../pages/variables";
+
+interface GameData {
+ id: number,
+ ingame: boolean,
+ Me: string,
+ MyOpponent: string,
+ MyScore: string,
+ MyOpponentScore: string,
+}
 
 const MatchHistory = () => {
-  const matchHistory = [
-    {
-      opponent: "ie-laabb",
-      playerScore: 5,
-      opponentScore: 0,
-      result: "win",
-    },
-    {
-      opponent: "ie-laabb",
-      playerScore: 3,
-      opponentScore: 2,
-      result: "win",
-    },
-    {
-      opponent: "ie-laabb",
-      playerScore: 5,
-      opponentScore: 2,
-      result: "win",
-    },
-    {
-      opponent: "ie-laabb",
-      playerScore: 3,
-      opponentScore: 2,
-      result: "win",
-    },
 
-    // ... add more matches here ...
-  ];
+  const [gameData, setGameData] = useState<any>();
+  const [userPicture, setUserPicture] = useState<string | null>(null);
+  const [myName, setMyName] = useState<string>("");
+  const [myOpponentName, setMyOpponentName] = useState<string>("");
+  const [myScore, setMyScore] = useState<string>("");
+  const [myOpponentScore, setMyOpponentScore] = useState<string>("");
+  
+  let { username } = useParams(); // Get the username parameter from the URL
+  if (!username) {
+    username = "me";
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/games/user/${Playerusername}`, // Update the URL to match your API endpoint
+        );
+        setGameData(response.data);
+      } catch (error) {
+        console.error("Error fetching game data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    // Function to fetch user picture
+    const fetchUserPicture = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      try {
+        if (tokenCookie) {
+          const token = tokenCookie.split("=")[1];
+          const response = await axios.get(
+            `http://localhost:3000/profile/ProfilePicture/${username}`,
+            {
+              responseType: "arraybuffer",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          const contentType = response.headers["content-type"];
+          const blob = new Blob([response.data], { type: contentType });
+          const imageUrl = URL.createObjectURL(blob);
+          setUserPicture(imageUrl);
+        } else {
+          // Handle the case when there is no token (e.g., display a placeholder image)
+          setUserPicture("../../public/images/default.png");
+        }
+      } catch (error) {
+        // Handle errors gracefully (e.g., display an error message to the user)
+        console.error("Error fetching user picture:", error);
+      }
+    };
+
+    // Call the fetchUserPicture function
+    fetchUserPicture();
+  }, [username]);
+
+  useEffect(() => {
+    if (gameData) {
+      gameData.map((match: any, index: any) => {
+        if (match.player1 === Playerusername) {
+          console.log("I'm player1 and my Name is : ", match.player1);
+          setMyName(match.player1);
+          setMyScore(match.score1);
+          setMyOpponentName(match.player2);
+          setMyOpponentScore(match.score2);
+        }
+        if (match.player2 === Playerusername) {
+          console.log("I'm player2 and my Namd is : ", match.player2);
+          setMyName(match.player2);
+          setMyScore(match.score2);
+          setMyOpponentName(match.player1);
+          setMyOpponentScore(match.score1);
+        }
+        // if (MyGameData.Me)
+        //   console.log("check myName: ", MyGameData.Me);
+      })
+    }
+  }, [myName, myOpponentName, myScore, myOpponentScore])
+
+  
 
   return (
     <div className="background-gray rounded-[30px] p-6 mt-6 mx-auto lg:max-w-[95%] shadow-[0px_10px_20px_20px_#00000024] animate-fade-in-top">
@@ -36,33 +110,34 @@ const MatchHistory = () => {
         Match History
       </h1>
       <ul className="space-y-4">
-        {matchHistory.map((match, index) => (
+        {gameData && gameData.map((match: any, index: any) => (
+          
           <li
             key={index}
             className={`flex items-center justify-between text-gray-100 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl rounded-md p-3 ${
-              match.result === "win" ? "linear-grad-green" : "lenin-grad-red"
+              (match.score1 == 5 && match.player1 == Playerusername) || (match.player2 == Playerusername && match.score2 == 5) ? "linear-grad-green" : "lenin-grad-red"
             }`}
           >
             <div className="flex items-center space-x-2">
               <img
-                src="../public/images/zihirri.jpg"
-                alt="Profile Owner"
+                src={userPicture || "../../public/images/default.png"}
+                alt={`Your profile`}
                 className="w-12 h-12 rounded-full"
               />
-              <span>Zihirri</span>
+              <span className="text-gray-200 text-base">{match.player1 == Playerusername ? match.player1 : match.player2}</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-green-500">{match.playerScore}</span>
+              <span className="text-green-500">{match.player1 == Playerusername ? match.score1 : match.score2}</span>
               <span className="text-gray-500">-</span>
-              <span className="text-red-500">{match.opponentScore}</span>
+              <span className="text-red-500">{match.player1 != Playerusername ? match.score1 : match.score2}</span>
             </div>
             <div className="flex items-center space-x-2">
               <img
-                src={`../public/images/${match.opponent}.jpg`}
-                alt={`${match.opponent}'s profile`}
+                src={`../public/images/${match.player1}.jpg`}
+                alt={`Your opponent's profile`}
                 className="w-12 h-12 rounded-full"
               />
-              <span>{match.opponent}</span>
+              <span className="text-gray-200 text-base">{match.player1 != Playerusername? match.player1 : match.player2}</span>
             </div>
           </li>
         ))}

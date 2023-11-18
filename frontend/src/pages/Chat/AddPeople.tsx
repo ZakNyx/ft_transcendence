@@ -13,7 +13,7 @@ const DmRoomButton = (props:any) => {
 
   const [isButtonDisabled, setIsButtonDisabled] = useState<any>(false);
 
-  const token = Cookies.get('accessToken');
+  const token = Cookies.get('token');
 
 
   const handleButtonClick = () =>  {
@@ -104,7 +104,7 @@ export default function AddPeople (props:PropsType) {
   const userId = props.userId;
   const [addUsers, setAddUsers] = useState<any>(null);
 
-  const token = Cookies.get('accessToken');
+  const token = Cookies.get('token');
   const navigate = useNavigate();
 
   useEffect(() => {

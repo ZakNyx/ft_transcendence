@@ -116,7 +116,7 @@ export default function JoinRoom(props: any) {
   const userId = props.userId;
   const [rooms, setRooms] = useState<any>(null); 
 
-  const token = Cookies.get('accessToken');
+  const token = Cookies.get('token');
 
   const navigate = useNavigate();
 

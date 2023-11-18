@@ -10,6 +10,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { SocketModule } from './socket/socket.module'
 import { HttpModule } from './chat/http/http.module';
 import { MessageModule } from './chat/message/message.module';
+import { GameModule } from './game/game.module';
 
 
 
@@ -19,12 +20,12 @@ import { MessageModule } from './chat/message/message.module';
     AuthModule,
     PrismaModule,
     UserModule,
-    ProfileModule,
     NotificationsModule,
     SocketModule,
     HttpModule,
     MessageModule,
     ProfileModule,
+    GameModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],

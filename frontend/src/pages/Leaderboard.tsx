@@ -13,6 +13,7 @@ interface UserData {
   wins: number;
   winrate: number;
   elo: number;
+  games: any[];
 }
 
 export default function Leaderboard() {

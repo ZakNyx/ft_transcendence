@@ -5,7 +5,7 @@ const uploadUsername = async (endpoint:any, newUsername :string) => {
    
 
     try {
-      const token = Cookies.get('accessToken');
+      const token = Cookies.get('token');
       if (token) {
         
         const response = await axios.post(endpoint, 

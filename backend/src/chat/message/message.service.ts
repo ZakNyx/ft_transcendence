@@ -1370,26 +1370,31 @@ export class MessageService {
     //client.emit("leftRoom", userId);
   }
 
-  async fetchState(client: Socket, userId: string) {
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        userId: userId,
-      },
-      include: {
-        dms: true,
-        rooms: true,
-        // participantNotifs: true,
-      },
-    });
-    if (user.dms) {
-      user.dms.forEach((dm) => {
-        client.join(dm.id.toString().concat('dm'));
+  async fetchState(client: Socket, userid: string) {
+
+    // console.log('checking userid before findUnique : ', userid);
+    // if (userid) {
+
+      const user = await this.prismaService.user.findUnique({
+        where: {
+          username: userid,
+        },
+        include: {
+          dms: true,
+          rooms: true,
+          // participantNotifs: true,
+        },
       });
-    }
-    if (user.rooms) {
-      user.rooms.forEach((room) => {
-        client.join(room.RoomId.toString().concat('room'));
-      });
-    }
+      if (user.dms) {
+        user.dms.forEach((dm) => {
+          client.join(dm.id.toString().concat('dm'));
+        });
+      }
+      if (user.rooms) {
+        user.rooms.forEach((room) => {
+          client.join(room.RoomId.toString().concat('room'));
+        });
+      }
+    // }
   }
 }

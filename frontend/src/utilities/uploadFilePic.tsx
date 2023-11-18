@@ -8,7 +8,7 @@ const uploadFilePic = async (endpoint:any,file :any) => {
     formData.append('file', file);
   
     try {
-      const token = Cookies.get('accessToken');
+      const token = Cookies.get('token');
       if (token) {
         const decode: Token = jwt(token);
         const userId: string = decode.sub;

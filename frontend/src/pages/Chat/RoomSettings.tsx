@@ -492,7 +492,7 @@ const RoomSettings = (props:any) => {
 
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-    const token = Cookies.get('accessToken');
+    const token = Cookies.get('token');
 
 
     

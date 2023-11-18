@@ -5,7 +5,7 @@ import { Token } from "../context/types";
 
 export const user_data = async () => {
     try {
-      const token = Cookies.get("accessToken");
+      const token = Cookies.get("token");
       if (token) {
         const decode: Token= jwt(token);
         const userId: string = decode.sub;
