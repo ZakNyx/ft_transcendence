@@ -255,8 +255,7 @@ export class MessageGateway
   }
 
   async handleConnection(client: Socket) {
-    console.log(`client: ${client.id} connected in Chat gateway!`)
-
+    console.log(`client  connected in Chat gateway: ${client.id}`)
     const userId = this.validateToken(client.handshake.auth.token);
 
     if (!userId) {

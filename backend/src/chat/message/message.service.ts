@@ -95,6 +95,8 @@ export class MessageService {
   }
 
   async createDm(client: Socket, payload: dmDTO, mapy: Map<string, Socket>) {
+    console.log(`payload.receiverName : ${payload.receiverName}`);
+    console.log(`payload.senderId : ${payload.senderId}`);
     const user = await this.prismaService.user.findUnique({
       where: {
         username: payload.receiverName,
@@ -104,7 +106,7 @@ export class MessageService {
       data: {
         creatorId: payload.senderId,
         participants: {
-          connect: [{ userId: payload.senderId }, { userId: user.userId }],
+          connect: [{ username: payload.senderId }, { username: user.username }],
         },
       },
     });
@@ -1385,15 +1387,17 @@ export class MessageService {
           // participantNotifs: true,
         },
       });
-      if (user.dms) {
-        user.dms.forEach((dm) => {
-          client.join(dm.id.toString().concat('dm'));
-        });
-      }
-      if (user.rooms) {
-        user.rooms.forEach((room) => {
-          client.join(room.RoomId.toString().concat('room'));
-        });
+      if (user) {
+        if (user.dms) {
+          user.dms.forEach((dm) => {
+            client.join(dm.id.toString().concat('dm'));
+          });
+        }
+        if (user.rooms) {
+          user.rooms.forEach((room) => {
+            client.join(room.RoomId.toString().concat('room'));
+          });
+        }
       }
     // }
   }

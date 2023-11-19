@@ -281,7 +281,7 @@ export class HttpService {
     return { dm: dm, image: ownImage };
   }
 
-  async addPeopleFetch(userId: string) {
+  async  addPeopleFetch(userId: string) {
     const currentUser = await this.prismaService.user.findUnique({
       where: {
         username: userId,
@@ -298,7 +298,7 @@ export class HttpService {
     const users = await this.prismaService.user.findMany({
       where: {
         NOT: {
-          username: {
+          userId: {
             in: blockedUserIds,
           },
         },
@@ -315,7 +315,7 @@ export class HttpService {
             },
           },
         ],
-        username: {
+        userId: {
           not: userId,
         },
       },

@@ -59,7 +59,6 @@ const IsGameOppOnline = (GameOppName: string) => {
 
           // Set the user data in the state
           setUser(response.data);
-          // initializeSocket(token);
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error

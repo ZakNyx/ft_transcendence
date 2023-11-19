@@ -8,6 +8,7 @@ export class actionDTO {
 export class dmDTO {
   senderId: string;
   receiverName: string;
+  token: string;
 }
 
 export class friendRequestDTO {

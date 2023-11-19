@@ -136,6 +136,8 @@ export class InvitedEvent  {
     handleConnection = (client: Socket) => {
         try{
             console.log(`client connected in invitedGame id : ${client.id}`);
+            if (!client.handshake.headers.authorization)
+                return ;
             const token: string = client.handshake.headers.authorization.slice(7);
             if (!token)
                 throw new UnauthorizedException();

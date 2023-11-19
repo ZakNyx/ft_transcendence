@@ -49,7 +49,8 @@ export  function InitSocket() {
         }
     
         if (!socket && token && !isSocketSet) {
-            const test: any = io("http://localhost:3000/Invited", {
+
+            const test: Socket = io("http://localhost:3000/Invited", {
                 extraHeaders: {
                     Authorization: `Bearer ${token}`,
                 },

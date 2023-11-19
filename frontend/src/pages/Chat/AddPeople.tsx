@@ -17,6 +17,8 @@ const DmRoomButton = (props:any) => {
 
 
   const handleButtonClick = () =>  {
+    // console.log('emitting the server backend with this socket.id : ', props.socket.id);
+    // console.log(`check userId before emitting createDM : ${props.userData.userData.username}`);
     props.socket.emit('createDm', {senderId: props.userData.userId, receiverName: props.userData.userData.username, token: token});
     setIsButtonDisabled(true);
   }
@@ -119,6 +121,7 @@ export default function AddPeople (props:PropsType) {
         },
       });
       if (response.status === 200) {
+        console.log('check response : ', response.data);
         setAddUsers(response.data)
     }
     } catch (error) {
@@ -175,7 +178,9 @@ export default function AddPeople (props:PropsType) {
         {
                  
                  addUsers.map( (user: any, index: number) => (
-                 <ExistinUser key={index} index={user.id} userData={user} userId={userId} socket={socket}/>))
+                  // console.log('test');
+                 <ExistinUser key={index} index={user.id} userData={user} userId={userId} socket={socket}/>
+                 ))
         }
       
         </div>

@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import  { jwtDecode } from 'jwt-decode';
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/Home";
@@ -31,7 +31,7 @@ export interface Token {
 }
 
 function App() {
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>("");
 
@@ -45,9 +45,10 @@ function App() {
       setToken(tokenCookie.split("=")[1]);
       SecondToken = tokenCookie.split("=")[1];
       if (SecondToken) {
+        console.log('check secondtoken: ', SecondToken);
         const decode: Token = jwtDecode(SecondToken);
         setUserId(decode["username"]);
-        if (socket === null) {
+        if (!socket) {
           setSocket(
             io("http://localhost:3000/Chat", {
               auth: { token: SecondToken },

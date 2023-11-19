@@ -104,6 +104,7 @@ function StateChangingButton(props: { username: string }) {
         reciever: user?.username,
         // Add any other relevant data
       };
+      // console.log('check friend name : ', jwtUser?.username);
       // Emit the "sendNotification" event to the WebSocket server
       socket.emit("sendNotification", notificationData);
       window.location.reload();
