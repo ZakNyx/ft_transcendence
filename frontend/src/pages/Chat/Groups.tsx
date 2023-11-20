@@ -35,28 +35,28 @@ function GroupsComponent(props:any) {
 
     fetchData();
 
-    props?.socket?.on("blocked", () => {
+    props.socket.on("blocked", () => {
       fetchData();
     });
-    props?.socket?.on("leftRoom", () => {
+    props.socket.on("leftRoom", () => {
       fetchData();
     });
-    props?.socket?.on("unblocked", () => {
+    props.socket.on("unblocked", () => {
       fetchData();
     });
-    props?.socket?.on("createdRoom", () => {
+    props.socket.on("createdRoom", () => {
       fetchData();
     });
-    props?.socket?.on("kicked", () => {
+    props.socket.on("kicked", () => {
       fetchData();
     });
-    props?.socket?.on("joinedChatRoom", () => {
+    props.socket.on("joinedChatRoom", () => {
       fetchData();
     });
-    props?.socket?.on("banned", () => {
+    props.socket.on("banned", () => {
       fetchData();
     });
-    props?.socket?.on("createdMessage", () => {
+    props.socket.on("createdMessage", () => {
       fetchData();
     });
     return () => {

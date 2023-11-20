@@ -130,7 +130,7 @@ const ContactBar = (barData:any) => {
   
   const DMConveComponent = (props: any) => {
     
-    const socket = props.socket;
+    // const socket = props.socket;
     const maxLength = 500;
     
     const containerRef = useRef<HTMLDivElement>(null);
@@ -170,7 +170,7 @@ const ContactBar = (barData:any) => {
     };
 
         fetchData();
-        socket.on("dmDeleted", () => {
+        props.socket.on("dmDeleted", () => {
           const path : string = "http://localhost:5173/chat/dmConv/?id=" + receivedData;
           if(window.location.href === path)
           {
@@ -178,14 +178,14 @@ const ContactBar = (barData:any) => {
 
           }
         })
-        socket.on("blocked", () => {
+        props.socket.on("blocked", () => {
           const path : string = "http://localhost:5173/chat/dmConv/?id=" + receivedData;
           if(window.location.href === path)
           {
             navigate('/chat' , {replace: true});
           }
         })
-        socket.on("unblocked", () =>{
+        props.socket.on("unblocked", () =>{
           fetchData();
         })
         
@@ -197,9 +197,9 @@ const ContactBar = (barData:any) => {
             }
           }, 200);
         }
-        socket.on("createdMessage", messageListener)
+        props.socket.on("createdMessage", messageListener)
         return (() => {
-          socket.removeListener('createdMessage', messageListener);
+          props.socket.removeListener('createdMessage', messageListener);
         })
         
       }
@@ -208,8 +208,8 @@ const ContactBar = (barData:any) => {
   const handleSubmit = (e:any) => {
     e.preventDefault(); 
     
-    if (socket && message.trim() !== '') {
-      socket.emit('sendMessage', { messageContent: message, dmId: Number(receivedData), userId: props.userId, roomId: null, sentAt: new Date() });
+    if (props.socket && message.trim() !== '') {
+      props.socket.emit('sendMessage', { messageContent: message, dmId: Number(receivedData), userId: props.userId, roomId: null, sentAt: new Date() });
       setMessage('');
     }
   };

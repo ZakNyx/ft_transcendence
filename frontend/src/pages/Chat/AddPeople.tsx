@@ -18,6 +18,7 @@ const DmRoomButton = (props: any) => {
   const handleButtonClick = () => {
     // console.log('emitting the server backend with this socket.id : ', props.socket.id);
     // console.log(`check userId before emitting createDM : ${props.userData.userData.username}`);
+    console.log('sooooo', props.socket)
     props.socket.emit("createDm", {
       senderId: props.userData.userId,
       receiverName: props.userData.userData.username,
@@ -97,8 +98,8 @@ function ExistinUser(userData: any) {
   );
 }
 
-export default function AddPeople(props: PropsType) {
-  const socket = props.socket;
+export default function AddPeople(props: any) {
+  // const socket = props.socket;
   const userId = props.userId;
   const [addUsers, setAddUsers] = useState<any>(null);
 
@@ -130,13 +131,13 @@ export default function AddPeople(props: PropsType) {
     };
     fetchData();
 
-    socket.on("dmDeleted", () => {
+    props.socket.on("dmDeleted", () => {
       fetchData();
     });
-    socket.on("blocked", () => {
+    props.socket.on("blocked", () => {
       fetchData();
     });
-    socket.on("unblocked", () => {
+    props.socket.on("unblocked", () => {
       fetchData();
     });
     props.socket.on("createdDm", () => {
@@ -144,10 +145,10 @@ export default function AddPeople(props: PropsType) {
     });
 
     return () => {
-      socket.off("createdDm");
-      socket.off("unblocked");
-      socket.off("blocked");
-      socket.off("dmDeleted");
+      props.socket.off("createdDm");
+      props.socket.off("unblocked");
+      props.socket.off("blocked");
+      props.socket.off("dmDeleted");
     };
   }, []);
 
@@ -166,7 +167,7 @@ export default function AddPeople(props: PropsType) {
                 index={user.id}
                 userData={user}
                 userId={userId}
-                socket={socket}
+                socket={props.socket}
               />
             ))}
           </div>

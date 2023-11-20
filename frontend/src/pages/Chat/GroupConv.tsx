@@ -114,7 +114,7 @@ const ContactBar = (barData:any) => {
   const GroupConveComponent = (props:any) => {
     
   //console.log("userId f conv: ", props);
-  const socket = props.socket;
+  // const socket = props.socket;props.
 
   const navigate = useNavigate();
 
@@ -169,7 +169,7 @@ const ContactBar = (barData:any) => {
       fetchData();
     })
   
-    socket.on("kicked", (kickedId: string) =>
+    props.socket.on("kicked", (kickedId: string) =>
     {
       if (props.userId === kickedId)
       {
@@ -181,7 +181,7 @@ const ContactBar = (barData:any) => {
         }
       })
     
-    socket.on("banned", (banned: string) => {
+    props.socket.on("banned", (banned: string) => {
       if (props.userId === banned)
       {
         const path : string = "http://localhost:5173/chat/groupConv/?id=" + receivedData;
@@ -192,11 +192,11 @@ const ContactBar = (barData:any) => {
       }
     })
 
-    socket.on("muted", () => {
+    props.socket.on("muted", () => {
       fetchData();
     })
     
-    socket.on("unmuted", () => {
+    props.socket.on("unmuted", () => {
       fetchData();
     })
 
@@ -208,12 +208,12 @@ const ContactBar = (barData:any) => {
         }
       }, 200);
     }
-    socket.on("createdMessage", messageListener)
+    props.socket.on("createdMessage", messageListener)
 
     return (() => {
-      socket.removeListener('createdMessage', messageListener);
-      socket.off('unmuted')
-      socket.off('muted')
+      props.socket.removeListener('createdMessage', messageListener);
+      props.socket.off('unmuted')
+      props.socket.off('muted')
       // socket.off('banned')
       // if (window.location.pathname === "")
       //   socket.off('leftRoom')
@@ -229,8 +229,8 @@ const ContactBar = (barData:any) => {
     const handleSubmit = (e:any) => {
       e.preventDefault();
       //check this below
-      if (socket && message.trim() !== '' && dataState) {
-        socket.emit('sendMessage', { messageContent: message, dmId: null, userId: props.userId, roomId: dataState.roomId, sentAt: new Date() });
+      if (props.socket && message.trim() !== '' && dataState) {
+        props.socket.emit('sendMessage', { messageContent: message, dmId: null, userId: props.userId, roomId: dataState.roomId, sentAt: new Date() });
         setMessage('');
       }
     };

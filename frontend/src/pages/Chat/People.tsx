@@ -33,20 +33,20 @@ function DMsComponent (props:any)
   
   fetchData();
 
-    props?.socket?.on("dmDeleted", () => {
+    props.socket.on("dmDeleted", () => {
     fetchData();
   })
-    props?.socket?.on("createdDm", () => {
+    props.socket.on("createdDm", () => {
       console.log("Hello world!!!")
       fetchData();
     });
-    props?.socket?.on("createdMessage", () => {
+    props.socket.on("createdMessage", () => {
       fetchData();
     });
-    props?.socket?.on("blocked", () => {
+    props.socket.on("blocked", () => {
       fetchData();
     })
-    props?.socket?.on("unblocked", () => {
+    props.socket.on("unblocked", () => {
       fetchData();
     })
 

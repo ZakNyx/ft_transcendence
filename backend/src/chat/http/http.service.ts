@@ -213,11 +213,14 @@ export class HttpService {
       },
     });
 
+    // console.log(dms)
+    
     const currentUser = await this.prismaService.user.findUnique({
       where: {
         username: userId,
       },
     });
+
     let customArray: [number, Message[], User[]][] = [];
     dms.forEach((dm: { participants: User[]; msg: Message[] } & DM) => {
       if (
@@ -228,6 +231,7 @@ export class HttpService {
         customArray.push([dm.id, dm.msg, dm.participants]);
       }
     });
+    console.log(customArray)
     return customArray;
   }
 

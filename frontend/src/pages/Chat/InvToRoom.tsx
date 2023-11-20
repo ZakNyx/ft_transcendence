@@ -98,7 +98,7 @@ function ExistinUser(props: any) {
 export default function invToRoom(props: any) {
 
   const userId = props.userId;
-  const socket = props.socket;
+  // const socket = props.socket;
 
 
   const { search } = useLocation();
@@ -132,25 +132,25 @@ export default function invToRoom(props: any) {
 
     fetchData();
 
-    socket.on("blocked", () => {
+    props.socket.on("blocked", () => {
       fetchData();
     })
-    socket.on("unblocked", () => {
+    props.socket.on("unblocked", () => {
       fetchData();
     })
-    socket.on("banned", () => {
+    props.socket.on("banned", () => {
       fetchData();
     })
-    socket.on("unbanned", () => {
+    props.socket.on("unbanned", () => {
       fetchData();
     })
-    socket.on("kicked", () => {
+    props.socket.on("kicked", () => {
       fetchData();
     })
-    socket.on("leftRoom", () => {
+    props.socket.on("leftRoom", () => {
       fetchData();
     })
-    socket.on("joinedChatRoom", () => {
+    props.socket.on("joinedChatRoom", () => {
       fetchData();
     })
 
@@ -186,7 +186,7 @@ export default function invToRoom(props: any) {
           <div className="h-[88%] convs  overflow-y-scroll">
             {
               dataState.map((users: any, index: number) => (
-                < ExistinUser key={index} index={users.id} dataState={users} socketId={socket} roomId={Number(receivedData)} userId={props.userId} />
+                < ExistinUser key={index} index={users.id} dataState={users} socketId={props.socket} roomId={Number(receivedData)} userId={props.userId} />
               ))
             }
 

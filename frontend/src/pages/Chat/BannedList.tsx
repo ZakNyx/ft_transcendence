@@ -98,7 +98,7 @@ function BannedUser(props:any) {
 
 function BannedList (props:any)
 {
-    const socket = props.socket;
+    // const socket = props.socket;
 
     const navigate = useNavigate();
   
@@ -132,11 +132,11 @@ function BannedList (props:any)
        
 
         fetchData();
-        socket.on('unbanned', () => {
+        props.socket.on('unbanned', () => {
             fetchData();
         })
 
-        socket.on('banned', (bannedId: string) => {
+        props.socket.on('banned', (bannedId: string) => {
           if (props.userId === bannedId)
             {
                 navigate('/chat', {replace: true});
@@ -148,8 +148,8 @@ function BannedList (props:any)
         })
 
         return (() => {
-          socket.off('banned')
-          socket.off('unbanned')
+          props.socket.off('banned')
+          props.socket.off('unbanned')
         })
     }, []);
 
@@ -175,7 +175,7 @@ function BannedList (props:any)
                 <div className="h-[88%] convs  overflow-y-scroll">
                 {
                     banData.map((users: any, index: number) => (
-                        < BannedUser key={index} index={users.id} dataState={users} socketId={socket} roomId={Number(receivedData)} userId={props.userId}/>
+                        < BannedUser key={index} index={users.id} dataState={users} socketId={props.socket} roomId={Number(receivedData)} userId={props.userId}/>
                 ))
                 }
             

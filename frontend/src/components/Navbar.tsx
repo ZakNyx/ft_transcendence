@@ -139,37 +139,37 @@ function NavBar() {
     fetchUserData();
   }, [username]);
 
-  useEffect(() => {
-      const fetchUserData = async () => {
-        const tokenCookie = document.cookie
-          .split("; ")
-          .find((cookie) => cookie.startsWith("token="));
+  // useEffect(() => {
+  //     const fetchUserData = async () => {
+  //       const tokenCookie = document.cookie
+  //         .split("; ")
+  //         .find((cookie) => cookie.startsWith("token="));
   
-        if (tokenCookie) {
-          const token = tokenCookie.split("=")[1];
-          try {
-            // Configure Axios to send the token in the headers
-            const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            // Set the user data in the state
-            setOpponent(response.data);
-          } catch (error: any) {
-            if (error.response && error.response.status === 401) {
-              // Redirect to localhost:5137/ if Axios returns a 401 error
-              document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-              navigate("/");
-            } // Redirect to the root path
-            console.error("Error fetching user data:", error);
-          }
-        }
-      };
+  //       if (tokenCookie) {
+  //         const token = tokenCookie.split("=")[1];
+  //         try {
+  //           // Configure Axios to send the token in the headers
+  //           const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
+  //             headers: {
+  //               Authorization: `Bearer ${token}`,
+  //             },
+  //           });
+  //           // Set the user data in the state
+  //           setOpponent(response.data);
+  //         } catch (error: any) {
+  //           if (error.response && error.response.status === 401) {
+  //             // Redirect to localhost:5137/ if Axios returns a 401 error
+  //             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  //             navigate("/");
+  //           } // Redirect to the root path
+  //           console.error("Error fetching user data:", error);
+  //         }
+  //       }
+  //     };
 
-      // Call the fetchUserData function
-      fetchUserData();
-  }, [opponent]);
+  //     // Call the fetchUserData function
+  //     fetchUserData();
+  // }, [opponent]);
 
   useEffect(() => {
     // Function to fetch user picture
