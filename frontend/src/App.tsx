@@ -59,10 +59,15 @@ function App() {
     }
   }, [token, socket, userId]);
 
+    // I get the path and checks if matches the euh LoginPage and returns either true or false ~
+  const currentRoute = window.location.pathname;
+  const isLoginPage = currentRoute === "/";
+
+
     return (
-      <div className="background-image min-h-screen">
+      <div className="background-image min-h-screen overflow-hidden">
         <Router>
-          <NavBar />
+          {token && <NavBar />}
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />

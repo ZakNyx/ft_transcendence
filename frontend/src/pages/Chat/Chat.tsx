@@ -14,7 +14,7 @@ const Chat = (props: PropsType) => {
 
   return (
     <div
-      className="chat lg:ml-[2px] lg:mr-[2px] lg:mb-[10px] lg:h-full lg:w-full lg:flex lg:100vh lg:gap-[0px] 
+      className="lg:ml-[2px] lg:mr-[2px] lg:mb-[10px] lg:h-full lg:w-full lg:flex lg:100vh lg:gap-[0px] 
     ml-[2px] mr-[2px] mb-[10px] h-full w-full flex justify-around 100vh gap-[0px] mt-[20px]"
     >
       <div
