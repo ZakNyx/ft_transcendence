@@ -5,8 +5,10 @@ let myGameOppName: any = null;
 let isSent: boolean = false;
 let isReceived: boolean = false;
 let sock: Socket | null = null;
+let chatSocket: Socket | null = null;
 let notifToken: string;
 let isSocketSet: boolean = false;
+let isSocketSet2: boolean = false;
 let RoomId: number = 0;
 let GameId: number = 0;
 let Playerusername: string;
@@ -35,6 +37,11 @@ export function setIsReceived(newValue: boolean) {
     isReceived = newValue;
 }
 
+export function setChatSocket(newValue: Socket) {
+    chatSocket = newValue;
+    console.log(`checking chatSocket.id in variables : ${chatSocket.id}`);
+}
+
 export  function InitSocket() {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [token, setToken] = useState<string | null>(null);
@@ -43,37 +50,50 @@ export  function InitSocket() {
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
 
-        if (tokenCookie && !token) {
-            notifToken = tokenCookie.split("=")[1];
-            setToken(notifToken);
-        }
-    
-        if (!socket && token && !isSocketSet) {
+    if (tokenCookie && !token) {
+        notifToken = tokenCookie.split("=")[1];
+        setToken(notifToken);
+    }
 
-            const test: Socket = io("http://localhost:3000/Invited", {
-                extraHeaders: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+    if (!socket && token && !isSocketSet) {
 
-            test.on('connect', () => {
-                sock = test;
-                console.log(`checking sock.id in variables: ${sock?.id}`);
-                setSocket(test);
-            })
+        const test: Socket = io("http://localhost:3000/Invited", {
+            extraHeaders: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-            // test.on('joined', (roomNumber: number) => {
-            //     console.log('joined event received!');
-            //     setRoomId(roomNumber);
-            // })
-            isSocketSet = true;
-        }
+        test.on('connect', () => {
+            sock = test;
+            console.log(`checking sock.id in variables: ${sock?.id}`);
+            setSocket(test);
+        })
+        isSocketSet = true;
+    }
+}
+
+export  function InitChatSocket(token: string) {
+    const [socket, setSocket] = useState<Socket | null>(null);
+    if (!socket && !isSocketSet2){
+        const test: Socket = io("http://localhost:3000/Chat", {
+            extraHeaders: {
+              Authorization: `${token}`,
+            },
+        });
+        test.on('connect', () => {
+            chatSocket = test;
+            
+            setSocket(test);
+        })
+        isSocketSet2 = true;
+    }
 }
 
 export { myGameOppName };
 export { isReceived };
 export { isSent };
 export { sock };
+export { chatSocket };
 export { notifToken };
 export { RoomId };
 export { GameId };

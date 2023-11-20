@@ -156,7 +156,6 @@ function NavBar() {
             });
             // Set the user data in the state
             setOpponent(response.data);
-            console.log('check Opponent status : ', response.data.status);
           } catch (error: any) {
             if (error.response && error.response.status === 401) {
               // Redirect to localhost:5137/ if Axios returns a 401 error

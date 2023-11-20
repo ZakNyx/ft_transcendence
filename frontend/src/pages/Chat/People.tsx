@@ -1,40 +1,43 @@
-import DMComp from "./DM.tsx";
+import DMComp from './DM.tsx';
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import Cookies from "js-cookie";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
-function DMsComponent(props: any) {
+
+function DMsComponent (props:any)
+{
   const [dmData, setDmData] = useState<any>(null);
-
-  const token = Cookies.get("token");
+  const token = Cookies.get('token');
 
   const navigate = useNavigate();
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/chat/dms", {
-          params: {
-            userId: props.userId,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.status === 200) {
-          setDmData(response.data);
-        }
-      } catch (error) {
-        navigate("/chat", { replace: true });
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/chat/dms', {
+        params: {
+          userId: props.userId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 200) {
+        setDmData(response.data)
+        console.log('check response.data : ', response.data);
       }
-    };
-
-    fetchData();
+    } catch (error) {
+      navigate('/chat' , {replace: true});
+    }
+  };
+  
+  fetchData();
 
     props?.socket?.on("dmDeleted", () => {
-      fetchData();
-    });
+    fetchData();
+  })
     props?.socket?.on("createdDm", () => {
+      console.log("Hello world!!!")
       fetchData();
     });
     props?.socket?.on("createdMessage", () => {
@@ -42,19 +45,21 @@ function DMsComponent(props: any) {
     });
     props?.socket?.on("blocked", () => {
       fetchData();
-    });
+    })
     props?.socket?.on("unblocked", () => {
       fetchData();
-    });
+    })
 
-    return () => {
-      props.socket.off("unblocked");
-      props.socket.off("blocked");
-      props.socket.off("createdMessage");
-      props.socket.off("createdDm");
-      props.socket.off("dmDeleted");
-    };
+    return(() => {
+      props.socket.off('unblocked')
+      props.socket.off('blocked')
+      props.socket.off('createdMessage')
+      props.socket.off('createdDm')
+      props.socket.off('dmDeleted')
+    })
+
   }, []);
+
 
   if (dmData) {
     return (

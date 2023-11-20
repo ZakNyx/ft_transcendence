@@ -204,7 +204,7 @@ export class InvitedEvent  {
             // }
         }
         catch (err) {
-            console.log(`Error123: ${err}`);
+            console.log(`InvitedGame Error: ${err}`);
         }
     }
 

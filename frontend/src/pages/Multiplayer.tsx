@@ -368,7 +368,6 @@ export default function Multiplayer() {
   else {
     if (isConnected && IsGameStarted && !IsGameEnded) {
       console.log('render game comp')
-      
       return (
         <div className="">
           {/* <NavBar /> */}

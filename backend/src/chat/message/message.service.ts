@@ -102,6 +102,7 @@ export class MessageService {
         username: payload.receiverName,
       },
     });
+
     const dm = await this.prismaService.dM.create({
       data: {
         creatorId: payload.senderId,
@@ -110,13 +111,14 @@ export class MessageService {
         },
       },
     });
+
     client.emit('createdDm', dm.id);
     if (mapy.get(user.userId)) mapy.get(user.userId).emit('createdDm', dm.id);
     client.join(dm.id.toString().concat('dm'));
     if (mapy.get(user.userId))
       mapy.get(user.userId).join(dm.id.toString().concat('dm'));
     if (this.dmCronState == 'off') {
-      this.dmCronState = 'on';
+      this.dmCronState = 'on';  
       cron.schedule('*/5 * * * *', async () => {
         const dms = await this.prismaService.dM.findMany({
           include: {

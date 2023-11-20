@@ -45,18 +45,16 @@ function App() {
       setToken(tokenCookie.split("=")[1]);
       SecondToken = tokenCookie.split("=")[1];
       if (SecondToken) {
-        console.log('check secondtoken: ', SecondToken);
         const decode: Token = jwtDecode(SecondToken);
         setUserId(decode["username"]);
-        if (!socket) {
-          setSocket(
-            io("http://localhost:3000/Chat", {
-              auth: { token: SecondToken },
-            }),
-          );
-        }
+          if (!socket) setSocket(io("http://localhost:3000/Chat", {
+            extraHeaders: {
+              Authorization: `${token}`,
+            },
+          }));
       }
     }
+    if (socket) console.log("socket in App.tsx : ", socket);
   }, [token, socket, userId]);
 
     // I get the path and checks if matches the euh LoginPage and returns either true or false ~

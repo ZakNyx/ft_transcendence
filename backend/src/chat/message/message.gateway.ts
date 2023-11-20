@@ -242,6 +242,7 @@ export class MessageGateway
 
   handleDisconnect(client: Socket) {
     for (let entry of this.mapy.entries()) {
+      console.log('Chat socket disconnected11!');
       if (entry[1] == client) this.mapy.delete(entry[0]);
     }
   }
@@ -256,9 +257,10 @@ export class MessageGateway
 
   async handleConnection(client: Socket) {
     console.log(`client  connected in Chat gateway: ${client.id}`)
-    const userId = this.validateToken(client.handshake.auth.token);
+    const userId = this.validateToken(client.handshake.headers.authorization.slice(7));
 
     if (!userId) {
+      console.log('Chat socket disconnected!');
       client.disconnect();
       return ;
     }

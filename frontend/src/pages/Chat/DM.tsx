@@ -1,7 +1,4 @@
-
 import { Link } from "react-router-dom";
-
-
 
 const DMComp = (props: any) => {
     let date : Date | null;

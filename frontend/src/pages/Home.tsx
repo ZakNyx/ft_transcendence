@@ -4,6 +4,7 @@ import robotSvg from "../../public/images/robot.svg";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { InitSocket, setUsername } from "./variables";
+import { initializeChatSocket } from "../components/socketManager";
 
 
 interface UserData {

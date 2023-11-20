@@ -13,6 +13,7 @@ const DmRoomButton = (props: any) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState<any>(false);
 
   const token = Cookies.get("token");
+  console.log('check socket.id in AddPeople.tsx : ', props.socket.id);
 
   const handleButtonClick = () => {
     // console.log('emitting the server backend with this socket.id : ', props.socket.id);
