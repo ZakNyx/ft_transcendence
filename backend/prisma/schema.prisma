@@ -105,7 +105,7 @@ model Message {
   time     String?
   roomId         Int?
   dm             DM?       @relation(fields: [dmId], references: [id])
-  sender         User      @relation(fields: [senderId], references: [userId])
+  sender         User?      @relation(fields: [senderId], references: [username])//username
   room           Room?     @relation(fields: [roomId], references: [id])
   roomData       ChatRoom? @relation(fields: [roomId], references: [id], map: "MessageRoomData")
 }

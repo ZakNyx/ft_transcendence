@@ -30,8 +30,8 @@ export class MessageService {
   private dmCronState: string = 'off';
   private muteCronState: string = 'off';
   private roomInvCronState: string = 'off';
-
   async createMessage(payload: messageDTO, server: Server) {
+    console.log('sendInfo ===> ',payload)
     const message = await this.prismaService.message.create({
       data: {
         sentAt: payload.sentAt,

@@ -20,7 +20,7 @@ export class HttpService {
   async checkBlocked(userId: string, blockedUserId: string) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: userId,
       },
     });
 
@@ -171,7 +171,8 @@ export class HttpService {
       where: {
         participants: {
           some: {
-            userId: userId,
+            // The type of userId is Login not database userId
+            username: userId,
           },
         },
         OR: [
@@ -187,6 +188,7 @@ export class HttpService {
               },
             },
             AND: {
+              // The type of creatorId is Login not database userId
               creatorId: userId,
             },
           },
@@ -196,7 +198,8 @@ export class HttpService {
         participants: {
           where: {
             NOT: {
-              userId: userId,
+              // The type of userId is Login not database userId
+              username: userId,
             },
           },
           select: {
@@ -213,7 +216,7 @@ export class HttpService {
       },
     });
 
-    // console.log(dms)
+    console.log("dms: ",dms)
     
     const currentUser = await this.prismaService.user.findUnique({
       where: {
@@ -231,7 +234,7 @@ export class HttpService {
         customArray.push([dm.id, dm.msg, dm.participants]);
       }
     });
-    console.log(customArray)
+    console.log("customarray: ", customArray)
     return customArray;
   }
 
@@ -261,7 +264,7 @@ export class HttpService {
         participants: {
           where: {
             NOT: {
-              userId: userId,
+              username: userId,
             },
           },
           select: {
@@ -298,11 +301,12 @@ export class HttpService {
       (blockedUser) => blockedUser,
     );
     const dmIds = currentUser.dms.map((dm) => dm.id);
-
+    
+    
     const users = await this.prismaService.user.findMany({
       where: {
         NOT: {
-          userId: {
+          username: {
             in: blockedUserIds,
           },
         },
@@ -319,7 +323,7 @@ export class HttpService {
             },
           },
         ],
-        userId: {
+        username: {
           not: userId,
         },
       },
@@ -329,6 +333,7 @@ export class HttpService {
         return user;
       }
     });
+    console.log("users : ", users)
     return filteredUsers;
   }
 
@@ -386,7 +391,7 @@ export class HttpService {
           },
           {
             NOT: {
-              userId: {
+              username: {
                 in: subjectRoom.bannedUsers,
               },
             },

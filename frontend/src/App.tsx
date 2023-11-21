@@ -46,7 +46,9 @@ function App() {
       SecondToken = tokenCookie.split("=")[1];
       if (SecondToken) {
         const decode: Token = jwtDecode(SecondToken);
+        //Debug 2 : Verify user Id type
         setUserId(decode["username"]);
+        // alert("In App.tsx " + decode["username"])
           if (!socket) setSocket(io("http://localhost:3000/Chat", {
             extraHeaders: {
               Authorization: `${token}`,
