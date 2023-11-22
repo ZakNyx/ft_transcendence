@@ -76,7 +76,7 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
           // Set the user data in the state
           setUser(response.data);
           setUsername(response.data.username);
-          const socket = initializeSocket(token);
+          const socket = initializeSocket('');
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error
@@ -118,7 +118,7 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
           // Set the user data in the state
           setOpp(response.data);
           setOppUsername(response.data.username);
-          const socket = initializeSocket(token);
+          const socket = initializeSocket('');
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error

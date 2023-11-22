@@ -35,6 +35,7 @@ export class NotificationsGateway
 
   @WebSocketServer()
   async handleConnection(client: Socket) {
+    console.log('con',client.id);
     try {
       const token = client.handshake.headers.authorization.slice(7);
       if (!token) {
@@ -62,6 +63,7 @@ export class NotificationsGateway
   }
 
   async handleDisconnect(client: Socket) {
+    console.log('dis',client);
     try {
       const token = client.handshake.headers.authorization.slice(7);
       if (!token) {
@@ -101,6 +103,7 @@ export class NotificationsGateway
   @SubscribeMessage("sendNotification")
   @UseGuards(AuthGuard("websocket-jwt"))
   async sendNotification(@MessageBody() body: notificationBodyDTO, @Req() req) {
+    console.log('tststst', body);
     return await this.notificationsService.sendNotification(
       body,
       req.user,

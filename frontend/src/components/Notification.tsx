@@ -23,7 +23,7 @@ interface UserData {
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState<notifData[] | null>(null);
-
+  const [newNotifications, setNewNotifications] = useState<notifData[] | null>(null);
   const [jwtUser, setJwtUser] = useState<UserData | null>(null);
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const Notifications = () => {
           user.senderPicture = imageUrl;
           updatedData.push(user);
         }
-          setNotifications(updatedData);
+          setNewNotifications(updatedData);
       }
     };
 
@@ -200,7 +200,7 @@ const cancelFriendRequest = async (user: string) => {
     <div className="text-gray-200 flex justify-center items-center font-montserrat pr-3 pl-3 max-h-screen overflow-y-scroll">
 
       <ul>
-        {notifications && notifications.map((notification, index) => (
+        {newNotifications && newNotifications.map((notification, index) => (
           <li className="" key={index}>
             <div className="items-center flex space-x-3">
               <img
