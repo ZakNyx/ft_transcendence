@@ -65,7 +65,7 @@ function App() {
     return (
       <div className="background-image min-h-screen overflow-hidden">
         <Router>
-          {token && <NavBar />}
+          {!isLoginPage && <NavBar />}
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />
