@@ -39,6 +39,7 @@ export default function Leaderboard() {
           );
 
           setData(response.data);
+          console.log(`check response.data : ${response.data}`);
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
