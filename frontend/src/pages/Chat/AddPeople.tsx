@@ -21,6 +21,7 @@ const DmRoomButton = (props: any) => {
     console.log('sooooo', props.socket)
     props.socket.emit("createDm", {
       senderId: props.userData.userId,
+      
       receiverName: props.userData.userData.username,
       token: token,
     });

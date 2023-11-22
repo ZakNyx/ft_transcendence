@@ -72,7 +72,7 @@ export class MessageService {
     }
     await this.prismaService.user.update({
       where: {
-        userId: payload.senderId,
+        username: payload.senderId,
       },
       data: {
         messages: {

@@ -19,7 +19,7 @@ export class friendRequestDTO {
 
 export class messageDTO {
   messageContent : string;
-  dmId?: number;
+  dmId: number;
   roomId: number;
   sentAt: Date;
   senderId: string;
