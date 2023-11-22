@@ -83,7 +83,7 @@ function HomePage() {
     if (name){
       setUsername(name.username);
     }
-  }, [name]); // The empty dependency array ensures this effect runs only once
+  }, []); // The empty dependency array ensures this effect runs only once
 
   //background-image removed
   return (

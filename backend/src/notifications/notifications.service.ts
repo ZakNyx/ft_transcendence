@@ -18,6 +18,7 @@ export class NotificationsService {
   ) {
     console.log(`sender name is : ${reqUser.username}`);
     console.log(`receiver name is : ${notifBody.reciever}`);
+    console.log(notifBody);
     const sender = await this.prismaService.user.findUnique({
       where: {
         username: reqUser.username,
