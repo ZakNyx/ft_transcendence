@@ -207,9 +207,9 @@ const ContactBar = (barData:any) => {
 
   const handleSubmit = (e:any) => {
     e.preventDefault(); 
-    
+    console.log(props.userId)
     if (props.socket && message.trim() !== '') {
-      props.socket.emit('sendMessage', { messageContent: message, dmId: Number(receivedData), userId: props.userId, roomId: null, sentAt: new Date() });
+      props.socket.emit('sendMessage', { messageContent: message, dmId: Number(receivedData), senderId: props.userId, roomId: null, sentAt: new Date() });
       setMessage('');
     }
   };

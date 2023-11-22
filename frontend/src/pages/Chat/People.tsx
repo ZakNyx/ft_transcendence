@@ -14,8 +14,10 @@ function DMsComponent (props:any)
   useEffect(() => {
   const fetchData = async () => {
     try {
+      console.log("userId: ", props.userId);
       const response = await axios.get('http://localhost:3000/chat/dms', {
         params: {
+          // Debug 3 : Check userId type
           userId: props.userId,
         },
         headers: {
@@ -60,9 +62,10 @@ function DMsComponent (props:any)
 
   }, []);
 
-
+  console.log(dmData)
   if (dmData) {
     return (
+      <>
       <div className="rounded-xl flex-wrap dark:bg-npc-gray">
         <div className="group ml-6 text-gray-200 flex justify-between items-center ">
           <div className="font-bold text-base md:text-xl  mt-2">Friends</div>
@@ -86,7 +89,9 @@ function DMsComponent (props:any)
           ))}
         </div>
       </div>
-    );
+    </>
+
+  );
   }
 }
 

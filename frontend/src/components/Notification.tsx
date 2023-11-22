@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { initializeSocket } from "./socketManager";
+import {isEqual} from "lodash";
 
 
 interface notifData {
@@ -97,14 +98,13 @@ const Notifications = () => {
           user.senderPicture = imageUrl;
           updatedData.push(user);
         }
-
-        setNotifications(updatedData);
+          setNotifications(updatedData);
       }
     };
 
     if(notifications && notifications.length > 0)
-    updateUserPictures();
-  }, []);
+      updateUserPictures();
+  }, [notifications]);
 
   const fetchUserPicture = async (username: string) => {
     const tokenCookie = document.cookie

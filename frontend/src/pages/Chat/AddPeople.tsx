@@ -21,6 +21,7 @@ const DmRoomButton = (props: any) => {
     console.log('sooooo', props.socket)
     props.socket.emit("createDm", {
       senderId: props.userData.userId,
+      
       receiverName: props.userData.userData.username,
       token: token,
     });
@@ -121,7 +122,8 @@ export default function AddPeople(props: any) {
           },
         );
         if (response.status === 200) {
-          console.log("check response : ", response.data);
+          // Debug 1 :check out response content
+          console.log("check response : ", response);
           setAddUsers(response.data);
         }
       } catch (error) {

@@ -98,7 +98,7 @@ export default function ProfileCard() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [username]); // Include `username` in the dependency array
+  }, []); // Include `username` in the dependency array
 
   useEffect(() => {
     // Function to fetch user picture
@@ -136,7 +136,7 @@ export default function ProfileCard() {
 
     // Call the fetchUserPicture function
     fetchUserPicture();
-  }, [username]);
+  }, []);
   return (
     <div className="background-gray rounded-[30px] lg:max-w-[95%] h-auto p-6 mt-3  lg:ml-8 lg:mt-14 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
       <h1 className="text-gray-200 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-5xl">
