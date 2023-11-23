@@ -37,23 +37,34 @@ function App() {
 
 
   useEffect(() => {
-    let SecondToken: string | null = null;
+    let newToken: string | null = null;
     const tokenCookie: string | undefined = document.cookie
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
     if (tokenCookie && !token) {
-      setToken(tokenCookie.split("=")[1]);
-      SecondToken = tokenCookie.split("=")[1];
-      if (SecondToken) {
-        const decode: Token = jwtDecode(SecondToken);
+      newToken = tokenCookie.split("=")[1];
+      setToken(newToken);
+      if (newToken && !socket) {
+        const decode: Token = jwtDecode(newToken);
+        console.log('check token in App : ', newToken);
         //Debug 2 : Verify user Id type
         setUserId(decode["username"]);
         // alert("In App.tsx " + decode["username"])
-          if (!socket) setSocket(io("http://localhost:3000/Chat", {
+          const newSocket: Socket = io("http://localhost:3000/Chat", {
             extraHeaders: {
-              Authorization: `${token}`,
+              Authorization: `Bearer ${newToken}`,
             },
-          }));
+          });
+          
+          newSocket.on("connect", () => {
+            console.log("Socket connected");
+          });
+      
+          newSocket.on("disconnect", () => {
+            console.log("Socket disconnected");
+          });
+      
+          setSocket(newSocket);
       }
     }
     if (socket) console.log("socket in App.tsx : ", socket);
