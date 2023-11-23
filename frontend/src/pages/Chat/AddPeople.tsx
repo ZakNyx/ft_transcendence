@@ -156,8 +156,8 @@ export default function AddPeople(props: any) {
 
   if (addUsers) {
     return (
-      <div className="lg:w-2/3 lg:h-5/6 ml-0 mr-4 my-4 rounded-xl bg-[#232429]">
-        <div className="w-full h-full flex flex-col items-center justify-center">
+      <div className="lg:w-3/5 lg:h-4/6 ml-0 mr-4 my-4 rounded-xl bg-[#232429] ">
+        <div className="w-full h-full flex flex-col items-center justify-center ">
           <div className="w-full h-1/12 m-1 flex items-center justify-center text-gray-200 text-center font-bold text-xl md:text-3xl">
             Create a Conversation
           </div>
