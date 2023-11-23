@@ -66,9 +66,9 @@ function DMsComponent (props:any)
   if (dmData) {
     return (
       <>
-      <div className="rounded-xl flex-wrap dark:bg-npc-gray">
+      <div className="rounded-xl flex-wrap dark:bg-npc-gray h-[50vh] overflow-y-scroll">
         <div className="group ml-6 text-gray-200 flex justify-between items-center ">
-          <div className="font-bold text-base md:text-xl  mt-2">Friends</div>
+          <div className="font-bold text-base md:text-xl  mt-2">Conversations</div>
           <div className="w-full h-[45px] flex flex-col items-end">
             <Link
               to="addpeople"

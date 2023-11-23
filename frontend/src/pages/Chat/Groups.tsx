@@ -76,7 +76,7 @@ function GroupsComponent(props:any) {
   if (convData)
   {
         return (
-    <div className="rounded-xl flex-wrap dark:bg-npc-gray"
+    <div className="rounded-xl flex-wrap dark:bg-npc-gray overflow-y-scroll h-[35vh] mb-3"
     >
       <div className="group ml-6 text-gray-200 flex justify-between items-center ">
         <div className="font-bold text-base md:text-xl  mt-2">
