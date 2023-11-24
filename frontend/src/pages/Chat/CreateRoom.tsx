@@ -84,7 +84,7 @@ function CreateRoom(props: any) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="lg:w-2/3 lg:h-5/6 rounded-xl ml-4 md:ml-2 overflow-hidden shadow-lg bg-npc-gray pt-12 pb-12"
+      className="lg:w-2/3 h-h-[86vh] rounded-xl ml-6 md:ml-3 mr-4 my-3.5 overflow-hidden shadow-lg bg-npc-gray pt-12 pb-12"
     >
       <div className="w-full h-full flex items-center justify-center flex-wrap">
         <div

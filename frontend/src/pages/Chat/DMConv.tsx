@@ -66,18 +66,9 @@ const Mssg = (msgData: any) => {
     return (
       <div key={msgData.index} className="max-w-[60%] max-h-[60%] m-[15px]">
         <div className="w-full h-full">
-          <div className=" w-[15px] h-[15px] mt-[15px] bg-[#EEEEFF] rounded-full dark:bg-[#1A1C26]"></div>
+          <div className=" w-[15px] h-[15px] mt-[15px] rounded-full bg-[#181616]"></div>
           <div
-            className="p-[10px] ml-[15px] mt-[10px] max-w-[60%]  w-fit h-fit bg-[#EEEEFF] rounded-[25px] dark:bg-[#1A1C26] text-left text-[#353535] dark:text-white text-clip overflow-hidden"
-            style={{
-              fontFamily: "poppins",
-              fontSize: "14px",
-              fontStyle: "normal",
-              fontWeight: 600,
-              lineHeight: "normal",
-              letterSpacing: "1px",
-              overflowWrap: "break-word",
-            }}
+            className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] text-sm md:text-base  w-fit h-fit rounded-3xl bg-[#181616] text-left text-white text-clip overflow-hidden"
           >
             {msgData.msgData.messageContent}
           </div>
@@ -93,17 +84,7 @@ const Mssg = (msgData: any) => {
         <div className="w-full h-full flex flex-row-reverse justify-start ml-[20px]">
           <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
           <div
-            className="p-[10px] mt-[10px] max-w-[60%] h-fit bg-[#6F37CF] rounded-[25px] dark:bg-[#6F37CF] text-left text-white dark:text-white text-clip"
-            style={{
-              fontFamily: "poppins",
-              fontSize: "14px",
-              fontStyle: "normal",
-              fontWeight: 600,
-              lineHeight: "normal",
-              letterSpacing: "1px",
-              overflowWrap: "break-word",
-              maxWidth: "90%",
-            }}
+            className="p-[10px] text-sm md:text-base mt-[10px] max-w-[60%] h-fit rounded-3xl bg-[#6F37CF] text-left text-white text-clip"
           >
             {msgData.msgData.messageContent}
           </div>
@@ -205,7 +186,7 @@ const DMConveComponent = (props: any) => {
 
   if (dataState) {
     return (
-      <div className="lg:w-2/3 ml-0 mr-4 my-3 rounded-xl overflow-hidden bg-npc-gray h-[86vh] flex flex-col justify-between">
+      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-hidden bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl" >
   <div className="w-full h-12 border-solid mb-5">
     <ContactBar barData={dataState.dm} userId={props.userId} socket={props.socket} />
   </div>
@@ -215,7 +196,7 @@ const DMConveComponent = (props: any) => {
     ))}
   </div>
   <div className="w-90 h-20 flex items-center justify-between mx-auto">
-    <img className="logoImg rounded-3xl w-12 h-12 ml-2 mr-4" src={dataState.image.image} alt="" />
+    <img className="logoImg rounded-3xl w-12 h-12 ml-2 mr-4 mb-1.5" src={dataState.image.image} alt="" />
     <form onSubmit={handleSubmit} className="flex-grow flex items-center w-full">
       <input
         type="text"
