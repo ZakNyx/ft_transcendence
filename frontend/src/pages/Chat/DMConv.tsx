@@ -31,7 +31,9 @@ const ContactBar = (barData: any) => {
         </Popup>
 
         <div className="w-full h-full ml-[55px] flex justify-around items-center">
-          <div className=" text-white w-full flex items-center text-md lg:text-xl mt-5">
+          <div
+            className=" text-white w-full flex items-center text-md lg:text-xl mt-5"
+          >
             {barData.barData.participants[0].displayname}
           </div>
           {/* <div> */}
@@ -46,7 +48,9 @@ const ContactBar = (barData: any) => {
             // to="/chat/dmConv"
             className={` bg-npc-purple hover:bg-purple-hover   transition-all rounded-xl mr-3 hover:dark:shadow-lg hover:shadow-lg mt-5 pb-1`}
           >
-            <div className="w-full h-full text-white text-center mt-[5px] text-sm">
+            <div
+              className="w-full h-full text-white text-center mt-[5px] text-sm"
+            >
               Invite Game
             </div>
           </Link>
@@ -63,7 +67,9 @@ const Mssg = (msgData: any) => {
       <div key={msgData.index} className="max-w-[60%] max-h-[60%] m-[15px]">
         <div className="w-full h-full">
           <div className=" w-[15px] h-[15px] mt-[15px] rounded-full bg-[#181616]"></div>
-          <div className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] text-sm md:text-base  w-fit h-fit rounded-3xl bg-[#181616] text-left text-white text-clip overflow-hidden">
+          <div
+            className="p-[10px] ml-[15px] mt-[10px] max-w-[60%] text-sm md:text-base  w-fit h-fit rounded-3xl bg-[#181616] text-left text-white text-clip overflow-hidden"
+          >
             {msgData.msgData.messageContent}
           </div>
         </div>
@@ -77,7 +83,9 @@ const Mssg = (msgData: any) => {
       >
         <div className="w-full h-full flex flex-row-reverse justify-start ml-[20px]">
           <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
-          <div className="p-[10px] text-sm md:text-base mt-[10px] max-w-[60%] h-fit rounded-3xl bg-[#6F37CF] text-left text-white text-clip">
+          <div
+            className="p-[10px] text-sm md:text-base mt-[10px] max-w-[60%] h-fit rounded-3xl bg-[#6F37CF] text-left text-white text-clip"
+          >
             {msgData.msgData.messageContent}
           </div>
         </div>
@@ -99,6 +107,7 @@ const DMConveComponent = (props: any) => {
 
   const [message, setMessage] = useState("");
   const token = Cookies.get("token");
+
   useEffect(() => {
     if (receivedData) {
       const fetchData = async () => {
@@ -122,7 +131,6 @@ const DMConveComponent = (props: any) => {
         }
       };
 
-      // Call fetchData once when the component mounts
       fetchData();
 
       props.socket.on("dmDeleted", () => {
@@ -142,11 +150,10 @@ const DMConveComponent = (props: any) => {
       });
 
       props.socket.on("unblocked", () => {
-        fetchData(); // Fetch data when unblocked
+        fetchData();
       });
 
       function messageListener() {
-        // Update state when new messages arrive
         fetchData();
         setTimeout(() => {
           if (containerRef.current) {
@@ -157,12 +164,11 @@ const DMConveComponent = (props: any) => {
 
       props.socket.on("createdMessage", messageListener);
 
-      // Clean up event listeners when the component unmounts
       return () => {
         props.socket.removeListener("createdMessage", messageListener);
       };
     }
-  }, [receivedData, dataState, props.userId, token, navigate, props.socket]);
+  }, [receivedData, dataState]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -180,66 +186,48 @@ const DMConveComponent = (props: any) => {
 
   if (dataState) {
     return (
-      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
-        <div className="w-full h-12 border-solid mb-5">
-          <ContactBar
-            barData={dataState.dm}
-            userId={props.userId}
-            socket={props.socket}
-          />
-        </div>
-        <div
-          className="w-full h-[calc(80vh - 64px)] overflow-hidden overflow-y-scroll"
-          ref={containerRef}
+      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl" >
+  <div className="w-full h-12 border-solid mb-5">
+    <ContactBar barData={dataState.dm} userId={props.userId} socket={props.socket} />
+  </div>
+  <div className="w-full h-[calc(80vh - 64px)] overflow-hidden overflow-y-scroll" ref={containerRef}>
+    {dataState.dm.msg.map((element: any, index: any) => (
+      <Mssg key={index} index={element.id} msgData={element} userId={props.userId} />
+    ))}
+  </div>
+  <div className="w-90 h-20 flex items-center justify-between mx-auto">
+    <img className="logoImg rounded-3xl w-12 h-12 ml-2 mr-4 mb-1.5" src={dataState.image.image} alt="" />
+    <form onSubmit={handleSubmit} className="flex-grow flex items-center w-full">
+      <input
+        type="text"
+        maxLength={maxLength}
+        placeholder="Enter your message"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        className="w-full h-full bg-[#1A1C26] text-white rounded-3xl border border-gray-500 active:border-gray-700 pl-2 text-sm focus:outline-none"
+      />
+      <button
+        type="submit"
+        className="w-10 h-full ml-2 flex justify-center items-center"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="#6F37CF"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="w-6 h-6 text-[#6F37CF]"
         >
-          {dataState.dm.msg.map((element: any, index: any) => (
-            <Mssg
-              key={index}
-              index={element.id}
-              msgData={element}
-              userId={props.userId}
-            />
-          ))}
-        </div>
-        <div className="w-90 h-20 flex items-center justify-between mx-auto">
-          <img
-            className="logoImg rounded-3xl w-12 h-12 ml-2 mr-4 mb-1.5"
-            src={dataState.image.image}
-            alt=""
-          />
-          <form
-            onSubmit={handleSubmit}
-            className="flex-grow flex items-center w-full"
-          >
-            <input
-              type="text"
-              maxLength={maxLength}
-              placeholder="Enter your message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="w-full h-full bg-[#1A1C26] text-white rounded-3xl border border-gray-500 active:border-gray-700 pl-2 text-sm focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="w-10 h-full ml-2 flex justify-center items-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="#6F37CF"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-6 h-6 text-[#6F37CF]"
-              >
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-            </button>
-          </form>
-        </div>
-      </div>
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
+
     );
   }
 };
