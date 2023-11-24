@@ -161,8 +161,8 @@ export default function JoinRoom(props: any) {
 
   if (rooms) {
     return (
-      <div className="lg:w-2/3 lg:h-5/6 ml-0 mr-4 my-4 rounded-xl overflow-hidden bg-[#232429]">
-        <div className="w-full h-full flex-wrap justify-center">
+      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl bg-npc-gray h-[86vh] shadow-xl">
+        <div className="w-full h-full flex-wrap justify-center mt-3">
           <div className="w-full h-1/12 m-1 flex items-center justify-center text-gray-200 text-center font-bold text-xl md:text-3xl">
             Join a Room
           </div>
