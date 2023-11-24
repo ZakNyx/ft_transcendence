@@ -186,7 +186,7 @@ const DMConveComponent = (props: any) => {
 
   if (dataState) {
     return (
-      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-hidden bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl" >
+      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl" >
   <div className="w-full h-12 border-solid mb-5">
     <ContactBar barData={dataState.dm} userId={props.userId} socket={props.socket} />
   </div>

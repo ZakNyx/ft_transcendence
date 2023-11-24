@@ -34,28 +34,13 @@ const DMComp = (props: any) => {
               />
     
               <div
-                className="groupName mb-[40px] text-black dark:text-white w-full mt-[-40px] ml-[45px] overflow-hidden"
-                style={{
-                  fontFamily: "poppins",
-                  fontSize: "15px",
-                  fontStyle: "normal",
-                  fontWeight: 600,
-                  lineHeight: "normal",
-                  letterSpacing: "0.75px",
-                }}
+                className="groupName text-base mb-[36px] text-gray-200 dark:text-white w-full mt-[-40px] ml-[45px] overflow-hidden"
+
               >
                 {props.dmData[2][0].username}
               </div>
               <div
-                className="groupMsg text-black dark:text-white w-[70%] mt-[-40px] ml-[45px] overflow-hidden  whitespace-nowrap"
-                style={{
-                  fontFamily: "poppins",
-                  fontSize: "12px",
-                  fontStyle: "normal",
-                  fontWeight: 300,
-                  lineHeight: "normal",
-                  letterSpacing: "0.65px",
-                }}
+                className="groupMsg text-gray-400 w-[70%] mt-[-40px] ml-12 text-xs overflow-hidden  whitespace-nowrap"
               >
                 {props.dmData[1].length ? props.dmData[1][props.dmData[1].length - 1].messageContent  : ""}
               </div>
