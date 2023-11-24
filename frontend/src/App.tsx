@@ -13,7 +13,6 @@ import Game from "./pages/Pong";
 import Multiplayer from "./pages/Multiplayer";
 import Invited from "./pages/Invited";
 import NavBar from "./components/Navbar";
-
 import Chat from "./pages/Chat/Chat";
 import DefaultChatComp from "./pages/Chat/DefaultChatComp";
 import CreateRoom from "./pages/Chat/CreateRoom";
@@ -49,7 +48,6 @@ function App() {
         console.log('check token in App : ', newToken);
         //Debug 2 : Verify user Id type
         setUserId(decode["username"]);
-        // alert("In App.tsx " + decode["username"])
           const newSocket: Socket = io("http://localhost:3000/Chat", {
             extraHeaders: {
               Authorization: `Bearer ${newToken}`,
@@ -67,7 +65,6 @@ function App() {
           setSocket(newSocket);
       }
     }
-    if (socket) console.log("socket in App.tsx : ", socket);
   }, [token, socket, userId]);
 
     // I get the path and checks if matches the euh LoginPage and returns either true or false ~
@@ -88,40 +85,40 @@ function App() {
             <Route path="/game/multiplayer" element={<Multiplayer />} />
             <Route
               path="chat"
-              element={<Chat userId={userId} socket={socket} />}
+              element={socket && <Chat userId={userId} socket={socket} />}
             >
               <Route index element={<DefaultChatComp />} />
               <Route
                 path="createRoom"
-                element={<CreateRoom socket={socket} userId={userId} />}
+                element={socket && <CreateRoom socket={socket} userId={userId} />}
               />
               <Route
                 path="joinRoom"
-                element={<JoinRoom userId={userId} socket={socket} />}
+                element={socket && <JoinRoom userId={userId} socket={socket} />}
               />
               <Route
                 path="addPeople"
-                element={<AddPeople socket={socket} userId={userId} />}
+                element={socket && <AddPeople socket={socket} userId={userId} />}
               />
               <Route
                 path="dmConv"
-                element={<DMConv socket={socket} userId={userId} />}
+                element={socket && <DMConv socket={socket} userId={userId} />}
               />
               <Route
                 path="groupConv"
-                element={<GroupConv userId={userId} socket={socket} />}
+                element={socket && <GroupConv userId={userId} socket={socket} />}
               />
               <Route
                 path="invToRoom"
-                element={<InvToRoom socket={socket} userId={userId} />}
+                element={socket && <InvToRoom socket={socket} userId={userId} />}
               />
               <Route
                 path="roomSettings"
-                element={<RoomSettings socket={socket} userId={userId} />}
+                element={socket && <RoomSettings socket={socket} userId={userId} />}
               />
               <Route
                 path="bannedUsers"
-                element={<BannedList socket={socket} userId={userId} />}
+                element={socket && <BannedList socket={socket} userId={userId} />}
               />
             </Route>
             <Route path="/profile/:username" element={<Profile />} />

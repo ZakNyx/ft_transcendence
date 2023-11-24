@@ -216,7 +216,7 @@ export class HttpService {
       },
     });
 
-    console.log("dms: ",dms)
+    // console.log("dms: ",dms)
     
     const currentUser = await this.prismaService.user.findUnique({
       where: {
@@ -234,7 +234,7 @@ export class HttpService {
         customArray.push([dm.id, dm.msg, dm.participants]);
       }
     });
-    console.log("customarray: ", customArray)
+    // console.log("customarray: ", customArray)
     return customArray;
   }
 
@@ -333,7 +333,7 @@ export class HttpService {
         return user;
       }
     });
-    console.log("users : ", users)
+    // console.log("users : ", users)
     return filteredUsers;
   }
 

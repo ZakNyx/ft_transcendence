@@ -14,7 +14,7 @@ function DMsComponent (props:any)
   useEffect(() => {
   const fetchData = async () => {
     try {
-      console.log("userId: ", props.userId);
+      // console.log("userId: ", props.userId);
       const response = await axios.get('http://localhost:3000/chat/dms', {
         params: {
           // Debug 3 : Check userId type
@@ -26,20 +26,22 @@ function DMsComponent (props:any)
       });
       if (response.status === 200) {
         setDmData(response.data)
-        console.log('check response.data : ', response.data);
+        // console.log('check response.data : ', response.data);
       }
     } catch (error) {
       navigate('/chat' , {replace: true});
     }
   };
   
-  fetchData();
+  const pollInterval = setInterval(() => {
+    fetchData();
+  }, 600);
 
     props.socket.on("dmDeleted", () => {
     fetchData();
   })
     props.socket.on("createdDm", () => {
-      console.log("Hello world!!!")
+      // console.log("Hello world!!!")
       fetchData();
     });
     props.socket.on("createdMessage", () => {
@@ -58,11 +60,12 @@ function DMsComponent (props:any)
       props.socket.off('createdMessage')
       props.socket.off('createdDm')
       props.socket.off('dmDeleted')
+      clearInterval(pollInterval);
     })
 
   }, []);
 
-  console.log(dmData)
+  // console.log(dmData)
   if (dmData) {
     return (
       <>
