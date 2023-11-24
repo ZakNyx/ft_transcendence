@@ -16,6 +16,7 @@ const MatchHistory = () => {
 
   const [gameData, setGameData] = useState<any>();
   const [userPicture, setUserPicture] = useState<string | null>(null);
+  const [oppPicture, setOppPicture] = useState<string | null>(null);
   const [myName, setMyName] = useState<string>("");
   const [myOpponentName, setMyOpponentName] = useState<string>("");
   const [myScore, setMyScore] = useState<string>("");
@@ -26,6 +27,7 @@ const MatchHistory = () => {
     username = "me";
   }
 
+  console.log('check playerUsername : ', Playerusername);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -78,6 +80,44 @@ const MatchHistory = () => {
     // Call the fetchUserPicture function
     fetchUserPicture();
   }, [username]);
+
+  useEffect(() => {
+    // Function to fetch user picture
+    const fetchUserPicture = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      try {
+        if (tokenCookie) {
+          const token = tokenCookie.split("=")[1];
+          const response = await axios.get(
+            `http://localhost:3000/profile/ProfilePicture/${Playerusername}`,
+            {
+              responseType: "arraybuffer",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          const contentType = response.headers["content-type"];
+          const blob = new Blob([response.data], { type: contentType });
+          const imageUrl = URL.createObjectURL(blob);
+          setOppPicture(imageUrl);
+        } else {
+          // Handle the case when there is no token (e.g., display a placeholder image)
+          setOppPicture("../../public/images/default.png");
+        }
+      } catch (error) {
+        // Handle errors gracefully (e.g., display an error message to the user)
+        console.error("Error fetching user picture:", error);
+      }
+    };
+
+    // Call the fetchUserPicture function
+    fetchUserPicture();
+  }, [Playerusername]);
 
   useEffect(() => {
     if (gameData) {
@@ -133,8 +173,8 @@ const MatchHistory = () => {
             </div>
             <div className="flex items-center space-x-2">
               <img
-                src={`../public/images/${match.player1}.jpg`}
-                alt={`Your opponent's profile`}
+                src={oppPicture || "../../public/images/default.png"}
+                alt={`Your profile`}
                 className="w-12 h-12 rounded-full"
               />
               <span className="text-gray-200 text-base">{match.player1 != Playerusername? match.player1 : match.player2}</span>

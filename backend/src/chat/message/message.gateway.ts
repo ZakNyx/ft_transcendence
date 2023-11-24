@@ -248,15 +248,20 @@ export class MessageGateway
   }
 
   validateToken(token : string) {
-    const payload = this.jwtservice.decode(token);
-    // console.log(payload);
-    if (!payload)
-      return null;
-    return payload;
+    try {
+      const payload = this.jwtservice.decode(token);
+      if (!payload)
+        return null;
+      return payload;
+    }
+    catch (err) {
+      console.error('Chat Error : ', err);
+    }
+
   }
 
   async handleConnection(client: Socket) {
-    console.log(`client  connected in Chat gateway: ${client.id}`)
+    console.log(`client  connected in Chat gateway: ${client.id}`);
     const userId = this.validateToken(client.handshake.headers.authorization.slice(7));
 
     if (!userId) {

@@ -168,7 +168,7 @@ const DMConveComponent = (props: any) => {
         props.socket.removeListener("createdMessage", messageListener);
       };
     }
-  }, [receivedData]);
+  }, [receivedData, dataState]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();

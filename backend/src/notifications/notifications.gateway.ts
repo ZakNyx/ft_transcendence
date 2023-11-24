@@ -35,7 +35,7 @@ export class NotificationsGateway
 
   @WebSocketServer()
   async handleConnection(client: Socket) {
-    console.log('con',client.id);
+    // console.log('con',client.id);
     try {
       const token = client.handshake.headers.authorization.slice(7);
       if (!token) {
@@ -63,7 +63,7 @@ export class NotificationsGateway
   }
 
   async handleDisconnect(client: Socket) {
-    console.log('dis',client);
+    // console.log('dis',client);
     try {
       const token = client.handshake.headers.authorization.slice(7);
       if (!token) {
