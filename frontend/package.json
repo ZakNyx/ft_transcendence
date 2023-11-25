@@ -33,7 +33,7 @@
     "reactjs-popup": "^2.0.6",
     "socket.io-client": "^4.7.2",
     "sweetalert": "^2.1.2",
-    "sweetalert2": "^11.7.28",
+    "sweetalert2": "^11.6.13",
     "three": "^0.157.0"
   },
   "devDependencies": {

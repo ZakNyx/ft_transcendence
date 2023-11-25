@@ -157,54 +157,6 @@ export class ProfileService {
     return targetUser;
   }
 
-  async profilePictureMe(requser, res) {
-    try {
-      const user = await this.prismaService.user.findUnique({
-        where: {
-          username: requser.username,
-        },
-      });
-      if (user.picture) {
-        const imageBuffer = await fs.readFile(user.picture);
-        res.setHeader("Content-Type", user.pictureMimetype);
-        res.send(imageBuffer);
-      } else {
-        const url_image = await axios.get(user.imageUrl, {
-          responseType: "arraybuffer",
-        });
-        const imageBuffer = Buffer.from(url_image.data, "binary");
-        res.setHeader("Content-Type", "image/jpg");
-        res.send(imageBuffer);
-      }
-    } catch (error) {
-      res.status(500).send("could not upload the image");
-    }
-  }
-
-  async profilePicture(username, res) {
-    try {
-      const user = await this.prismaService.user.findUnique({
-        where: {
-          username: username,
-        },
-      });
-      if (user.picture) {
-        const imageBuffer = await fs.readFile(user.picture);
-        res.setHeader("Content-Type", user.pictureMimetype);
-        res.send(imageBuffer);
-      } else {
-        const url_image = await axios.get(user.imageUrl, {
-          responseType: "arraybuffer",
-        });
-        const imageBuffer = Buffer.from(url_image.data, "binary");
-        res.setHeader("Content-Type", "image/jpg");
-        res.send(imageBuffer);
-      }
-    } catch (error) {
-      res.status(500).send("could not upload the image");
-    }
-  }
-
   async getprofilePicture(res, username): Promise<StreamableFile>{
     const user = await this.prismaService.user.findUnique({where : {
      username: username,
@@ -212,7 +164,7 @@ export class ProfileService {
     if (user){
       let path;
       if (user.pictureStatus)
-        path = user.pictureMimetype;
+        path = user.filePath;
       else
         path = 'uploads/default.png';
       const file = createReadStream(path)
@@ -252,7 +204,7 @@ export class ProfileService {
       data: {
         picture: `http://localhost:3000/profile/ProfilePicture/${req.user.username}`,
         pictureStatus: true,
-        pictureMimetype: filepath,
+        filePath: filepath,
       },
     });
   }
@@ -266,7 +218,7 @@ export class ProfileService {
     if (user.pictureStatus === true) {
       console.log();
       try {
-        await fs.unlink(req.user.pictureMimetype);
+        await fs.unlink(req.user.filePath);
       } catch (error) {}
     }
     const updateUser = await this.prismaService.user.update({

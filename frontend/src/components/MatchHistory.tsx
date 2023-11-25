@@ -55,19 +55,14 @@
           if (tokenCookie) {
             const token = tokenCookie.split("=")[1];
             const response = await axios.get(
-              `http://localhost:3000/profile/ProfilePicture/${username}`,
+              `http://localhost:3000/profile/${username}`,
               {
-                responseType: "arraybuffer",
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
               },
             );
-
-            const contentType = response.headers["content-type"];
-            const blob = new Blob([response.data], { type: contentType });
-            const imageUrl = URL.createObjectURL(blob);
-            setUserPicture(imageUrl);
+            setUserPicture(response.data.picture);
           } else {
             // Handle the case when there is no token (e.g., display a placeholder image)
             setUserPicture("../../public/images/default.png");
@@ -93,19 +88,14 @@
           if (tokenCookie) {
             const token = tokenCookie.split("=")[1];
             const response = await axios.get(
-              `http://localhost:3000/profile/ProfilePicture/${myGameOppName}`,
+              `http://localhost:3000/profile/${myGameOppName}`,
               {
-                responseType: "arraybuffer",
                 headers: {
                   Authorization: `Bearer ${token}`,
                 },
               },
             );
-
-            const contentType = response.headers["content-type"];
-            const blob = new Blob([response.data], { type: contentType });
-            const imageUrl = URL.createObjectURL(blob);
-            setOppPicture(imageUrl);
+            setOppPicture(response.data.picture);
           } else {
             // Handle the case when there is no token (e.g., display a placeholder image)
             setOppPicture("../../public/images/default.png");

@@ -33,7 +33,6 @@ export class AuthService {
           username: newUser.username,
           displayname: newUser.username,
           email: newUser.email,
-          imageUrl : imageLink,
           picture : imageLink,
           pictureStatus : true,
           userId:newUser.userId,

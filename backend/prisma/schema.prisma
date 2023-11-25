@@ -24,12 +24,10 @@ model User {
   rooms             RoomMember[]
   roomInvites       Json[]
   FirstTime         Boolean        @default(true)
-  // participantNotifs Notification[] @relation(name: "ParticipantNotifsToUser")
 
-  imageUrl        String
-  picture         String?
-  pictureStatus   Boolean @default(false)
-  pictureMimetype String?
+  picture         String
+  pictureStatus   Boolean @default(true)
+  filePath        String?
 
   username    String @unique
   displayname String @unique

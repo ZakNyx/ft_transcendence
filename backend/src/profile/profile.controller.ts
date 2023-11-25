@@ -69,11 +69,6 @@ export class ProfileController {
     return await this.profileService.getProfile(username, req.user);
   }
 
-  @Get('ProfilePicture/me')
-  async ProfilePictureMe(@Res() res, @Req() req) {
-    return await this.profileService.profilePictureMe(req.user, res);
-  }
-
 
   @Get('ProfilePicture/:username')
   async ProfilePicture(@Res({ passthrough: true }) res, @Param('username') username: string) : Promise<StreamableFile> {
