@@ -8,6 +8,7 @@ import Validate from "../components/Validate";
 import Notification from "./Notification";
 import { RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../pages/variables";
 import Swal from "sweetalert2";
+import { Socket } from "socket.io-client";
 
 interface UserData {
   userID: string;
@@ -100,6 +101,7 @@ function NavBar() {
   const [user, setUser] = useState<UserData | null>(null);
   const [userPicture, setUserPicture] = useState<string | null>(null);
   const [opponent, setOpponent] = useState<UserData | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
     // Function to fetch user data and set it in the state
@@ -121,7 +123,7 @@ function NavBar() {
           // Set the user data in the state
           setUser(response.data);
           setUsername(response.data.username);
-          const socket = initializeSocket(token);
+          if (!socket) setSocket(initializeSocket(token));
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error

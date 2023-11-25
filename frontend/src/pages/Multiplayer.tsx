@@ -8,7 +8,7 @@ import RotatingButton from "./RotatingButton";
 import NavBar from "../components/Navbar";
 import { NavLink } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
-import { setGameId } from "./variables";
+import { setGameId, setMyGameOppName } from "./variables";
 
 interface GameSettings {
   paddleColor: string;
@@ -304,6 +304,7 @@ export default function Multiplayer() {
         setGameId(gamedata.gameId);
         setGameData(gamedata);
         setOppUsername(OppName);
+        setMyGameOppName(OppName);
         setInGame(true);
         setIsGameStarted(true);
       });

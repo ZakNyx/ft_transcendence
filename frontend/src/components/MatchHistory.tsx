@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Playerusername } from "../pages/variables";
+import { Playerusername, myGameOppName } from "../pages/variables";
 
 interface GameData {
  id: number,
@@ -27,7 +27,7 @@ const MatchHistory = () => {
     username = "me";
   }
 
-  console.log('check playerUsername : ', Playerusername);
+  // console.log('check playerUsername : ', Playerusername);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -92,7 +92,7 @@ const MatchHistory = () => {
         if (tokenCookie) {
           const token = tokenCookie.split("=")[1];
           const response = await axios.get(
-            `http://localhost:3000/profile/ProfilePicture/${Playerusername}`,
+            `http://localhost:3000/profile/ProfilePicture/${myGameOppName}`,
             {
               responseType: "arraybuffer",
               headers: {
@@ -117,7 +117,7 @@ const MatchHistory = () => {
 
     // Call the fetchUserPicture function
     fetchUserPicture();
-  }, [Playerusername]);
+  }, []);
 
   useEffect(() => {
     if (gameData) {
