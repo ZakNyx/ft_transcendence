@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import IconButton from "./IconButton";
 import SearchBar from "./SearchBar";
 import axios from "axios";
@@ -84,6 +84,8 @@ function NavBar() {
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | undefined>(undefined);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
   const [inviSender, setInviSender] = useState<string>("");
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/"
 
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -122,6 +124,7 @@ function NavBar() {
 
           // Set the user data in the state
           setUser(response.data);
+          console.log('check username in NavBar : ', response.data.username);
           setUsername(response.data.username);
           if (!socket) setSocket(initializeSocket(token));
         } catch (error: any) {
@@ -302,8 +305,11 @@ function NavBar() {
       navigate('/home');
     }
   } 
-
-  // Render your Navbar JSX here, using the username and userPicture states
+  
+  if (isLoginPage) {
+    return null; // Don't render the NavBar on the login page
+  }
+  
   if (invitationReceived) {
     Swal.fire({
       title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
@@ -445,7 +451,7 @@ function NavBar() {
                             // Clear the 'token' cookie
                             document.cookie =
                               "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                              window.location.reload();
+                              // window.location.reload();
                               navigate("/");
                           }}
                           to="/"

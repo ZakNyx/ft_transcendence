@@ -49,11 +49,16 @@ export class SocketEvent  {
         return this.prisma;
     }
 
-    createGameRecord(client1: string, client2: string) {
-        return prisma.game.create({
+    async createGameRecord(client1: string, client2: string) {
+
+        return await prisma.game.create({
             data: {
-                player1: client1, player2: client2, score1: "", score2: "", ingame: false
+                player1: client1, player2: client2, score1: "", score2: "", ingame: false, users: {
+                    connect: [{username: client1}, {username: client2}]
+                
+                }
             },
+            
         });
     }
 

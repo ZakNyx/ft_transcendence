@@ -72,6 +72,7 @@ function HomePage() {
           // Set the user data in the state
           setName(response.data);
           setUsername(response.data.username);
+          localStorage.setItem("Username", response.data.username);
         } catch (error) {
           // Handle errors
           console.error("Error fetching user data:", error);
