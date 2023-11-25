@@ -13,7 +13,7 @@ import { Socket } from "socket.io-client";
 interface UserData {
   userID: string;
   username: string;
-  profilePicture: string;
+  picture: string;
   displayname: string;
   gamesPlayed: number;
   wins: number;
@@ -99,7 +99,6 @@ function NavBar() {
 
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
-  const [userPicture, setUserPicture] = useState<string | null>(null);
   const [opponent, setOpponent] = useState<UserData | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -172,44 +171,6 @@ function NavBar() {
   //     // Call the fetchUserData function
   //     fetchUserData();
   // }, [opponent]);
-
-  useEffect(() => {
-    // Function to fetch user picture
-    const fetchUserPicture = async () => {
-      const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
-
-      try {
-        if (tokenCookie && username) {
-          const token = tokenCookie.split("=")[1];
-          const response = await axios.get(
-            `http://localhost:3000/profile/ProfilePicture/${username}`,
-            {
-              responseType: "arraybuffer",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
-
-          const contentType = response.headers["content-type"];
-          const blob = new Blob([response.data], { type: contentType });
-          const imageUrl = URL.createObjectURL(blob);
-          setUserPicture(imageUrl);
-        } else {
-          // Handle the case when there is no token (e.g., display a placeholder image)
-          setUserPicture("../../public/images/default.png");
-        }
-      } catch (error) {
-        // Handle errors gracefully (e.g., display an error message to the user)
-        console.error("Error fetching user picture:", error);
-      }
-    };
-
-    // Call the fetchUserPicture function
-    fetchUserPicture();
-  }, [username]);
 
   const closeDropdown = () => {
     const timeout = setTimeout(() => {
@@ -400,9 +361,9 @@ function NavBar() {
                 onMouseEnter={openDropdown}
                 onMouseLeave={closeDropdown}
               >
-                {userPicture && (
+                {user && (
                   <img
-                    src={userPicture}
+                    src={user.picture}
                     alt="profile picture"
                     className="w-12 h-12 cursor-pointer rounded-[30px] flex-shrink-0 min-w-[48px] min-h-[48px]"
                   />

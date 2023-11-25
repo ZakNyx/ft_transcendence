@@ -10,7 +10,7 @@ import { initializeSocket } from "./socketManager";
 interface UserData {
   userID: string;
   username: string;
-  profilePicture: string;
+  picture: string;
   displayname: string;
   gamesPlayed: number;
   wins: number;
@@ -23,7 +23,6 @@ interface UserData {
 export default function ProfileCard() {
   const [user, setUser] = useState<UserData | null>(null);
   const [jwtUser, setJwtUser] = useState<UserData | null>(null);
-  const [userPicture, setUserPicture] = useState<string | null>(null);
   const navigate = useNavigate();
 
   let { username } = useParams(); // Get the username parameter from the URL
@@ -100,43 +99,6 @@ export default function ProfileCard() {
     fetchUserData();
   }, []); // Include `username` in the dependency array
 
-  useEffect(() => {
-    // Function to fetch user picture
-    const fetchUserPicture = async () => {
-      const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
-
-      try {
-        if (tokenCookie) {
-          const token = tokenCookie.split("=")[1];
-          const response = await axios.get(
-            `http://localhost:3000/profile/ProfilePicture/${username}`,
-            {
-              responseType: "arraybuffer",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
-
-          const contentType = response.headers["content-type"];
-          const blob = new Blob([response.data], { type: contentType });
-          const imageUrl = URL.createObjectURL(blob);
-          setUserPicture(imageUrl);
-        } else {
-          // Handle the case when there is no token (e.g., display a placeholder image)
-          setUserPicture("../../public/images/default.png");
-        }
-      } catch (error) {
-        // Handle errors gracefully (e.g., display an error message to the user)
-        console.error("Error fetching user picture:", error);
-      }
-    };
-
-    // Call the fetchUserPicture function
-    fetchUserPicture();
-  }, []);
   return (
     <div className="background-gray rounded-[30px] lg:max-w-[95%] h-auto p-6 mt-3  lg:ml-8 lg:mt-14 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
       <h1 className="text-gray-200 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-5xl">
@@ -144,10 +106,10 @@ export default function ProfileCard() {
       </h1>
       <div className="flex items-center">
         <div className="flex items-center">
-          {userPicture && (
+          {user && (
             <div className="relative">
             <img
-              src={userPicture}
+              src={user.picture}
               alt="profile picture"
               className="w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
             />

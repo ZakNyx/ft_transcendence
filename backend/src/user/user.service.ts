@@ -25,6 +25,7 @@ export class UserService {
         gamesPlayed: true,
         wins: true,
         winrate: true,
+        picture: true,
       },
     });
     return users;

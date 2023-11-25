@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 interface UserData {
   userID: string;
   username: string;
-  profilePicture: string;
+  picture: string;
   displayname: string;
   gamesPlayed: number;
   wins: number;
@@ -18,7 +18,6 @@ interface UserData {
 
 export default function Leaderboard() {
   const [data, setData] = useState<UserData[] | null>(null);
-  const [newData, setNewData] = useState<UserData[] | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,6 +39,7 @@ export default function Leaderboard() {
           );
             // console.log(response.data);
           setData(response.data);
+          console.log(response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
@@ -49,55 +49,6 @@ export default function Leaderboard() {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    const fetchUserPicture = async (username: string) => {
-      const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
-
-      try {
-        if (tokenCookie) {
-          const token = tokenCookie.split("=")[1];
-          const response = await axios.get<string>(
-            `http://localhost:3000/profile/ProfilePicture/${username}`,
-            {
-              responseType: "arraybuffer",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          const contentType = response.headers["content-type"];
-          const blob = new Blob([response.data], { type: contentType });
-          const imageUrl = URL.createObjectURL(blob);
-
-          return imageUrl;
-        } else {
-          return "URL_OF_PLACEHOLDER_IMAGE";
-        }
-      } catch (error) {
-        console.error("Error fetching user picture:", error);
-        return "URL_OF_PLACEHOLDER_IMAGE";
-      }
-    };
-
-    const updateUserPictures = async () => {
-      if (data) {
-        const updatedData: UserData[] = [];
-
-        for (const user of data) {
-          const imageUrl = await fetchUserPicture(user.username);
-          user.profilePicture = imageUrl;
-          updatedData.push(user);
-        }
-
-        setNewData(updatedData);
-      }
-    };
-    if(data && data.length)
-      updateUserPictures();
-  }, [data]);
   
 
   return (
@@ -109,8 +60,8 @@ export default function Leaderboard() {
       </h1>
       <BackToTop />
       <div className="p-6 mt-6 mx-auto lg:max-w-[90%]">
-        {newData &&
-          newData.map((item, index) => (
+        {data &&
+          data.map((item, index) => (
             <div
               key={item.userID}
               className="flex rounded-2xl p-4 mb-4 justify-between bg-npc-gray shadow-[0px_2px_4px_2px_#00000006]"
@@ -125,9 +76,9 @@ export default function Leaderboard() {
               </div>
 
               <div className="flex items-center justify-center  mr-4">
-                {item.profilePicture && (
+                {item.picture && (
                   <img
-                    src={item.profilePicture}
+                    src={item.picture}
                     alt="profile picture"
                     className="w-8 md:w-10 lg:w-16 xl:w-20 h-8 md:h-10 lg:h-16 xl:h-20 rounded-full"
                   />

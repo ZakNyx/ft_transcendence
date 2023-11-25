@@ -92,10 +92,9 @@ const Notifications = () => {
         const updatedData: notifData[] = [];
 
         for (const user of notifications) {
-          const imageUrl = await fetchUserPicture(user.sender);
-          const displayname = await fetchUserDisplay(user.sender);
-          user.sernderdisplayname = displayname;
-          user.senderPicture = imageUrl;
+          const fetchedUser:any = await fetchUser(user.sender);
+          user.sernderdisplayname = fetchedUser.username;
+          user.senderPicture = fetchedUser.picture;
           updatedData.push(user);
         }
           setNewNotifications(updatedData);
@@ -106,39 +105,7 @@ const Notifications = () => {
       updateUserPictures();
   }, [notifications]);
 
-  const fetchUserPicture = async (username: string) => {
-    const tokenCookie = document.cookie
-      .split("; ")
-      .find((cookie) => cookie.startsWith("token="));
-
-    try {
-      if (tokenCookie) {
-        const token = tokenCookie.split("=")[1];
-        const response = await axios.get<string>(
-          `http://localhost:3000/profile/ProfilePicture/${username}`,
-          {
-            responseType: "arraybuffer",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const contentType = response.headers["content-type"];
-        const blob = new Blob([response.data], { type: contentType });
-        const imageUrl = URL.createObjectURL(blob);
-
-        return imageUrl;
-      } else {
-        return "URL_OF_PLACEHOLDER_IMAGE";
-      }
-    } catch (error) {
-      console.error("Error fetching user picture:", error);
-      return "URL_OF_PLACEHOLDER_IMAGE";
-    }
-  };
-
-  const fetchUserDisplay = async (username:string) => {
+  const fetchUser = async (username:string) => {
     const tokenCookie = document.cookie
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
@@ -155,7 +122,7 @@ const Notifications = () => {
           }
         );
 
-        return response.data.displayname;
+        return response.data;
         }
     } catch (error) {
       console.error("Error fetching user displayname", error);

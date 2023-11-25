@@ -1,12 +1,15 @@
 import {
   HttpException,
   Injectable,
+  StreamableFile,
   UnauthorizedException,
 } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { updateNameDTO } from "./dto/profile.dto";
 import * as fs from "fs/promises";
 import axios from "axios";
+import { createReadStream } from 'fs';
+import { lookup } from 'mime-types';
 
 @Injectable()
 export class ProfileService {
@@ -202,6 +205,25 @@ export class ProfileService {
     }
   }
 
+  async getprofilePicture(res, username): Promise<StreamableFile>{
+    const user = await this.prismaService.user.findUnique({where : {
+     username: username,
+    }})
+    if (user){
+      let path;
+      if (user.pictureStatus)
+        path = user.pictureMimetype;
+      else
+        path = 'uploads/default.png';
+      const file = createReadStream(path)
+      const mimetype = lookup(path)
+      res.set({
+        'content-type': mimetype
+      })
+      return new StreamableFile(file);
+    }
+  }
+
   async updateName(body: updateNameDTO, req) {
     const user = await this.prismaService.user.findUnique({
       where: {
@@ -228,9 +250,9 @@ export class ProfileService {
         username: req.user.username,
       },
       data: {
-        picture: filepath,
+        picture: `http://localhost:3000/profile/ProfilePicture/${req.user.username}`,
         pictureStatus: true,
-        pictureMimetype: mimetype,
+        pictureMimetype: filepath,
       },
     });
   }
@@ -242,8 +264,9 @@ export class ProfileService {
       },
     });
     if (user.pictureStatus === true) {
+      console.log();
       try {
-        await fs.unlink(req.user.picture);
+        await fs.unlink(req.user.pictureMimetype);
       } catch (error) {}
     }
     const updateUser = await this.prismaService.user.update({
@@ -251,7 +274,6 @@ export class ProfileService {
         username: req.user.username,
       },
       data: {
-        picture: "./uploads/default.png",
         pictureStatus: false,
       },
     });
