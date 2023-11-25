@@ -4,13 +4,12 @@ import Swal from "sweetalert2";
 
 interface UserData {
   username: string;
-  profilePicture: string;
+  picture: string;
   displayname: string;
 }
 
 const BlockList: React.FC = () => {
   const [blocklist, setBlockList] = useState<UserData[] | null>(null);
-  const [newBlocklist, setNewBlockList] = useState<UserData[] | null>(null);
 
   useEffect(() => {
     const fetchBlockList = async () => {
@@ -32,6 +31,7 @@ const BlockList: React.FC = () => {
           );
 
           setBlockList(response.data);
+          console.log(response.data)
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
@@ -41,54 +41,6 @@ const BlockList: React.FC = () => {
     fetchBlockList();
   }, []);
 
-  useEffect(() => {
-    const fetchUserPicture = async (username: string) => {
-      const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
-
-      try {
-        if (tokenCookie) {
-          const token = tokenCookie.split("=")[1];
-          const response = await axios.get<string>(
-            `http://localhost:3000/profile/ProfilePicture/${username}`,
-            {
-              responseType: "arraybuffer",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          const contentType = response.headers["content-type"];
-          const blob = new Blob([response.data], { type: contentType });
-          const imageUrl = URL.createObjectURL(blob);
-
-          return imageUrl;
-        } else {
-          return "URL_OF_PLACEHOLDER_IMAGE";
-        }
-      } catch (error) {
-        console.error("Error fetching user picture:", error);
-        return "URL_OF_PLACEHOLDER_IMAGE";
-      }
-    };
-
-    const updateUserPictures = async () => {
-      if (blocklist) {
-        const updatedData: UserData[] = [];
-
-        for (const user of blocklist) {
-          const imageUrl = await fetchUserPicture(user.username);
-          user.profilePicture = imageUrl;
-          updatedData.push(user);
-        }
-
-        setNewBlockList(updatedData);
-      }
-    };
-    if (blocklist && blocklist.length) updateUserPictures();
-  }, [blocklist]);
 
   const handleClick = async (param: {
     displayname: string;
@@ -135,12 +87,12 @@ const BlockList: React.FC = () => {
       <div className="flex justify-center items-center font-montserrat pr-3 pl-3 background-gray">
         <div className="max-w-screen-md h-[20vh] w-[50vw] lg:w-[30vw] overflow-y-auto">
           <ul className="text-gray-200">
-            {newBlocklist &&
-              newBlocklist.map((blocklist, index) => (
+            {blocklist &&
+              blocklist.map((blocklist, index) => (
                 <li className="mb-3 flex items-center" key={index}>
                   <img
                     className="w-8 md:w-10 lg:w-10 xl:w-10 h-8 md:h-10 lg:h-10 xl:h-10 rounded-full"
-                    src={blocklist.profilePicture}
+                    src={blocklist.picture}
                     alt="User profile picture"
                   />
                   <p className="max-w-[10rem] pl-3 break-words text-xs xs:text-xs md:text-xs lg:text-sm username">
