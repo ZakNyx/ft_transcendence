@@ -24,7 +24,7 @@ interface notifData {
 interface UserData {
   userID: string;
   username: string;
-  profilePicture: string;
+  picture: string;
   displayname: string;
   gamesPlayed: number;
   wins: number;
@@ -44,11 +44,6 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
   you,
   opps,
 }) => {
-
-  const [userPicture, setUserPicture] = useState<string | null>(null);
-  const [oppUserPicture, setOppUserPicture] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
-  const [oppUsername, setOppUsername] = useState<string | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
   const [opp, setOpp] = useState<UserData | null>(null);
   const navigate = useNavigate();
@@ -75,7 +70,6 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
 
           // Set the user data in the state
           setUser(response.data);
-          setUsername(response.data.username);
           const socket = initializeSocket('');
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
@@ -95,7 +89,7 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
     return (() => {
       // console.log('scoreboard is unmount')
     })
-  }, [username]);
+  }, []);
 
   useEffect(() => {
     // Function to fetch user data and set it in the state
@@ -117,7 +111,6 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
 
           // Set the user data in the state
           setOpp(response.data);
-          setOppUsername(response.data.username);
           const socket = initializeSocket('');
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
@@ -134,83 +127,8 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [oppUsername]);
+  }, []);
 
-  useEffect(() => {
-    // Function to fetch user picture
-    const fetchUserPicture = async () => {
-      const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
-
-      try {
-        if (tokenCookie && username) {
-          const token = tokenCookie.split("=")[1];
-          const response = await axios.get(
-            `http://localhost:3000/profile/ProfilePicture/${username}`,
-            {
-              responseType: "arraybuffer",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
-
-          const contentType = response.headers["content-type"];
-          const blob = new Blob([response.data], { type: contentType });
-          const imageUrl = URL.createObjectURL(blob);
-          setUserPicture(imageUrl);
-        } else {
-          // Handle the case when there is no token (e.g., display a placeholder image)
-          setUserPicture("../../public/images/default.png");
-        }
-      } catch (error) {
-        // Handle errors gracefully (e.g., display an error message to the user)
-        console.error("Error fetching user picture:", error);
-      }
-    };
-
-    // Call the fetchUserPicture function
-    fetchUserPicture();
-  }, [username]);
-
-  useEffect(() => {
-    // Function to fetch user picture
-    const fetchUserPicture = async () => {
-      const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
-
-      try {
-        if (tokenCookie && oppUsername) {
-          const token = tokenCookie.split("=")[1];
-          const response = await axios.get(
-            `http://localhost:3000/profile/ProfilePicture/${oppUsername}`,
-            {
-              responseType: "arraybuffer",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
-
-          const contentType = response.headers["content-type"];
-          const blob = new Blob([response.data], { type: contentType });
-          const imageUrl = URL.createObjectURL(blob);
-          setOppUserPicture(imageUrl);
-        } else {
-          // Handle the case when there is no token (e.g., display a placeholder image)
-          setOppUserPicture("../../public/images/default.png");
-        }
-      } catch (error) {
-        // Handle errors gracefully (e.g., display an error message to the user)
-        console.error("Error fetching user picture:", error);
-      }
-    };
-
-    // Call the fetchUserPicture function
-    fetchUserPicture();
-  }, [oppUsername]);
 
   return (
     <div className="bg-npc-gray w-[45%] max-w-screen-md rounded-lg">
@@ -220,9 +138,9 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
       </style>
       <div className="flex flex-col sm:flex-row items-center justify-between text-gray-100 font-[Montserrat] text-base sm:text-s md:text-lg lg:text-xl xl:text-2xl rounded-md p-3">
         <div className="flex items-center space-x-2 mb-2 sm:mb-0">
-          {userPicture && (
+          {user && (
             <img
-              src={userPicture}
+              src={user.picture}
               alt="Profile Owner"
               className="w-12 h-12 rounded-full"
             />
@@ -236,10 +154,10 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
         </div>
         <div className="flex items-center space-x-2">
           <span className="whitespace-nowrap">{opps}</span>
-          {oppUserPicture && (
+          {opp && (
             <img
-              src={oppUserPicture}
-              alt={`${oppUsername}'s profile`}
+              src={opp.picture}
+              alt={`${opp.username}'s profile`}
               className="w-12 h-12 rounded-full"
             />
           )}
