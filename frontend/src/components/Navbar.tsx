@@ -123,7 +123,6 @@ function NavBar() {
 
           // Set the user data in the state
           setUser(response.data);
-          console.log('check username in NavBar : ', response.data.username);
           setUsername(response.data.username);
           if (!socket) setSocket(initializeSocket(token));
         } catch (error: any) {
