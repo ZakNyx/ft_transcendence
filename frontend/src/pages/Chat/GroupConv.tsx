@@ -201,7 +201,7 @@ const ContactBar = (barData:any) => {
     })
 
     function messageListener() {
-      fetchData();
+      fetchData();  
       setTimeout(() => {
         if (containerRef.current) {
           containerRef.current.scrollTop = containerRef.current.scrollHeight;
@@ -230,7 +230,8 @@ const ContactBar = (barData:any) => {
       e.preventDefault();
       //check this below
       if (props.socket && message.trim() !== '' && dataState) {
-        props.socket.emit('sendMessage', { messageContent: message, dmId: null, userId: props.userId, roomId: dataState.roomId, sentAt: new Date() });
+        console.log('Sendr id ==== ', props.userId)
+        props.socket.emit('sendMessage', { messageContent: message, dmId: null, senderId: props.userId, roomId: dataState.roomId, sentAt: new Date() });
         setMessage('');
       }
     };

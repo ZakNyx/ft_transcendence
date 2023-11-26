@@ -30,15 +30,15 @@ export class MessageService {
   private dmCronState: string = 'off';
   private muteCronState: string = 'off';
   private roomInvCronState: string = 'off';
+  
   async createMessage(payload: messageDTO, server: Server) {
-    // console.log('sendInfo ===> ',payload)`
     const message = await this.prismaService.message.create({
       data: {
         sentAt: payload.sentAt,
         messageContent: payload.messageContent,
         dmId: payload.dmId !== undefined ? payload.dmId : null,
         roomId: payload.dmId === undefined ? payload.roomId : null,
-        senderId: payload.senderId
+        senderId: payload.senderId,
       },
     });
     if (payload.dmId) {
@@ -56,6 +56,7 @@ export class MessageService {
         },
       });
     } else {
+      console.log('sendInfo ===> ',payload.roomId)  
       await this.prismaService.room.update({
         where: {
           id: payload.roomId,
@@ -161,7 +162,7 @@ export class MessageService {
   ) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        userId: payload.ownerId,
+        username: payload.ownerId,
       },
     });
     const saltRounds: number = 10;
@@ -175,10 +176,11 @@ export class MessageService {
         password: payload.password ? hash : null,
       },
     });
+    console.log('naaaame ===>', user)
     const roomMember = await this.prismaService.roomMember.create({
       data: {
         RoomId: room.id,
-        memberId: user.userId,
+        memberId: user.username,
         role: 'OWNER',
         joinTime: payload.joinTime,
       },
@@ -197,7 +199,7 @@ export class MessageService {
     });
     await this.prismaService.user.update({
       where: {
-        userId: payload.ownerId,
+        username: payload.ownerId,
       },
       data: {
         rooms: {
@@ -209,7 +211,7 @@ export class MessageService {
     });
     server.emit('createdRoom', room);
     client.join(room.id.toString().concat('room'));
-    await this.achievementsProcessing(payload.ownerId, 'Pioneer');
+    // await this.achievementsProcessing(payload.ownerId, 'Pioneer');
   }
 
   async changePassword(info: [number, string]) {    
@@ -375,27 +377,27 @@ export class MessageService {
   //   }
   // }
 
-  async achievementsProcessing(userId: string, achievement: string) {
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        userId: userId,
-      },
-      select: {
-        achievements: true,
-      },
-    });
-    if (user.achievements.includes(achievement)) return;
-    await this.prismaService.user.update({
-      where: {
-        userId: userId,
-      },
-      data: {
-        achievements: {
-          push: achievement,
-        },
-      },
-    });
-  }
+  // async achievementsProcessing(userId: string, achievement: string) {
+  //   const user = await this.prismaService.user.findUnique({
+  //     where: {
+  //       userId: userId,
+  //     },
+  //     select: {
+  //       achievements: true,
+  //     },
+  //   });
+  //   if (user.achievements.includes(achievement)) return;
+  //   await this.prismaService.user.update({
+  //     where: {
+  //       userId: userId,
+  //     },
+  //     data: {
+  //       achievements: {
+  //         push: achievement,
+  //       },
+  //     },
+  //   });
+  // }
 
   // async roomInviteApproval(
   //   client: Socket,
@@ -606,10 +608,10 @@ export class MessageService {
     };
     // this.notifProcessing(mapy, data.subject.userId, info);
     server.to(payload.roomId.toString().concat('room')).emit('promoted');
-    await this.achievementsProcessing(
-      payload.subjectId,
-      "Who's the boss now, huh?",
-    );
+    // await this.achievementsProcessing(
+    //   payload.subjectId,
+    //   "Who's the boss now, huh?",
+    // );
     // client.emit('promoted');
     // if (mapy.get(data.subject.userId))
     //   mapy.get(data.subject.userId).emit('promoted');
@@ -673,10 +675,10 @@ export class MessageService {
     };
     // this.notifProcessing(mapy, data.subject.userId, info);
     server.to(payload.roomId.toString().concat('room')).emit('muted');
-    await this.achievementsProcessing(
-      payload.subjectId,
-      'Can you please shut up?',
-    );
+    // await this.achievementsProcessing(
+    //   payload.subjectId,
+    //   'Can you please shut up?',
+    // );
     // client.emit('muted');
     // if (mapy.get(data.subject.userId))
     //   mapy.get(data.subject.userId).emit('muted');
@@ -1259,13 +1261,13 @@ export class MessageService {
   async roomJoinLogic(client: Socket, server: Server, payload: roomJoinDTO) {
     const joiner = await this.prismaService.user.findUnique({
       where: {
-        userId: payload.userId,
+        username: payload.userId,
       },
     });
     const roomMember = await this.prismaService.roomMember.create({
       data: {
         RoomId: payload.roomId,
-        memberId: joiner.userId,
+        memberId: joiner.username,
         role: 'USER',
         joinTime: payload.joinDate,
       },
@@ -1284,7 +1286,7 @@ export class MessageService {
     });
     await this.prismaService.user.update({
       where: {
-        userId: joiner.userId,
+        username: joiner.username,
       },
       data: {
         rooms: {
@@ -1299,7 +1301,7 @@ export class MessageService {
     server
       .to(payload.roomId.toString().concat('room'))
       .emit('joinedChatRoom', 'success');
-    await this.achievementsProcessing(payload.userId, 'Extrovert');
+    // await this.achievementsProcessing(payload.userId, 'Extrovert');
     // client.emit('joinedChatRoom', 'success');
   }
 
@@ -1335,14 +1337,14 @@ export class MessageService {
     roomId: number,
     mapy: Map<string, Socket>,
   ) {
-    let userId: string;
+    let username: string;
 
     for (let entry of mapy.entries()) {
-      if (entry[1] == client) userId = entry[0];
+      if (entry[1] == client) username = entry[0];
     }
     await this.prismaService.user.findUnique({
       where: {
-        userId: userId,
+        username: username,
       },
     });
     const room = await this.prismaService.room.findUnique({
@@ -1355,7 +1357,7 @@ export class MessageService {
     });
     let roomMemberId: number;
     for (let i = 0; i < room.RoomMembers.length; i++) {
-      if (room.RoomMembers[i].memberId == userId)
+      if (room.RoomMembers[i].memberId == username)
         roomMemberId = room.RoomMembers[i].id;
     }
     await this.prismaService.roomMember.findUnique({
@@ -1369,7 +1371,7 @@ export class MessageService {
         id: roomMemberId,
       },
     });
-    server.to(roomId.toString().concat('room')).emit('leftRoom', userId);
+    server.to(roomId.toString().concat('room')).emit('leftRoom', username);
     client.leave(roomId.toString().concat('room'));
     //client.emit("leftRoom", userId);
   }

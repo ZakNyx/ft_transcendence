@@ -55,7 +55,6 @@ model User {
 
   notifications Notification[]
   games         Game[]         @relation("GamePlayers")
-  chatRooms     ChatRoom[]     @relation("userInChatRoom")
 
   achievements String[]
 }
@@ -97,15 +96,14 @@ model Message {
   id             Int       @id @default(autoincrement())
   sentAt         DateTime  @default(now())
   messageContent String
-  dmId           Int
+  dmId           Int?
   senderId       String
   data     String?
   time     String?
   roomId         Int?
   dm             DM?       @relation(fields: [dmId], references: [id])
-  sender         User      @relation(fields: [senderId], references: [username])//username
+  sender         User?      @relation(fields: [senderId], references: [username])//username
   room           Room?     @relation(fields: [roomId], references: [id])
-  roomData       ChatRoom? @relation(fields: [roomId], references: [id], map: "MessageRoomData")
 }
 
 
@@ -158,7 +156,7 @@ model RoomMember {
   muted          Boolean   @default(false)
   muteExpiration DateTime?
   room           Room      @relation(fields: [RoomId], references: [id])
-  member         User      @relation(fields: [memberId], references: [userId])
+  member         User      @relation(fields: [memberId], references: [username])
   joinTime       DateTime
   inviterId      String?
   // leftTime DateTime
@@ -170,23 +168,3 @@ enum Role {
   OWNER
 }
 
-model ChatRoom {
-  id Int @id @default(autoincrement())
-
-  roomName   String   @unique
-  timeCreate DateTime @default(now())
-
-  users User[] @relation("userInChatRoom")
-
-  messages Message[]
-
-  admins      String[]
-  mutedUsers  String[]
-  bannedUsers String[]
-
-  isDm Boolean @default(false)
-
-  status String @default("public")
-
-  password String?
-}
