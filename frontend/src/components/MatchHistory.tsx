@@ -112,7 +112,7 @@
 
     useEffect(() => {
       if (gameData) {
-        gameData.map((match: any, index: any) => {
+        gameData.map((match: any) => {
           console.log('check user in gamedata : ', match.users);
           if (match.player1 === Playerusername) {
             console.log("I'm player1 and my Name is : ", match.player1);
