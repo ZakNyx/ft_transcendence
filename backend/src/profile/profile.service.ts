@@ -226,6 +226,7 @@ export class ProfileService {
         username: req.user.username,
       },
       data: {
+        picture: `http://localhost:3000/profile/ProfilePicture/${req.user.username}`,
         pictureStatus: false,
       },
     });

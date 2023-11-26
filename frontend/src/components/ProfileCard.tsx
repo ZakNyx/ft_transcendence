@@ -97,7 +97,7 @@ export default function ProfileCard() {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, []); // Include `username` in the dependency array
+  }, [username]); // Include `username` in the dependency array
 
   return (
     <div className="background-gray rounded-[30px] lg:max-w-[95%] h-auto p-6 mt-3  lg:ml-8 lg:mt-14 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
