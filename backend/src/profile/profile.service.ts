@@ -229,7 +229,7 @@ export class ProfileService {
         picture: `http://localhost:3000/profile/ProfilePicture/${req.user.username}`,
         pictureStatus: false,
       },
-    });
+    }); 
   }
 
   async deleteName(req) {
