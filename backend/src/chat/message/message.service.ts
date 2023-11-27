@@ -811,7 +811,7 @@ export class MessageService {
       },
       data: {
         bannedUsers: {
-          push: data.subject.userId,
+          push: data.subject.username,
         },
       },
     });
@@ -844,7 +844,7 @@ export class MessageService {
   ) {
     const subject = await this.prismaService.user.findUnique({
       where: {
-        userId: payload.subjectId,
+        username: payload.subjectId,
       },
     });
     const room = await this.prismaService.room.findUnique({
@@ -857,7 +857,7 @@ export class MessageService {
     });
 
     const updatedBannedUsers = room.bannedUsers.filter(
-      (userId) => userId != subject.userId,
+      (userId) => userId != subject.userId ,
     );
     await this.prismaService.room.update({
       where: {
@@ -877,7 +877,7 @@ export class MessageService {
     };
     // this.notifProcessing(mapy, subject.userId, info);
     server.to(payload.roomId.toString().concat('room')).emit('unbanned');
-    if (mapy.get(subject.userId)) mapy.get(subject.userId).emit('unbanned');
+    if (mapy.get(subject.username)) mapy.get(subject.username).emit('unbanned');
   }
 
   async OwnershipTransfer(
@@ -896,7 +896,7 @@ export class MessageService {
     });
     const owner = await this.prismaService.user.findUnique({
       where: {
-        userId: payload.userId,
+        username: payload.userId,
       },
       include: {
         rooms: true,
