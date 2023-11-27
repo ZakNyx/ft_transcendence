@@ -76,13 +76,13 @@ function GroupsComponent(props:any) {
   if (convData)
   {
         return (
-    <div className="rounded-xl flex-wrap dark:bg-npc-gray overflow-y-scroll h-[35vh] mb-3"
+    <div className="rounded-xl flex-wrap bg-npc-gray overflow-y-scroll h-[35vh] mb-3"
     >
       <div className="group ml-6 text-gray-200 flex justify-between items-center ">
         <div className="font-bold text-base md:text-xl  mt-2">
-          Groups
+          Rooms
         </div>
-        <div className="w-full h-[45px] flex flex-col items-end">
+        <div className="w-full h-11 flex flex-col items-end">
           <button onClick={() => setDisplay(!display)} className="flex items-center justify-center bg-npc-purple hover:bg-purple-hover text-white font-bold h-6 w-6 rounded-full m-3 mt-3.5">
             +
           </button>

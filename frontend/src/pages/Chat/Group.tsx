@@ -38,43 +38,18 @@ import logoImg from "../../../public/images/panda.svg"
               />
     
               <div
-                className="groupName mb-[40px] text-black dark:text-white w-full mt-[-40px] ml-[45px] overflow-hidden"
-                style={{
-                  fontFamily: "poppins",
-                  fontSize: "15px",
-                  fontStyle: "normal",
-                  fontWeight: 600,
-                  lineHeight: "normal",
-                  letterSpacing: "0.75px",
-                }}
+                className="groupName mb-[40px] text-gray-200 w-full mt-[-40px] ml-[45px] overflow-hidden "
               >
                 {groupData.groupData.RoomName}
               </div>
               <div
-                className="groupMsg text-black dark:text-white w-[105px] mt-[-40px] ml-[45px] overflow-hidden whitespace-nowrap"
-                style={{
-                  fontFamily: "poppins",
-                  fontSize: "12px",
-                  fontStyle: "normal",
-                  fontWeight: 300,
-                  lineHeight: "normal",
-                  letterSpacing: "0.65px",
-                }}
+                className="groupMsg text-gray-400 text-xs  w-[105px] mt-[-40px] ml-12 overflow-hidden whitespace-nowrap"
               >
                 {(groupData.groupData.msgs.length) ? groupData.groupData.msgs[groupData.groupData.msgs.length - 1].messageContent : ""}
               </div>
             </div>
             <div
-              className="date w-[30%] mt-[22px] overflow-hidden whitespace-nowrap text-center"
-              style={{
-                color: "#7C7C7C",
-                fontFamily: "poppins",
-                fontSize: "12px",
-                fontStyle: "normal",
-                fontWeight: 300,
-                lineHeight: "normal",
-                letterSpacing: "0.13px",
-              }}
+              className="date w-[30%] mt-[22px] overflow-hidden whitespace-nowrap text-center text-xs text-gray-500"
             >
               {
                formattedDate

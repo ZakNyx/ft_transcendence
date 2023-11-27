@@ -46,16 +46,7 @@ const DMComp = (props: any) => {
               </div>
             </div>
             <div
-              className="date w-[30%] mt-[22px] overflow-hidden whitespace-nowrap text-center"
-              style={{
-                color: "#7C7C7C",
-                fontFamily: "poppins",
-                fontSize: "12px",
-                fontStyle: "normal",
-                fontWeight: 300,
-                lineHeight: "normal",
-                letterSpacing: "0.13px",
-              }}
+              className="date w-[30%] mt-[22px] overflow-hidden whitespace-nowrap text-center text-gray-500 text-xs"
             >
               {formattedDate}
             </div>

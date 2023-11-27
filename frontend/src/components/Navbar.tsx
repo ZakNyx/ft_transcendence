@@ -307,7 +307,7 @@ function NavBar() {
           <NavLink to="/home">
             <img
               className="top-2 left-2 w-32 h-auto cursor-pointer"
-              src="../public/images/pingpong.png"
+              src="../../public/images/pingpong.png"
               alt="PingPong"
             />
           </NavLink>
@@ -320,7 +320,7 @@ function NavBar() {
             <li>
               <NavLink to="/home">
                 <IconButton
-                  imagePath="../public/images/Home.svg"
+                  imagePath="../../public/images/Home.svg"
                   isActive={window.location.pathname === "/home"}
                 />
               </NavLink>
@@ -329,7 +329,7 @@ function NavBar() {
             <li>
               <NavLink to="/chat">
                 <IconButton
-                  imagePath="../public/images/Chat.svg"
+                  imagePath="../../public/images/Chat.svg"
                   isActive={window.location.pathname === "/chat"}
                 />
               </NavLink>
@@ -337,7 +337,7 @@ function NavBar() {
             <li>
               <NavLink to="/leaderboard">
                 <IconButton
-                  imagePath="../public/images/Leaderboard.svg"
+                  imagePath="../../public/images/Leaderboard.svg"
                   isActive={window.location.pathname === "/leaderboard"}
                 />
               </NavLink>
@@ -345,7 +345,7 @@ function NavBar() {
             <div>
               <li onClick={toggleNotification} className="relative">
                 <IconButton
-                  imagePath="../public/images/Notification.svg"
+                  imagePath="../../public/images/Notification.svg"
                   isActive={isNotificationOpen}
                 />
                 {/* Notification counter */}

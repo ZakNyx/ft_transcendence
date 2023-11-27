@@ -75,7 +75,7 @@ function DMsComponent (props:any)
           <div className="w-full h-[45px] flex flex-col items-end">
             <Link
               to="addpeople"
-              className="flex items-center justify-center bg-npc-purple hover:bg-purple-hover text-white font-bold h-6 w-6 rounded-full m-3 mt-4"
+              className="flex items-center justify-center bg-npc-purple hover:bg-purple-hover text-white font-bold h-6 w-6 rounded-full m-3 mt-4 transition-all"
             >
               +
             </Link>
