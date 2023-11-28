@@ -114,11 +114,16 @@ export class MessageService {
     });
 
     client.emit('createdDm', dm.id);
-    if (mapy.get(user.userId)) mapy.get(user.userId).emit('createdDm', dm.id);
+
+    if (mapy.has(user.username))
+      mapy.get(user.username).emit('createdDm', dm.id);
+
     client.join(dm.id.toString().concat('dm'));
-    if (mapy.get(user.userId))
-      mapy.get(user.userId).join(dm.id.toString().concat('dm'));
-    if (this.dmCronState == 'off') {
+
+    if (mapy.has(user.username))
+      mapy.get(user.username).join(dm.id.toString().concat('dm'));
+
+      if (this.dmCronState == 'off') {
       this.dmCronState = 'on';  
       cron.schedule('*/5 * * * *', async () => {
         const dms = await this.prismaService.dM.findMany({
@@ -135,16 +140,16 @@ export class MessageService {
                   id: dm.id,
                 },
               });
-              if (mapy.get(dm.participants[0].userId)) {
-                mapy.get(dm.participants[0].userId).emit('dmDeleted');
+              if (mapy.has(dm.participants[0].username)) {
+                mapy.get(dm.participants[0].username).emit('dmDeleted');
                 mapy
-                  .get(dm.participants[0].userId)
+                  .get(dm.participants[0].username)
                   .leave(dm.id.toString().concat('dm'));
               }
-              if (mapy.get(dm.participants[1].userId)) {
-                mapy.get(dm.participants[1].userId).emit('dmDeleted');
+              if (mapy.has(dm.participants[1].username)) {
+                mapy.get(dm.participants[1].username).emit('dmDeleted');
                 mapy
-                  .get(dm.participants[1].userId)
+                  .get(dm.participants[1].username)
                   .leave(dm.id.toString().concat('dm'));
               }
             }
@@ -788,9 +793,9 @@ export class MessageService {
     server
       .to(payload.roomId.toString().concat('room'))
       .emit('kicked', data.subject.userId);
-    if (mapy.get(data.subject.userId))
+    if (mapy.has(data.subject.username))
       mapy
-        .get(data.subject.userId)
+        .get(data.subject.username)
         .leave(payload.roomId.toString().concat('room'));
     // client.emit('kicked');
     // if (mapy.get(data.subject.userId))
@@ -827,9 +832,9 @@ export class MessageService {
     server
       .to(payload.roomId.toString().concat('room'))
       .emit('banned', data.subject.userId);
-    if (mapy.get(data.subject.userId))
+    if (mapy.has(data.subject.username))
       mapy
-        .get(data.subject.userId)
+        .get(data.subject.username)
         .leave(payload.roomId.toString().concat('room'));
     // client.emit('banned');
     // if (mapy.get(data.subject.userId))
@@ -877,7 +882,8 @@ export class MessageService {
     };
     // this.notifProcessing(mapy, subject.userId, info);
     server.to(payload.roomId.toString().concat('room')).emit('unbanned');
-    if (mapy.get(subject.username)) mapy.get(subject.username).emit('unbanned');
+    if (mapy.has(subject.username))
+      mapy.get(subject.username).emit('unbanned');
   }
 
   async OwnershipTransfer(
@@ -981,7 +987,8 @@ export class MessageService {
       },
     });
     client.emit('blocked');
-    if (mapy.get(blockedUserId)) mapy.get(blockedUserId).emit('blocked');
+    if (mapy.has(blockedUserId))
+      mapy.get(blockedUserId).emit('blocked');
   }
 
   async unblockUser(
@@ -1010,7 +1017,8 @@ export class MessageService {
       },
     });
     client.emit('unblocked');
-    if (mapy.get(unblockedUserId)) mapy.get(unblockedUserId).emit('unblocked');
+    if (mapy.has(unblockedUserId))
+      mapy.get(unblockedUserId).emit('unblocked');
   }
 
   // async sendFriendRequest(

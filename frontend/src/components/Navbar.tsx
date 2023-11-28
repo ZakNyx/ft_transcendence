@@ -38,52 +38,12 @@ interface notifData {
   data: string;
 }
 
-const IsGameOppOnline = (GameOppName: string) => {
-  const [user, setUser] = useState<UserData | null>(null);
-
-  useEffect(() => {
-    // Function to fetch user data and set it in the state
-    const fetchUserData = async () => {
-      const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
-
-      if (tokenCookie) {
-        const token = tokenCookie.split("=")[1];
-        try {
-          // Configure Axios to send the token in the headers
-          const response = await axios.get(`http://localhost:3000/profile/${GameOppName}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-
-          // Set the user data in the state
-          setUser(response.data);
-        } catch (error: any) {
-          if (error.response && error.response.status === 401) {
-            // Redirect to localhost:5137/ if Axios returns a 401 error
-            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            // navigate("/");
-          } // Redirect to the root path
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
-    // Call the fetchUserData function
-    fetchUserData();
-    if (user) console.log(`checking opp status : ${user.status}`);
-  }, [user]);
-}
-
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [isSocketSet, setIsSocketSet] = useState<boolean>(false);
   const [invitationReceived, setInvitationReceived] = useState<boolean>(false);
   const [isGameDeclined, setIsGameDeclined] = useState<boolean>(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | undefined>(undefined);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
-  const [inviSender, setInviSender] = useState<string>("");
   const location = useLocation();
   const isLoginPage = location.pathname === "/"
 
@@ -141,38 +101,6 @@ function NavBar() {
     // Call the fetchUserData function
     fetchUserData();
   }, [username]);
-
-  // useEffect(() => {
-  //     const fetchUserData = async () => {
-  //       const tokenCookie = document.cookie
-  //         .split("; ")
-  //         .find((cookie) => cookie.startsWith("token="));
-  
-  //       if (tokenCookie) {
-  //         const token = tokenCookie.split("=")[1];
-  //         try {
-  //           // Configure Axios to send the token in the headers
-  //           const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
-  //             headers: {
-  //               Authorization: `Bearer ${token}`,
-  //             },
-  //           });
-  //           // Set the user data in the state
-  //           setOpponent(response.data);
-  //         } catch (error: any) {
-  //           if (error.response && error.response.status === 401) {
-  //             // Redirect to localhost:5137/ if Axios returns a 401 error
-  //             document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  //             navigate("/");
-  //           } // Redirect to the root path
-  //           console.error("Error fetching user data:", error);
-  //         }
-  //       }
-  //     };
-
-  //     // Call the fetchUserData function
-  //     fetchUserData();
-  // }, [opponent]);
 
   const closeDropdown = () => {
     const timeout = setTimeout(() => {

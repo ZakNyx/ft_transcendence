@@ -269,6 +269,12 @@ export class MessageGateway
       client.disconnect();
       return ;
     }
+
+    if (this.mapy.has(userId["username"]))
+      this.mapy.set(userId["username"], client);
+    else
+      this.mapy.set(userId["username"], client);
+
     await this.messageService.fetchState(client, userId["username"]);
   }
 }

@@ -11,7 +11,7 @@ function DMsComponent (props:any)
   const token = Cookies.get('token');
 
   const navigate = useNavigate();
-  useEffect(() => {
+  
   const fetchData = async () => {
     try {
       // console.log("userId: ", props.userId);
@@ -32,10 +32,12 @@ function DMsComponent (props:any)
       navigate('/chat' , {replace: true});
     }
   };
-  
-  const pollInterval = setInterval(() => {
+
+  useEffect(() => {
     fetchData();
-  }, 600);
+  },[]);
+
+  useEffect(() => {
 
     props.socket.on("dmDeleted", () => {
     fetchData();
@@ -60,10 +62,9 @@ function DMsComponent (props:any)
       props.socket.off('createdMessage')
       props.socket.off('createdDm')
       props.socket.off('dmDeleted')
-      clearInterval(pollInterval);
     })
 
-  }, []);
+  }, [dmData]);
 
   // console.log(dmData)
   if (dmData) {
