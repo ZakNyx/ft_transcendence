@@ -322,7 +322,6 @@ const ParticipantAdmin1 = (props: any) => {
 };
 
 const ParticipantUser = (props: any) => {
-  // //console.log("participants:    ", props);
   const role = props.roomState.rooms[0].role;
   return (
     <div
@@ -349,7 +348,7 @@ const ParticipantUser = (props: any) => {
           </div>
         </div>
       </div>
-      <hr className=" w-[90%] h-[1px] m-auto bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]"></hr>
+      <hr className=" w-[90%] h-[1px] m-auto  opacity-[15%] border-0 rounded bg-[#8a8abd] dark:opacity-[10%]"></hr>
     </div>
   );
 };
@@ -569,21 +568,20 @@ const RoomSettings = (props: any) => {
         setIsButtonDisabled(true);
       }
     };
-    // //console.log("roomStte: ", roomState);
     return (
       <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
         <div className="w-full h-full flex-wrap">
-          <div className="w-full h-[15%] border-solid mb-[25px] flex items-center">
+          <div className="w-full h-[11%] border-solid flex items-center font-semibold text-2xl tracking-wider ">
             <GroupBar roomState={roomState} socket={props.socket} />
           </div>
-          <div className="w-full h-[10%] mt-[25px] flex-wrap">
+          <div className="w-full h-[7%] mt-[10px] flex-wrap text-xl text-gray-200 font-thin tracking-wide">
             <ParticipantsNumber roomState={roomState} socket={props.socket} />
           </div>
-          <div className="w-full h-[10%] mt-[25px] flex-wrap">
+          <div className="w-full h-[7%] mt-[15px] flex-wrap">
             {roomState.participants.map((participant: any) => {
               if (roomState.role === "USER") {
                 return (
-                  <div key={participant.id} className="w-full h-full overflow-y-scroll">
+                  <div key={participant.id} className="w-full h-full">
                     {
                       <ParticipantUser
                         index={participant.id}
@@ -646,13 +644,13 @@ const RoomSettings = (props: any) => {
             })}
           </div>
         </div>
-        <div className=" w-full h-auto flex justify-center items-start mt-[-50px]">
+        <div className=" w-full h-auto flex justify-center items-start pb-3">
           {roomState.role !== "OWNER" && (
             <button
               type="submit"
               disabled={isButtonDisabled}
               onClick={handleSubmit}
-              className={`w-16 h-auto bg-[#D7385E]  text-white rounded-2xl hover:shadow-2xl ${
+              className={`w-16 h-auto bg-[#D7385E]  text-gray-200  sm:text-sm text-base font-thin rounded-2xl hover:shadow-2xl ${
                 isButtonDisabled
                   ? "opacity-[50%] hover:shadow-none"
                   : "enabled-button"
@@ -666,7 +664,7 @@ const RoomSettings = (props: any) => {
               type="submit"
               disabled={roomState.role === "OWNER"}
               onClick={handleSubmit}
-              className={`w-16 h-auto bg-gray-600  text-white rounded-2xl hover:shadow-none`}
+              className={`w-16 h-auto bg-gray-600  text-gray-200 sm:text-sm text-base font-thin rounded-2xl hover:shadow-none`}
             >
               Leave Group
             </button>

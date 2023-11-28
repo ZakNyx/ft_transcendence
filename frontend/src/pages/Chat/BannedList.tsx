@@ -44,15 +44,7 @@ const UnbanButton = (props:any) => {
             />
   
             <div
-              className="groupName text-black dark:text-white w-full ml-[20px]"
-              style={{
-                fontFamily: "poppins",
-                fontSize: "15px",
-                fontStyle: "normal",
-                fontWeight: 600,
-                lineHeight: "normal",
-                letterSpacing: "0.75px",
-              }}
+              className="groupName text-gray-200 w-full ml-[20px] text-sm md:text-base"
             >
               {props.dataState.dataState.username}
             </div>
@@ -64,18 +56,9 @@ const UnbanButton = (props:any) => {
               type='submit'
               disabled={isButtonDisabled}
               onClick= { toggleDiv }
-              className={`w-[50px] h-[30px] bg-[#6F37CF] rounded-[25%] mr-[10px] hover:dark:shadow-lg hover:shadow-lg ${isButtonDisabled} ? 'bg-[#9d88c0] hover:shadow-none' : 'enabled-button' `}
+              className={`w-[50px] h-[30px] bg-[#6F37CF] rounded-[25%] mr-[10px] hover:shadow-lg ${isButtonDisabled} ? 'bg-[#9d88c0] hover:shadow-none' : 'enabled-button' `}
               >
-                <div className="w-full h-full text-white text-center mt-[5px]"
-                style={{
-                  fontFamily: "poppins",
-                  fontSize: "14px",
-                  fontStyle: "normal",
-                  fontWeight: 600,
-                  lineHeight: "normal",
-                  letterSpacing: "0.13px",
-                  }}>
-  
+                <div className="w-full h-full text-gray-300 text-center mt-[5px] text-sm font-thin">
                   Unban
                 </div>
             </button>
@@ -88,8 +71,8 @@ const UnbanButton = (props:any) => {
 
 function BannedUser(props:any) {
     return (
-      <div key={props.index} className='w-[350px] max-h-[80px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
-       dark:bg-[#1A1C26] shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]'>
+      <div key={props.index} className='w-[350px] max-h-[80px] m-auto my-[40px] p-auto border-3 rounded-xl border-solid 
+       bg-[#1A1C26] shadow-xl'>
         <UnbanButton dataState={props}/>
       </div>
     )
@@ -156,21 +139,12 @@ function BannedList (props:any)
     if (banData)
     {
         return (
-            <div
-            className="lg:ml-[-10px] lg:mr-[15px] lg:my-[15px] lg:w-[70%] lg:h-[88%] lg:rounded-[25px] lg:flex-2 lg:flex-shrink-0 lg:border-solid lg:border-[#FFFFFF] lg:bg-[#FFFFFF]  lg:shadow-none lg:dark:border-[#272932] lg:dark:bg-[#272932]
-            ml-[-10px] mr-[15px] my-[15px] w-[50%] h-[88%] rounded-[25px] flex-2 flex-shrink-0 border-solid border-[#FFFFFF] bg-[#FFFFFF]  shadow-none flex-wrap dark:border-[#272932] dark:bg-[#272932]"
-            >
+            <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
                 <div className='w-full h-full flex-wrap justify-center'>
-                <div className="w-full h-[10%] m-[1px] flex items-center justify-center text-black dark:text-white text-center" style={{
-                        fontFamily: "poppins",
-                        fontSize: "25px",
-                        fontStyle: "normal",
-                        fontWeight: 900,
-                        letterSpacing: "1.5px",
-                    }} >
+                <div className="w-full h-[10%] m-[1px] flex items-center justify-center text-gray-200 text-center text-xl md:text-2xl tracking-wider">
                    Banned Users
                 </div>
-                <hr className=" w-[50%] h-[1px] m-auto bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%]">
+                <hr className=" w-[50%] h-[1px] m-auto border-0 rounded-xl opacity-[10%]">
                 </hr>
                 <div className="h-[88%] convs  overflow-y-scroll">
                 {
