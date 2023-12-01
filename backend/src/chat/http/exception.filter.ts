@@ -34,7 +34,7 @@ import {
         else if(status == 400)
           return null;
         else {
-          response.status(status).json({
+            response.status(status).json({
             statusCode: status,
             message: `${message}`,
           });
