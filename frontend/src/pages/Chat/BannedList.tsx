@@ -22,6 +22,7 @@ const UnbanButton = (props:any) => {
       e.preventDefault(); // Prevent the form from submitting traditionally
   
       setIsButtonDisabled(true);
+      console.log('first', props.dataState.dataState.userId)
         props.dataState.socketId.emit('unban', 
         {
             userId: props.dataState.userId,

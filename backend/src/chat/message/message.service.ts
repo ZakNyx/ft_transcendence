@@ -849,7 +849,7 @@ export class MessageService {
   ) {
     const subject = await this.prismaService.user.findUnique({
       where: {
-        username: payload.subjectId,
+        username: payload.userId,
       },
     });
     const room = await this.prismaService.room.findUnique({
@@ -861,10 +861,21 @@ export class MessageService {
       },
     });
 
+    let exactUsername1 = await this.prismaService.user.findUnique({
+      where: {
+        userId : payload.subjectId
+      },
+      select:{
+        username: true
+      }
+    })
+    let exactUsername = exactUsername1.username
+    
     const updatedBannedUsers = room.bannedUsers.filter(
-      (userId) => userId != subject.userId ,
+      (username) =>  username != exactUsername
     );
-    await this.prismaService.room.update({
+    // console.log(updatedBannedUsers)
+    await this.prismaService.room.update({  
       where: {
         id: payload.roomId,
       },
