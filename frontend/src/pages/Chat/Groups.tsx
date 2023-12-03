@@ -13,25 +13,25 @@ function GroupsComponent(props:any) {
 
   const navigate = useNavigate();
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/chat/groups', {
+        params: {
+          userId: props.userId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 200) {
+        setConvData(response.data);
+      }
+    } catch (error) {
+      navigate("/chat", { replace: true });
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/chat/groups', {
-          params: {
-            userId: props.userId,
-          },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.status === 200) {
-          setConvData(response.data);
-        }
-      } catch (error) {
-        navigate("/chat", { replace: true });
-      }
-    };
 
     fetchData();
 
@@ -70,7 +70,7 @@ function GroupsComponent(props:any) {
       // props.socket.off('leftRoom')
       props.socket.off("blocked");
     };
-  }, []);
+  }, [convData]);
 
   const [display, setDisplay] = useState(true);
   if (convData)

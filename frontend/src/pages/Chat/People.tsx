@@ -32,12 +32,16 @@ function DMsComponent (props:any)
       navigate('/chat' , {replace: true});
     }
   };
-
+  
+  // useEffect(() => {
+  //   fetchData();
+  // }, [])
+  
   useEffect(() => {
+
+  const pollInterval = setInterval(() => {
     fetchData();
-  },[]);
-
-  useEffect(() => {
+  }, 500);
 
     props.socket.on("dmDeleted", () => {
     fetchData();
@@ -62,6 +66,7 @@ function DMsComponent (props:any)
       props.socket.off('createdMessage')
       props.socket.off('createdDm')
       props.socket.off('dmDeleted')
+      clearInterval(pollInterval);
     })
 
   }, [dmData]);

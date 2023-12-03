@@ -112,32 +112,34 @@ const GroupConveComponent = (props: any) => {
   const [componentKey, setComponentKey] = useState(0);
   const [hasNavigated, setHasNavigated] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/chat/groups/${receivedData}`,
-          {
-            params: {
-              userId: props.userId,
-            },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/chat/groups/${receivedData}`,
+        {
+          params: {
+            userId: props.userId,
           },
-        );
-        if (response.status === 200) {
-          setDataState(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching data  in groupConv:", error);
-        if (!hasNavigated) {
-          setHasNavigated(true);
-          navigate("/chat", { replace: true });
-        }
-        setComponentKey((prevKey) => prevKey + 1);
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (response.status === 200) {
+        setDataState(response.data);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching data  in groupConv:", error);
+      if (!hasNavigated) {
+        setHasNavigated(true);
+        navigate("/chat", { replace: true });
+      }
+      setComponentKey((prevKey) => prevKey + 1);
+    }
+  };
+
+  useEffect(() => {
+
     fetchData();
 
     props.socket.on("blocked", () => {
@@ -199,7 +201,7 @@ const GroupConveComponent = (props: any) => {
       // socket.off('unblocked')
       // socket.off('blocked')
     };
-  }, [componentKey, receivedData]);
+  }, [componentKey, receivedData, dataState]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();

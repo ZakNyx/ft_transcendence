@@ -4,24 +4,15 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { Socket } from "socket.io-client";
 
-interface PropsType {
-  userId: string;
-  socket: Socket;
-}
-
 const DmRoomButton = (props: any) => {
   const [isButtonDisabled, setIsButtonDisabled] = useState<any>(false);
 
   const token = Cookies.get("token");
-  console.log('check socket.id in AddPeople.tsx : ', props.socket.id);
 
   const handleButtonClick = () => {
-    // console.log('emitting the server backend with this socket.id : ', props.socket.id);
-    // console.log(`check userId before emitting createDM : ${props.userData.userData.username}`);
-    console.log('sooooo', props.socket)
+    console.log('check socket.id in AddPeople.tsx : ', props.socket.id);
     props.socket.emit("createDm", {
       senderId: props.userData.userId,
-      
       receiverName: props.userData.userData.username,
       token: token,
     });
@@ -44,8 +35,7 @@ const DmRoomButton = (props: any) => {
             {props.userData.userData.username}
           </div>
         </div>
-        <Link
-          to="/pvf"
+        <button
           onClick={() => {
             props.socket.emit("gameInvite", {
               id: props.userData.userData.userId,
@@ -63,7 +53,7 @@ const DmRoomButton = (props: any) => {
           >
             Play
           </div>
-        </Link>
+        </button>
         <button
           // to="/chat/dmConv/"
           type="button"
@@ -123,7 +113,7 @@ export default function AddPeople(props: any) {
         );
         if (response.status === 200) {
           // Debug 1 :check out response content
-          console.log("check response : ", response);
+          // console.log("check response : ", response);
           setAddUsers(response.data);
         }
       } catch (error) {
