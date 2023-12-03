@@ -6,14 +6,6 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
-interface GameData {
-    gameId: number;
-    player1: { playerID: string; score: string };
-    player2: { playerID: string; score: string };
-  }
-
 @WebSocketGateway({
     namespace: "Invited",
     cors: {
@@ -54,30 +46,6 @@ export class InvitedEvent  {
     
     getPrismaClient() {
         return this.prisma;
-    }
-
-    createGameRecord(client1: string, client2: string) {
-        return prisma.game.create({
-            data: {
-                player1: client1, player2: client2, score1: "", score2: "", ingame: false
-            },
-        });
-    }
-
-    async updateGameResult(gameId: number, player1Score: string, player2Score: string) {
-        // Access the Prisma client directly from this.prisma
-        const prisma = this.prisma;
-
-        // Update the game record in the database
-        const updatedGame = await prisma.game.update({
-            where: { id: gameId },
-            data: {
-                score1: player1Score,
-                score2: player2Score,
-            },
-        });
-
-        return updatedGame;
     }
 
     BallReset = (room: Room) => {
@@ -163,45 +131,6 @@ export class InvitedEvent  {
             else {
                 this.connectedPlayers.set(userObj.username, client);
             }
-            // if (this.connectedCli % 2 === 0) {
-            //     client.join(`${this.RoomNum}`);
-            //     const newRoom = new Room(this.RoomNum);
-            //     console.log(`new Room is created! ${newRoom.num}`);
-            //     newRoom.client1 = new Client(1); // Initialize client1
-            //     newRoom.ball = new Ball();
-            //     newRoom.client1.id = client.id;
-            //     newRoom.client1.token = token;
-            //     newRoom.client1.username = userObj.username;
-            //     newRoom.client1.socket = client;
-            //     this.Rooms.push(newRoom);
-            //     this.server.to(`${newRoom.client1.id}`).emit('joined', this.RoomNum);
-            //     this.connectedCli++;
-            // }
-            // else {
-            //     if (!this.Rooms[this.RoomNum])
-            //         return;
-            //     client.join(`${this.RoomNum}`);
-            //     const currentRoom = this.Rooms[this.RoomNum];
-            //     if (currentRoom && currentRoom.client1) {
-            //         if (currentRoom.client1.token === token){
-            //             console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal");
-            //             client.leave(`${this.RoomNum}`);
-            //             currentRoom.client1.id = client.id;
-            //             return ;
-            //         }
-            //         currentRoom.client2 = new Client(2); // Initialize client2
-            //         currentRoom.client2.id = client.id;
-            //         currentRoom.client2.socket = client;
-            //         currentRoom.client2.username = userObj.username;
-            //         this.server.to(`${currentRoom.client2.id}`).emit('joined', this.RoomNum);
-            //         this.connectedCli++;
-            //     }
-            // }
-            // if (this.Rooms[this.RoomNum].client2) {
-            //     this.Rooms[this.RoomNum].IsFull = true;
-            //     this.BallReset(this.Rooms[this.RoomNum]);
-            //     this.RoomNum++;
-            // }
         }
         catch (err) {
             console.log(`InvitedGame Error: ${err}`);
@@ -407,8 +336,6 @@ export class InvitedEvent  {
                     this.Rooms[_room].game.IsStarted = true;
                 }
                 if (this.SocketsByUser.has(token)) {
-                    console.log(`check _room : ${_room}`);;
-                    console.log(`check this.RoomNum : ${this.RoomNum}`);
                     if ((this.SocketsByUser.get(token) === client.id) && (_room < this.RoomNum &&
                     (this.Rooms[_room].client1.username === userObj.username
                     || this.Rooms[_room].client2.username === userObj.username))) {
@@ -420,82 +347,6 @@ export class InvitedEvent  {
         }
         catch (err) {
             console.log(`Error: ${err}`);
-        }
-    }
-
-    IfGameIsFinish = async (room: Room, gamedata: GameData) => {
-        if (room.client1.inGame || room.client2.inGame)
-            return ;
-        else {
-            console.log('test test game salat now time for updating database');
-            this.updateGameResult(gamedata.gameId, room.client1.score.toString(), room.client2.score.toString());
-            await this.prismaService.game.findUnique({
-                where: {
-                    id: gamedata.gameId,
-                }
-            })
-    
-            await this.prismaService.user.update({
-                where: {
-                    username: room.winner,
-                },
-                data: {
-                    wins: {
-                        increment: 1,
-                    },
-                    elo: {
-                        increment: 10,
-                    },
-                    gamesPlayed: {
-                        increment: 1,
-                    }
-                }
-            })
-            const user = await prisma.user.findUnique({
-                where: {
-                    username: room.loser,
-                }
-            });
-            if (user) {
-                const data = {
-                    loses: {
-                        increment: 1,
-                    },
-                    gamesPlayed: {
-                        increment: 1,
-                    },
-                    elo: undefined,
-                };
-    
-                if (user.elo >= 10) {
-                    data.elo = {
-                        decrement: 10,
-                    };
-                }
-                await prisma.user.update({
-                    where: {
-                        username: room.loser,
-                    },
-                    data,
-                });
-                room.isDatabaseUpdated = false;
-            }
-        }
-    }
-
-    @SubscribeMessage('leaveQueue')
-    handleleavequeue(@ConnectedSocket() client: Socket, @MessageBody() room: number) {
-        console.log(`checking room Number if exist: ${room}`);
-        if (this.Rooms[room] && !this.Rooms[room].client1.inGame) {
-            if (this.Rooms[room].client1.id === client.id) {
-                if (this.SocketsByUser.has(this.Rooms[room].client1.token))
-                    this.SocketsByUser.delete(this.Rooms[room].client1.token);
-                this.Rooms[room].client1.socket.leave(`${room}`);
-                this.connectedCli--;
-                this.RoomNum++;
-                console.log(`check connectedCli after leaving the queue ${this.connectedCli}`);
-                console.log('client leaves the room');
-            }
         }
     }
 

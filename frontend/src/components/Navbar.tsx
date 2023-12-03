@@ -29,7 +29,6 @@ interface UserData {
 
 interface notifData {
   int: number;
-
   reciever: string;
   sender: string;
   sernderDisplayName: string;
@@ -116,111 +115,143 @@ function NavBar() {
   }, [dropdownTimeout]);
   
   useEffect(() => {
+    console.log('checking isSent in NavBar : ', isSent);
+    
+    sock?.on('sendInvitationToOpp', (inviSender: string) => {
+      setMyGameOppName(inviSender);
+      console.log('you received a game invitation from : ', inviSender);
+      setInvitationReceived(true);
+      // setIsSent(true);
+    })
 
-    const fetchUserData = async () => {
-      const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
-
-      if (tokenCookie) {
-        const token = tokenCookie.split("=")[1];
-        try {
-          // Configure Axios to send the token in the headers
-          const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          // Set the user data in the state
-          setOpponent(response.data);
-          console.log('check Opponent status : ', response.data.status);
-        } catch (error: any) {
-          if (error.response && error.response.status === 401) {
-            // Redirect to localhost:5137/ if Axios returns a 401 error
-            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            navigate("/");
-          } // Redirect to the root path
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
-
-    if (sock) {
-      sock.on('joined', (roomNumber: number) => {
-          console.log('listening to joined event to set room Id in NavBar : ', roomNumber);
-          setRoomId(roomNumber);
-      })
-
-      if (myGameOppName && isSent) {
-        fetchUserData();
-        if (opponent?.status == 'ONLINE') {
-          sock.emit("sendInvitationToServer", myGameOppName);
-            setIsSent(false);
-        }
-        else if (opponent?.status == 'OFFLINE') {
-          Swal.fire({
-            title: `${myGameOppName} is Offline!`
-          });
-        }
-        
-      }
-
-      sock.on('sendInvitationToOpp', (inviSender: string) => {
-        setMyGameOppName(inviSender);
-        console.log('you received a game invitation from : ', inviSender);
-        setInvitationReceived(true);
-      })
+    const redirectToInvitedGame = () => {
+      if (sock)
+        sock.emit('AcceptingInvitation', {acceptation: true, OppName: myGameOppName});
+    }
   
-      sock.on('IsGameAccepted', () => {
-        navigate('/game/invited');
-      })
-  
-      sock.on('IsGameDeclined', () => {
-        setIsGameDeclined(true);
+    const invitationDenied = () => {
+      if (sock) {
+        sock.emit('AcceptingInvitation', {acceptation: false, OppName: myGameOppName});
+        navigate('/home');
+      }
+    } 
+    
+    if (invitationReceived) {
+      Swal.fire({
+        title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
+        showDenyButton: true,
+        showCancelButton: false,
+        allowOutsideClick: false,
+        confirmButtonText: 'Accept',
+        denyButtonText: `Deny`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          redirectToInvitedGame();
+        } else if (result.isDenied) {
+          invitationDenied();
+        }
+        setInvitationReceived(false);
       })
     }
 
-  }, [isSent, myGameOppName, invitationReceived, RoomId, sock])
+  }, [isSent, invitationReceived]);
 
-  const redirectToInvitedGame = () => {
-    if (sock)
-      sock.emit('AcceptingInvitation', {acceptation: true, OppName: myGameOppName});
-  }
-
-  const invitationDenied = () => {
-    if (sock) {
-      sock.emit('AcceptingInvitation', {acceptation: false, OppName: myGameOppName});
-      navigate('/home');
-    }
-  } 
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     const tokenCookie = document.cookie
+  //       .split("; ")
+  //       .find((cookie) => cookie.startsWith("token="));
+  //     if (tokenCookie) {
+  //       const token = tokenCookie.split("=")[1];
+  //       try {
+  //         // Configure Axios to send the token in the headers
+  //         const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         });
+  //         // Set the user data in the state
+  //         setOpponent(response.data);
+  //         console.log('check Opponent status : ', response.data.status);
+  //       } catch (error: any) {
+  //         if (error.response && error.response.status === 401) {
+  //           // Redirect to localhost:5137/ if Axios returns a 401 error
+  //           document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  //           navigate("/");
+  //         } // Redirect to the root path
+  //         console.error("Error fetching user data:", error);
+  //       }
+  //     }
+  //   };
+  //   console.log('check sock.id in NavBar : ', sock?.id);
+  //   console.log('check myGameOppName : ', myGameOppName);
+  //   console.log('check isSent : ', isSent);
+  //   if (sock) {
+  //     sock.on('joined', (roomNumber: number) => {
+  //         console.log('listening to joined event to set room Id in NavBar : ', roomNumber);
+  //         setRoomId(roomNumber);
+  //     })
+  //     if (myGameOppName && isSent) {
+  //       fetchUserData();
+  //       if (opponent?.status == 'ONLINE') {
+  //         sock.emit("sendInvitationToServer", myGameOppName);
+  //           setIsSent(false);
+  //       }
+  //       else if (opponent?.status == 'OFFLINE') {
+  //         Swal.fire({
+  //           title: `${myGameOppName} is Offline!`
+  //         });
+  //       }
+  //     }
+  //     sock.on('sendInvitationToOpp', (inviSender: string) => {
+  //       setMyGameOppName(inviSender);
+  //       console.log('you received a game invitation from : ', inviSender);
+  //       setInvitationReceived(true);
+  //     })
+  //     sock.on('IsGameAccepted', () => {
+  //       navigate('/game/invited');
+  //     })
+  //     sock.on('IsGameDeclined', () => {
+  //       setIsGameDeclined(true);
+  //     })
+  //   }
+  // }, [isSent, myGameOppName, invitationReceived, RoomId, sock])
+  // const redirectToInvitedGame = () => {
+  //   if (sock)
+  //     sock.emit('AcceptingInvitation', {acceptation: true, OppName: myGameOppName});
+  // }
+  // const invitationDenied = () => {
+  //   if (sock) {
+  //     sock.emit('AcceptingInvitation', {acceptation: false, OppName: myGameOppName});
+  //     navigate('/home');
+  //   }
+  // } 
+  // if (invitationReceived) {
+  //   Swal.fire({
+  //     title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
+  //     showDenyButton: true,
+  //     showCancelButton: false,
+  //     allowOutsideClick: false,
+  //     confirmButtonText: 'Accept',
+  //     denyButtonText: `Deny`,
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       redirectToInvitedGame();
+  //     } else if (result.isDenied) {
+  //       invitationDenied();
+  //     }
+  //     setInvitationReceived(false);
+  //   })
+  // }
+  // if (isGameDeclined) {
+  //   Swal.fire({
+  //     title: `${myGameOppName} denied your invitation!`
+  //   });
+  //   setIsGameDeclined(false);
+  // }
   
   if (isLoginPage) {
     return null; // Don't render the NavBar on the login page
-  }
-  
-  if (invitationReceived) {
-    Swal.fire({
-      title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
-      showDenyButton: true,
-      showCancelButton: false,
-      allowOutsideClick: false,
-      confirmButtonText: 'Accept',
-      denyButtonText: `Deny`,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        redirectToInvitedGame();
-      } else if (result.isDenied) {
-        invitationDenied();
-      }
-      setInvitationReceived(false);
-    })
-  }
-
-  if (isGameDeclined) {
-    Swal.fire({
-      title: `${myGameOppName} denied your invitation!`
-    });
-    setIsGameDeclined(false);
   }
 
   return (

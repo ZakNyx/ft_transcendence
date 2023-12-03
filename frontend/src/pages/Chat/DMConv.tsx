@@ -4,8 +4,150 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Popup from "reactjs-popup";
 import ChatUserProfile from "./ChatUserProfile";
+import { RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../variables";
+import Swal from "sweetalert2";
+
+
+interface UserData {
+  userID: string;
+  username: string;
+  picture: string;
+  displayname: string;
+  gamesPlayed: number;
+  wins: number;
+  loses: number;
+  winrate: number;
+  elo: number;
+  status: string;
+  status2fa: boolean;
+  secret2fa: boolean;
+  secretAuthUrl: boolean;
+  notifications: notifData[];
+}
+
+interface notifData {
+  int: number;
+
+  reciever: string;
+  sender: string;
+  sernderDisplayName: string;
+  senderPicture: string;
+  type: string;
+  data: string;
+}
 
 const ContactBar = (barData: any) => {
+  
+  const [opponent, setOpponent] = useState<UserData | null>(null);
+  const [isGameDeclined, setIsGameDeclined] = useState<boolean>(false);
+  const [invitationReceived, setInvitationReceived] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+  
+  const fetchUserData = async () => {
+    const tokenCookie = document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith("token="));
+
+    if (tokenCookie) {
+      const token = tokenCookie.split("=")[1];
+      try {
+        // Configure Axios to send the token in the headers
+        const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        // Set the user data in the state
+        setOpponent(response.data);
+        console.log('check Opponent status : ', response.data.status);
+      } catch (error: any) {
+        if (error.response && error.response.status === 401) {
+          // Redirect to localhost:5137/ if Axios returns a 401 error
+          document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          navigate("/");
+        } // Redirect to the root path
+        console.error("Error fetching user data:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+
+
+    // console.log('check sock.id in NavBar : ', sock?.id);
+    // console.log('check myGameOppName : ', myGameOppName);
+    // console.log('check isSent : ', isSent);
+    if (sock) {
+      sock.on('joined', (roomNumber: number) => {
+          console.log('listening to joined event to set room Id in NavBar : ', roomNumber);
+          setRoomId(roomNumber);
+      })
+
+      if (myGameOppName && isSent) {
+        /*fetchUserData();
+        if (opponent?.status == 'ONLINE') {
+          sock.emit("sendInvitationToServer", myGameOppName);
+            setIsSent(false);
+        }
+        else */
+      }
+
+      sock.on('sendInvitationToOpp', (inviSender: string) => {
+        setMyGameOppName(inviSender);
+        console.log('you received a game invitation from : ', inviSender);
+        setInvitationReceived(true);
+        setIsSent(true);
+      })
+  
+      sock.on('IsGameAccepted', () => {
+        navigate('/game/invited');
+      })
+  
+      sock.on('IsGameDeclined', () => {
+        setIsGameDeclined(true);
+      })
+    }
+
+  }, [isSent, myGameOppName, invitationReceived, RoomId, sock])
+
+  const redirectToInvitedGame = () => {
+    if (sock)
+      sock.emit('AcceptingInvitation', {acceptation: true, OppName: myGameOppName});
+  }
+
+  const invitationDenied = () => {
+    if (sock) {
+      sock.emit('AcceptingInvitation', {acceptation: false, OppName: myGameOppName});
+      navigate('/home');
+    }
+  } 
+  
+  if (invitationReceived) {
+    Swal.fire({
+      title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
+      showDenyButton: true,
+      showCancelButton: false,
+      allowOutsideClick: false,
+      confirmButtonText: 'Accept',
+      denyButtonText: `Deny`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        redirectToInvitedGame();
+      } else if (result.isDenied) {
+        invitationDenied();
+      }
+      setInvitationReceived(false);
+    })
+  }
+
+  if (isGameDeclined) {
+    Swal.fire({
+      title: `${myGameOppName} denied your invitation!`
+    });
+    setIsGameDeclined(false);
+  }
+  
   return (
     <div className="w-[98%] ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll flex-wrap justify-center">
     <div className="w-full h-full flex items-center justify-start">
@@ -35,21 +177,29 @@ const ContactBar = (barData: any) => {
             {barData.barData.participants[0].displayname}
           </div>
           {/* <div> */}
-          <Link
-            to="/pvf"
+          <button
             onClick={() => {
-              barData.socket.emit("gameInvite", {
-                id: barData.barData.participants[0].userId,
-                type: "gameInvite",
-              });
+              setMyGameOppName(barData.barData.participants[0].displayname);
+              fetchUserData();
+
+              if (opponent?.status == "ONLINE") {
+                sock?.emit("sendInvitationToServer", barData.barData.participants[0].displayname);
+                setIsSent(true);
+              }
+
+              else if (opponent?.status == 'OFFLINE') {
+                Swal.fire({
+                  title: `${myGameOppName} is Offline!`
+                });
+              }
+
             }}
-            // to="/chat/dmConv"
             className={` bg-npc-purple hover:bg-purple-hover   transition-all rounded-xl mr-3 hover:dark:shadow-lg hover:shadow-lg mt-5 pb-1`}
           >
             <div className="w-full h-full text-white text-center mt-[5px] text-sm">
               Invite Game
             </div>
-          </Link>
+          </button>
         </div>
       </div>
       <hr className=" w-[90%] h-[1px] my-[15px] bg-[#474444bd] opacity-[15%] border-0 rounded  dark:bg-[#8a8abd] dark:opacity-[10%] flex justify-center"></hr>
@@ -114,18 +264,12 @@ const DMConveComponent = (props: any) => {
         },
       );
       if (response.status === 200) {
-        console.log('check response.data : ', response.data);
         setDataState(response.data);
       }
     } catch (error) {
       navigate("/chat", { replace: true });
     }
   };
-
-  // useEffect(() => {
-  //   if (receivedData) fetchData();
-  // }, [receivedData]);
-
 
   useEffect(() => {
     if (receivedData) {
@@ -155,7 +299,6 @@ const DMConveComponent = (props: any) => {
       });
 
       function messageListener() {
-        console.log("test here");
         fetchData();
         setTimeout(() => {
           if (containerRef.current) {

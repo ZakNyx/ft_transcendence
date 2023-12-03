@@ -33,6 +33,7 @@ function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>("");
+  const [isSent, setIsSent] = useState<boolean>(false);
 
 
   useEffect(() => {
@@ -47,6 +48,7 @@ function App() {
         const decode: Token = jwtDecode(newToken);
         console.log('check token in App : ', newToken);
         //Debug 2 : Verify user Id type
+        //@ts-ignore
         setUserId(decode["username"]);
           const newSocket: Socket = io("http://localhost:3000/Chat", {
             extraHeaders: {
