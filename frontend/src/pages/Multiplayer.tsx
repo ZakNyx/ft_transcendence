@@ -5,7 +5,6 @@ import { OrbitControls, RoundedBox, Sphere } from "@react-three/drei";
 import { DoubleSide } from "three";
 import EndGame from "./EndGame";
 import RotatingButton from "./RotatingButton";
-import NavBar from "../components/Navbar";
 import { NavLink } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
 import { setGameId, setMyGameOppName } from "./variables";
@@ -14,6 +13,8 @@ interface GameSettings {
   paddleColor: string;
   ballColor: string;
 }
+
+let isleavingQueueWithButton: boolean = false;
 
 interface GameData {
   gameId: number;
@@ -147,7 +148,6 @@ const  SettingVars = (props: any) => {
   return (
     //background-image removed
     <div className="flex flex-col App min-h-screen w-screen h-screen bg-npc-gra">
-      {/* <NavBar /> */}
       <div className="m-auto justify-between grid grid-cols-3 gap-4 bg-npc-gray p-8 rounded-xl">
         <div className="col-span-3 text-gray-200 font-montserrat font-semibold mb-1">
           Game's Settings
@@ -215,14 +215,9 @@ const RotatedCircle: React.FC<any> = (props) => {
   const [isInGame] = useState<boolean>(props.inGame);
 
   useEffect(() => {
-    // if (!isInGame) {
-    //   console.log("rak ba9i la3b a chamchoun");
-    // } else {
-    //   leaveQueue(props);
-    // }
-    return(
+    return (() => {
       console.log('Queue comp unmounted!')
-    )
+    })
   }, []);
 
   return (
@@ -292,6 +287,7 @@ export default function Multiplayer() {
   };
 
   useEffect(() => {
+    console.log("checking IsLeavingQueueWithButton : ", isleavingQueueWithButton);
     if (socket) {
       socket.on("joined", (RoomId: number) => {
         console.log("joined event received!");
@@ -339,12 +335,13 @@ export default function Multiplayer() {
     }
 
     return () => {
+      console.log('multiGame comp unmounted!!')
       if (socket) {
         if (InGame) {
           // console.log('leaveAndStillInGame event is sent to backend');
           socket.emit('leaveAndStillInGame', {_room: RoomNumber});
         }
-        console.log('game comp unmounted')
+        // console.log('game comp unmounted');
         socket.off("joined");
         socket.off("gameStarted");
         socket.off("gameEnded");
@@ -353,7 +350,7 @@ export default function Multiplayer() {
         // socket.disconnect();
       }
     };
-  }, [RoomNumber, IsGameStarted, socket]);
+  }, [RoomNumber, IsGameStarted, socket, isleavingQueueWithButton]);
 
   if (!changeSettings) {
     return (
@@ -368,7 +365,6 @@ export default function Multiplayer() {
   }
   else {
     if (isConnected && IsGameStarted && !IsGameEnded) {
-      console.log('render game comp')
       return (
         <div className="">
           {/* <NavBar /> */}
@@ -411,11 +407,9 @@ export default function Multiplayer() {
     }
     else if (isConnected && !IsGameStarted) {
       return (
-        //background-image removed
           <div className="h-screen no-scroll">
-            {/* <NavBar /> */}
             <div className="App h-screen flex flex-col items-center justify-center">
-              <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
+              <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame} isGameStarted={IsGameStarted} />
             </div>
           </div>
         );

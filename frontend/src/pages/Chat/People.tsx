@@ -33,15 +33,15 @@ function DMsComponent (props:any)
     }
   };
   
-  // useEffect(() => {
-  //   fetchData();
-  // }, [])
+  useEffect(() => {
+    fetchData();
+  }, [])
   
   useEffect(() => {
 
-  const pollInterval = setInterval(() => {
-    fetchData();
-  }, 500);
+  // const pollInterval = setInterval(() => {
+  //   fetchData();
+  // }, 700);
 
     props.socket.on("dmDeleted", () => {
     fetchData();
@@ -49,6 +49,7 @@ function DMsComponent (props:any)
     props.socket.on("createdDm", () => {
       // console.log("Hello world!!!")
       fetchData();
+      window.location.reload();
     });
     props.socket.on("createdMessage", () => {
       fetchData();
@@ -66,7 +67,7 @@ function DMsComponent (props:any)
       props.socket.off('createdMessage')
       props.socket.off('createdDm')
       props.socket.off('dmDeleted')
-      clearInterval(pollInterval);
+      // clearInterval(pollInterval);
     })
 
   }, [dmData]);
