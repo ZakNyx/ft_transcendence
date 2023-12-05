@@ -62,7 +62,7 @@ export default function Achievements() {
         <div className="h-[44vh] flex items-center justify-center">
           {!friend && !played && !won ? (
             <div className="text-center">
-              <p className="text-gray-200 font-[Rubik] text-lg">
+              <p className="text-gray-200 font-[Rubik] text-lg mb-28">
                 Boohoo! You haven't achieved anything yet (In life too)
               </p>
             </div>

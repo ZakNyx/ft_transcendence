@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, FormEvent, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -341,7 +341,7 @@ const DMConveComponent = (props: any) => {
           />
         </div>
         <div
-          className="w-full h-[calc(80vh - 64px)] overflow-hidden overflow-y-scroll"
+          className="w-full h-[calc(80vh - 64px)] overflow-hidden overflow-y-scroll mt-9"
           ref={containerRef}
         >
           {dataState.dm.msg.map((element: any, index: any) => (
@@ -359,37 +359,37 @@ const DMConveComponent = (props: any) => {
             src={dataState.image.image}
             alt=""
           />
-          <form
-            onSubmit={handleSubmit}
-            className="flex-grow flex items-center w-full"
-          >
-            <input
-              type="text"
-              maxLength={maxLength}
-              placeholder="Enter your message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="w-full h-full bg-[#1A1C26] text-white rounded-3xl border border-gray-500 active:border-gray-700 pl-2 text-sm focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="w-10 h-full ml-2 flex justify-center items-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="#6F37CF"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-6 h-6 text-[#6F37CC]"
+              <form
+                onSubmit={handleSubmit}
+                className="flex-grow flex items-center w-full"
               >
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-            </button>
-          </form>
+                <input
+                  type="text"
+                  maxLength={maxLength}
+                  placeholder="Enter your message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full h-full bg-[#1A1C26] text-white rounded-3xl border border-gray-500 active:border-gray-700 pl-2 text-sm focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  className="w-10 h-full ml-2 flex justify-center items-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="#6F37CF"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-6 h-6 text-[#6F37CC]"
+                  >
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </form>
         </div>
       </div>
     );

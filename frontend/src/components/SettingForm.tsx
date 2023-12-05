@@ -97,8 +97,7 @@ export default function SettingForm() {
       console.error("Error uploading user picture:", error);
       if (error.response && error.response.status == 400) {
         Swal.fire({
-          title:
-            "<h1 style='color: rgb(229 231 235 / 1'>" + "Error" + "</h1>",
+          title: "<h1 style='color: rgb(229 231 235 / 1'>" + "Error" + "</h1>",
           text: "Invalid file type or size.",
           icon: "error",
           background: "#252526",
@@ -161,7 +160,7 @@ export default function SettingForm() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         Swal.fire({
           title:
@@ -177,15 +176,13 @@ export default function SettingForm() {
       console.error("Error Changing Display Name:", error);
       if (error.response && error.response.status == 400) {
         Swal.fire({
-          title:
-            "<h1 style='color: rgb(229 231 235 / 1'>" + "Error" + "</h1>",
+          title: "<h1 style='color: rgb(229 231 235 / 1'>" + "Error" + "</h1>",
           text: "Username invalid or already taken.",
           icon: "error",
           background: "#252526",
           timer: 2000,
         });
       }
-
     }
   };
 
@@ -195,50 +192,51 @@ export default function SettingForm() {
         <span className="font-semibold text-gray-200 pt-4 opacity-90">
           Profile Picture
         </span>
-        <div className="w-full p-4 mx-2 flex justify-center">
-          {user && (
-            <img
-              src={user.picture}
-              alt="profile image"
-              className="items-center border w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
+
+          <div className="w-full p-4 mx-2 flex justify-center">
+            {user && (
+              <img
+                src={user.picture}
+                alt="profile image"
+                className="items-center border w-16 h-16 sm:w-24 sm:h-24 lg:w-40 lg:h-40 rounded-full mr-3 sm:mr-4 lg:mr-6 ml-1 sm:ml-2 lg:ml-4"
+              />
+            )}
+          </div>
+          <div className="text-center mb-3">
+            <span className="text-gray-400">
+              JPG, JPEG or PNG no larger than 1 MB
+            </span>
+          </div>
+          <div className="flex items-center justify-center">
+            <input
+              type="file"
+              id="profilepic"
+              hidden
+              onChange={handleProfilePictureChange}
             />
-          )}
-        </div>
-        <div className="text-center mb-3">
-          <span className="text-gray-400">
-            JPG, JPEG or PNG no larger than 1 MB
-          </span>
-        </div>
-        <div className="flex items-center justify-center">
-          <input
-            type="file"
-            id="profilepic"
-            hidden
-            onChange={handleProfilePictureChange}
-          />
-          <label
-            htmlFor="profilepic"
-            className="bg-blue-500 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition text-sm sm:text-base md:text-md"
-          >
-            Choose File
-          </label>
-          <button
-            type="submit"
-            onClick={uploadProfilePicture}
-            id="submit"
-            className="bg-blue-500 ml-3 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition text-sm sm:text-base md:text-md"
-          >
-            Upload
-          </button>
-          <button
-            type="button"
-            id="deletepic"
-            onClick={deleteProfilePicture}
-            className="bg-red-500 hover:bg-red-600 text-gray-200 cursor-pointer rounded-full px-4 py-2 ml-3 transition"
-          >
-            <img src="../../public/images/trash.svg" className="h-8 w-8" />
-          </button>
-        </div>
+            <label
+              htmlFor="profilepic"
+              className="bg-blue-500 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition text-sm sm:text-base md:text-md"
+            >
+              Choose File
+            </label>
+            <button
+              type="submit"
+              onClick={uploadProfilePicture}
+              id="submit"
+              className="bg-blue-500 ml-3 text-gray-200 rounded-md px-4 py-2 cursor-pointer hover:bg-blue-600 transition text-sm sm:text-base md:text-md"
+            >
+              Upload
+            </button>
+            <button
+              type="button"
+              id="deletepic"
+              onClick={deleteProfilePicture}
+              className="bg-red-500 hover:bg-red-600 text-gray-200 cursor-pointer rounded-full px-4 py-2 ml-3 transition"
+            >
+              <img src="../../public/images/trash.svg" className="h-8 w-8" />
+            </button>
+          </div>
       </div>
       <div className="lg:w-2/5 p-8 rounded-lg background-gray lg:ml-4 shadow-md">
         <span className="font-semibold text-gray-200 pt-4 opacity-90">
@@ -249,7 +247,7 @@ export default function SettingForm() {
             <label
               htmlFor="username"
               className="font-semibold text-gray-200 pb-1"
-            >
+              >
               Username
             </label>
             <div className="flex">
@@ -260,7 +258,7 @@ export default function SettingForm() {
                 value={newdisplayname}
                 onChange={handledisplaynameChange}
                 placeholder={user ? user.displayname : "loading..."}
-              />
+                />
             </div>
           </div>
           <div className="pb-4">
@@ -268,7 +266,7 @@ export default function SettingForm() {
               <label
                 htmlFor="2FA"
                 className="font-semibold text-gray-200 pr-6 pb1 text-xs sm:text-sm md:text-base"
-              >
+                >
                 Two-factor Authentication
               </label>
               <label className="flex cursor-pointer select-none items-center">
