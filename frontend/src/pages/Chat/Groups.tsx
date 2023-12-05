@@ -32,8 +32,12 @@ function GroupsComponent(props:any) {
   };
 
   useEffect(() => {
-
     fetchData();
+  }, [])
+
+  useEffect(() => {
+
+    // fetchData();
 
     props.socket.on("blocked", () => {
       fetchData();

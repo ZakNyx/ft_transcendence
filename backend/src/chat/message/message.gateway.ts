@@ -62,28 +62,28 @@ export class MessageGateway
     this.messageService.createMessage(payload, this.server);
   }
 
-  // @SubscribeMessage('roomInvite')
-  // async handleRoomInvite(
-  //   @ConnectedSocket() client: Socket,
-  //   @MessageBody() payload: roomInviteDTO,
-  // ) {
-  //   this.messageService.sendRoomInvite(client, this.server, payload, this.mapy);
-  // }
+  @SubscribeMessage('roomInvite')
+  async handleRoomInvite(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: roomInviteDTO,
+  ) {
+    this.messageService.sendRoomInvite(client, this.server, payload, this.mapy);
+  }
 
-  // @SubscribeMessage('roomInviteAccepted')
-  // async handleRoomInviteApproval(
-  //   @ConnectedSocket() client: Socket,
-  //   @MessageBody() payload: roomInviteDTO,
-  // ) {
-  //   this.messageService.roomInviteApproval(client, this.server, payload, this.mapy);
-  // }
+  @SubscribeMessage('roomInviteAccepted')
+  async handleRoomInviteApproval(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: roomInviteDTO,
+  ) {
+    this.messageService.roomInviteApproval(client, this.server, payload, this.mapy);
+  }
 
-  // @SubscribeMessage('roomInviteRejected')
-  // async handleRoomInviteRejection(
-  //   @MessageBody() payload: roomInviteDTO,
-  // ) {
-  //   this.messageService.roomInviteRejection(payload, this.mapy);
-  // }
+  @SubscribeMessage('roomInviteRejected')
+  async handleRoomInviteRejection(
+    @MessageBody() payload: roomInviteDTO,
+  ) {
+    this.messageService.roomInviteRejection(payload, this.mapy);
+  }
 
   // @SubscribeMessage('notifClicked')
   // async handleNotifClicked(
