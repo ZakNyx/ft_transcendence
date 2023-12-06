@@ -295,19 +295,23 @@ export class HttpService {
       },
       include: {
         dms: true,
+        blocks: true,
       },
     });
-    const blockedUserIds = currentUser.blockedUsers.map(
-      (blockedUser) => blockedUser,
+    // const blockedUserIds = currentUser.blockedUsers.map(
+    //   (blockedUser) => blockedUser,
+    // );
+    const bloc = currentUser.blocks.map(
+      (block) => block.username,
     );
     const dmIds = currentUser.dms.map((dm) => dm.id);
-    
+    console.log('bloc==> ', bloc)
     
     const users = await this.prismaService.user.findMany({
       where: {
         NOT: {
           username: {
-            in: blockedUserIds,
+            in: bloc,
           },
         },
         AND: [
@@ -326,12 +330,23 @@ export class HttpService {
         username: {
           not: userId,
         },
+  
       },
+      include: {
+        blocks : true,
+      }
     });
+    // const filteredUsers = users.filter((user) => {
+    //   if (!user.blockedUsers.includes(userId)) {
+    //     return user;
+    //   }
+    // });
+  
     const filteredUsers = users.filter((user) => {
-      if (!user.blockedUsers.includes(userId)) {
+      if (!user.blocks.some((block) => block.username === userId)) {
         return user;
       }
+      return null; 
     });
     // console.log("users : ", users)
     return filteredUsers;
@@ -344,6 +359,7 @@ export class HttpService {
       },
       include: {
         rooms: true,
+        blocks: true
       }
     });
     let accessCheck: boolean = false;
@@ -363,6 +379,9 @@ export class HttpService {
         bannedUsers: true,
       },
     });
+    const bloc = currentUser.blocks.map(
+      (block) => block.username,
+    );
     const users = await this.prismaService.user.findMany({
       where: {
         OR: [
@@ -385,7 +404,7 @@ export class HttpService {
           {
             NOT: {
               username: {
-                in: currentUser.blockedUsers,
+                in: bloc,
               },
             },
           },
