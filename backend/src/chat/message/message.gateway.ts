@@ -70,28 +70,6 @@ export class MessageGateway
     this.messageService.sendRoomInvite(client, this.server, payload, this.mapy);
   }
 
-  @SubscribeMessage('roomInviteAccepted')
-  async handleRoomInviteApproval(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() payload: roomInviteDTO,
-  ) {
-    this.messageService.roomInviteApproval(client, this.server, payload, this.mapy);
-  }
-
-  @SubscribeMessage('roomInviteRejected')
-  async handleRoomInviteRejection(
-    @MessageBody() payload: roomInviteDTO,
-  ) {
-    this.messageService.roomInviteRejection(payload, this.mapy);
-  }
-
-  // @SubscribeMessage('notifClicked')
-  // async handleNotifClicked(
-  //   @MessageBody() payload: roomInviteDTO,
-  // ) {
-  //   this.messageService.notifClicked(payload);
-  // }
-
   @SubscribeMessage('promote')
   async handlePromotion(
     @MessageBody() payload: actionDTO,
