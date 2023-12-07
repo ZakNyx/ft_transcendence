@@ -952,7 +952,8 @@ export class MessageService {
     client: Socket,
     blockedUserId: string,
     mapy: Map<string, Socket>,
-  ) {
+    
+    ) {
     let blocker: string;
     for (let entry of mapy.entries()) {
       if (entry[1] == client) blocker = entry[0];
