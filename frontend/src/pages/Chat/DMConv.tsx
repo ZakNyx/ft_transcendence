@@ -74,24 +74,11 @@ const ContactBar = (barData: any) => {
 
   useEffect(() => {
 
-
-    // console.log('check sock.id in NavBar : ', sock?.id);
-    // console.log('check myGameOppName : ', myGameOppName);
-    // console.log('check isSent : ', isSent);
     if (sock) {
       sock.on('joined', (roomNumber: number) => {
           console.log('listening to joined event to set room Id in NavBar : ', roomNumber);
           setRoomId(roomNumber);
       })
-
-      if (myGameOppName && isSent) {
-        /*fetchUserData();
-        if (opponent?.status == 'ONLINE') {
-          sock.emit("sendInvitationToServer", myGameOppName);
-            setIsSent(false);
-        }
-        else */
-      }
 
       sock.on('sendInvitationToOpp', (inviSender: string) => {
         setMyGameOppName(inviSender);
@@ -305,6 +292,7 @@ const DMConveComponent = (props: any) => {
       });
 
       function messageListener() {
+        console.log("message listener!!!");
         fetchData();
         setTimeout(() => {
           if (containerRef.current) {

@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  dev-db:
+    image: postgres:13
+    env_file:
+    - backend/.env
+    restart: always
+  backend:
+    build: 
+      context: ./backend
+    ports:
+      - 3000:3000
+    depends_on:
+      - dev-db
+    restart: always
+  frontend:
+    build: 
+      context: ./frontend
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+    restart: always
+networks:
+  default:

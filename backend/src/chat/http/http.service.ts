@@ -246,6 +246,7 @@ export class HttpService {
   }
 
   async fetchDMContent(dmId: number, userId: string) {
+    
     const currentUser = await this.prismaService.user.findUnique({
       where: {
         username: userId,
@@ -254,15 +255,18 @@ export class HttpService {
         dms: true,
       }
     });
+
     let accessCheck: boolean = false;
     currentUser.dms.map((dm: DM) => {
       if (dm.id == dmId) {
         accessCheck = true;
       }
     })
+
     if (!accessCheck) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
+
     const dm = await this.prismaService.dM.findUnique({
       where: {
         id: dmId,
@@ -283,6 +287,7 @@ export class HttpService {
         msg: true,
       },
     });
+
     const ownImage = await this.prismaService.user.findUnique({
       where: {
         username: userId,
@@ -291,11 +296,13 @@ export class HttpService {
         image: true,
       },
     });
+
     dm.msg.sort(this.compareMessages);
     return { dm: dm, image: ownImage };
   }
 
   async  addPeopleFetch(userId: string) {
+
     const currentUser = await this.prismaService.user.findUnique({
       where: {
         username: userId,
@@ -311,6 +318,7 @@ export class HttpService {
     const blockedUser = currentUser.blocks.map(
       (block) => block.username,
     );
+
     const dmIds = currentUser.dms.map((dm) => dm.id);
     console.log('bloc==> ', blockedUser)
     
@@ -423,6 +431,7 @@ export class HttpService {
         blocks: true,
       },
     });
+
     const nonBlockedUsers = users.filter((user: User) => {
       return !user.blockedUsers.includes(userId)
     })

@@ -143,7 +143,7 @@ const CallEverything = (props: any) => {
         onMouseEnter={() => setPause(false)}
       >
         <Canvas camera={{ position: props.cameraPosition }}>
-          <OrbitControls enableRotate={true} enableZoom={true} />
+          <OrbitControls enableRotate={false} enableZoom={true} enablePan={false}/>
           <PlayArea />
           <GameObjects
             color={props.paddleColor}
