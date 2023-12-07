@@ -957,6 +957,7 @@ export class MessageService {
     for (let entry of mapy.entries()) {
       if (entry[1] == client) blocker = entry[0];
     }
+
     const blockingUser = await this.prismaService.user.findUnique({
       where: {
         userId: blocker,
@@ -965,9 +966,11 @@ export class MessageService {
         friend: true,
       },
     });
+
     const updatedfriend1 = blockingUser.friend.filter((element: any) => {
       return element.userId != blockedUserId;
     });
+
     const blockedUser = await this.prismaService.user.findUnique({
       where: {
         userId: blockedUserId,
@@ -976,9 +979,11 @@ export class MessageService {
         friend: true,
       },
     });
+
     const updatedfriend2 = blockedUser.friend.filter((element: any) => {
       return element.userId != blocker;
     });
+
     await this.prismaService.user.update({
       where: {
         userId: blocker,
@@ -990,6 +995,7 @@ export class MessageService {
         friend: updatedfriend1,
       },
     });
+
     await this.prismaService.user.update({
       where: {
         userId: blockedUserId,
@@ -998,7 +1004,9 @@ export class MessageService {
         friend: updatedfriend2,
       },
     });
+
     client.emit('blocked');
+
     if (mapy.has(blockedUserId))
       mapy.get(blockedUserId).emit('blocked');
   }

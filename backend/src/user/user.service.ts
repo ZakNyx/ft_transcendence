@@ -95,6 +95,7 @@ export class UserService {
         },
       },
     });
+
     await this.prismaService.user.update({
       where: {
         username: unfriendUser.username,
@@ -107,6 +108,7 @@ export class UserService {
         },
       },
     });
+
   }
 
   async addUserToBlocking(reqUser, toBlockUser: string) {

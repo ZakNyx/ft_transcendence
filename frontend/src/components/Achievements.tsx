@@ -55,7 +55,7 @@ export default function Achievements() {
   }
   return (
     <div>
-      <div className="background-gray rounded-[30px] h-[44vh] p-6 mt-7 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
+      <div className="background-gray rounded-[30px] h-[44vh] p-6 mt-7 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top overflow-y-scroll">
         <h2 className="text-gray-200 font-[Rubik] text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl mb-4">
           Achievements
         </h2>

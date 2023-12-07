@@ -4,17 +4,15 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+function DMsComponent (props:any) {
 
-function DMsComponent (props:any)
-{
   const [dmData, setDmData] = useState<any>(null);
   const token = Cookies.get('token');
 
   const navigate = useNavigate();
-  
+
   const fetchData = async () => {
     try {
-      // console.log("userId: ", props.userId);
       const response = await axios.get('http://localhost:3000/chat/dms', {
         params: {
           // Debug 3 : Check userId type
@@ -24,30 +22,25 @@ function DMsComponent (props:any)
           Authorization: `Bearer ${token}`,
         },
       });
+
       if (response.status === 200) {
         setDmData(response.data)
-        // console.log('check response.data : ', response.data);
       }
+
     } catch (error) {
       navigate('/chat' , {replace: true});
     }
   };
-  
+
   useEffect(() => {
     fetchData();
   }, [])
-  
+
   useEffect(() => {
-
-  // const pollInterval = setInterval(() => {
-  //   fetchData();
-  // }, 700);
-
     props.socket.on("dmDeleted", () => {
-    fetchData();
-  })
+      fetchData();
+    })
     props.socket.on("createdDm", () => {
-      // console.log("Hello world!!!")
       fetchData();
       window.location.reload();
     });
@@ -67,12 +60,10 @@ function DMsComponent (props:any)
       props.socket.off('createdMessage')
       props.socket.off('createdDm')
       props.socket.off('dmDeleted')
-      // clearInterval(pollInterval);
     })
 
   }, [dmData]);
 
-  // console.log(dmData)
   if (dmData) {
     return (
       <>
@@ -100,7 +91,6 @@ function DMsComponent (props:any)
         </div>
       </div>
     </>
-
   );
   }
 }

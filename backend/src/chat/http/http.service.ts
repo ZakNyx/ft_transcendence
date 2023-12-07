@@ -16,14 +16,13 @@ import { RoomMember, Room, User, DM, Message } from '@prisma/client';
 @Injectable()
 export class HttpService {
   constructor(private prismaService: PrismaService) {}
-
+  
   async checkBlocked(userId: string, blockedUserId: string) {
     const user = await this.prismaService.user.findUnique({
       where: {
         username: userId,
       },
     });
-
     return user.blockedUsers.includes(blockedUserId);
   }
 
@@ -239,6 +238,7 @@ export class HttpService {
   }
 
   async fetchDMContent(dmId: number, userId: string) {
+    
     const currentUser = await this.prismaService.user.findUnique({
       where: {
         username: userId,
@@ -247,15 +247,18 @@ export class HttpService {
         dms: true,
       }
     });
+
     let accessCheck: boolean = false;
     currentUser.dms.map((dm: DM) => {
       if (dm.id == dmId) {
         accessCheck = true;
       }
     })
+
     if (!accessCheck) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
+
     const dm = await this.prismaService.dM.findUnique({
       where: {
         id: dmId,
@@ -276,6 +279,7 @@ export class HttpService {
         msg: true,
       },
     });
+
     const ownImage = await this.prismaService.user.findUnique({
       where: {
         username: userId,
@@ -284,25 +288,34 @@ export class HttpService {
         image: true,
       },
     });
+
     dm.msg.sort(this.compareMessages);
     return { dm: dm, image: ownImage };
   }
 
   async  addPeopleFetch(userId: string) {
+
     const currentUser = await this.prismaService.user.findUnique({
       where: {
         username: userId,
       },
       include: {
         dms: true,
+        blocks: true,
+        blockedBy: true,
       },
     });
+
+    currentUser.blocks.map((key: any) => {
+      console.log('key : ', key.username);
+    });
+
     const blockedUserIds = currentUser.blockedUsers.map(
       (blockedUser) => blockedUser,
     );
+
     const dmIds = currentUser.dms.map((dm) => dm.id);
-    
-    
+
     const users = await this.prismaService.user.findMany({
       where: {
         NOT: {
@@ -328,12 +341,13 @@ export class HttpService {
         },
       },
     });
+
     const filteredUsers = users.filter((user) => {
       if (!user.blockedUsers.includes(userId)) {
         return user;
       }
     });
-    // console.log("users : ", users)
+
     return filteredUsers;
   }
 
@@ -363,6 +377,7 @@ export class HttpService {
         bannedUsers: true,
       },
     });
+
     const users = await this.prismaService.user.findMany({
       where: {
         OR: [
@@ -399,6 +414,7 @@ export class HttpService {
         ],
       },
     });
+
     const nonBlockedUsers = users.filter((user: User) => {
       return !user.blockedUsers.includes(userId)
     })
