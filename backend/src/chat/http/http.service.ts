@@ -12,6 +12,7 @@ import { roomDTO } from '../dto/chatDto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Socket } from 'socket.io';
 import { RoomMember, Room, User, DM, Message } from '@prisma/client';
+import { BlockList } from 'net';
 
 @Injectable()
 export class HttpService {
@@ -295,19 +296,25 @@ export class HttpService {
       },
       include: {
         dms: true,
+        blocks: true,
       },
     });
-    const blockedUserIds = currentUser.blockedUsers.map(
-      (blockedUser) => blockedUser,
+    //This how you see the Blocked Users!!
+    const m_block = currentUser.blocks.map(
+      (blocks) => blocks.username,
+      // console.log('key : ', key.username);
     );
-    const dmIds = currentUser.dms.map((dm) => dm.id);
     
-    
-    const users = await this.prismaService.user.findMany({
+    const blockedUserIds = currentUser.blockedUsers.map(
+      (blockedUser) => blockedUser, 
+      );
+      const dmIds = currentUser.dms.map((dm) => dm.id);
+      console.log('Mablockino ==> ' ,m_block)
+      const users = await this.prismaService.user.findMany({
       where: {
         NOT: {
           username: {
-            in: blockedUserIds,
+            in: m_block,
           },
         },
         AND: [
@@ -329,11 +336,11 @@ export class HttpService {
       },
     });
     const filteredUsers = users.filter((user) => {
-      if (!user.blockedUsers.includes(userId)) {
+      if (!user.blocks.some((blocks) => blocks.username === userId)) {
         return user;
       }
+      return null; 
     });
-    // console.log("users : ", users)
     return filteredUsers;
   }
 
