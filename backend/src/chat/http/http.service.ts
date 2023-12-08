@@ -33,6 +33,21 @@ export class HttpService {
     return blockedUser.includes(blockedUserId)
   }
 
+  async checkBlockedBy(usernam: string, blockedUserId: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: usernam,
+      },
+      include: {
+        blockedBy: true,
+      }   
+    });
+    const blockedUser = user.blockedBy.map(
+      (block) => block.username,
+    );
+    return blockedUser.includes(blockedUserId)
+  }
+
   compareMessages(a: Message, b: Message): number {
 
     const dateA = new Date(a.sentAt);
@@ -121,7 +136,8 @@ export class HttpService {
       },
     });
     const asyncOperations = room.msgs.map(async (msg) => {
-      if (!(await this.checkBlocked(userId, msg.senderId))) {
+      if (!(await this.checkBlocked(userId, msg.senderId)) 
+          && !(await this.checkBlockedBy(userId, msg.senderId))) {
         const sender = await this.prismaService.user.findUnique({
           where: {
             username: msg.senderId,
