@@ -2,18 +2,14 @@ version: '3.8'
 services:
   post:
     image: postgres:13
-    networks:
-      - transcendence
     ports:
-      - 5434:5432
+      - "5434:5434"
     env_file:
     - ./backend/.env
     restart: always
   backend:
     build: 
       context: ./backend
-    networks:
-      - transcendence
     ports:
       - 3000:3000
     depends_on:
@@ -22,12 +18,10 @@ services:
   frontend:
     build: 
       context: ./frontend
-    networks:
-      - transcendence
     ports:
-      - 5173:5173
+      - 5174:5174
     depends_on:
       - backend
     restart: always
 networks:
-  transcendence:
+  default:
