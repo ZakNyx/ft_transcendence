@@ -64,6 +64,7 @@ export class Client {
     id: string;
     token: string;
     leave: boolean;
+    inQueue: boolean;
     constructor(num: number) {
         this.number = num;
         this.score = 0;
@@ -78,6 +79,7 @@ export class Client {
         this.token = "";
         this.username = "";
         this.leave = false;
+        this.inQueue = false;
         this.window = new Win();
     }
 }

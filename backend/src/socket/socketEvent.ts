@@ -106,13 +106,14 @@ export class SocketEvent  {
 
     //Moving the players paddle
     MoveEverthing = (x: number, room: Room, clientId: string) => {
-        if (room.IsFull) {
+        if (room && room.IsFull) {
             this.MovePaddles(x, room, clientId);
         }
     }
 
     IfClientInGame = (clientId: string): boolean => {
         let i: number = 0;
+        // console.log('ifClientInGame!!!');
         for (i; i < this.RoomNum; i++) {
             if (this.Rooms[i].client1.id === clientId) {
 
@@ -131,6 +132,29 @@ export class SocketEvent  {
         return false;
     }
 
+    IfClientInQueue = (Client: Socket, PreviousId: string, token: string) => {
+        for (let i: number = 0; i <= this.RoomNum; i++) {
+            if (this.Rooms[i]) {
+                console.log('rooms[i] : ', i);
+                console.log('PreviousId  : ', PreviousId);
+                console.log('this.Rooms[i].client1.inQueue : ', this.Rooms[i].client1.inQueue);
+                if (this.Rooms[i].client1 && this.Rooms[i].client1.id === PreviousId
+                    && this.Rooms[i].client1.inQueue) {
+                    console.log('test');
+                    this.SocketsByUser.set(token, Client.id);
+                    this.Rooms[i].client1.socket.leave(`${i}`);
+                    Client.join(`${i}`);
+                    this.Rooms[i].client1.id = Client.id;
+                    this.Rooms[i].client1.socket = Client;
+                    console.log('check new socket now : ', this.Rooms[i].client1.id);
+                }
+                if (this.Rooms[i].client2 && this.Rooms[i].client2.id === PreviousId) {
+                    this.SocketsByUser.set(token, Client.id);
+                }
+            }
+        }
+    }
+
     //Connection
     handleConnection = (client: Socket) => {
         try{
@@ -140,6 +164,8 @@ export class SocketEvent  {
                 throw new UnauthorizedException();
             if (this.SocketsByUser.has(token))
             {
+                //need to check if the client is in queue before.
+                this.IfClientInQueue(client, this.SocketsByUser.get(token), token)
                 if (this.IfClientInGame(this.SocketsByUser.get(token))) {
                     this.server.to(client.id).emit('InGame');
                     return ;
@@ -195,13 +221,13 @@ export class SocketEvent  {
                         currentRoom.isDatabaseUpdated = false;
                     })
                     this.connectedCli++;
+                    this.Rooms[this.RoomNum].IsFull = true;
+                    this.BallReset(this.Rooms[this.RoomNum]);
+                    this.RoomNum++;
                 }
             }
-            if (this.Rooms[this.RoomNum].client2) {
-                this.Rooms[this.RoomNum].IsFull = true;
-                this.BallReset(this.Rooms[this.RoomNum]);
-                this.RoomNum++;
-            }
+            // if (this.Rooms[this.RoomNum].client2) {
+            // }
         }
         catch (err) {
             console.log(`Error123: ${err}`);
@@ -303,6 +329,12 @@ export class SocketEvent  {
                 }
                 if (!room.client1.inGame && !room.client2.inGame && room.isDatabaseUpdated) {
                     this.IfGameIsFinish(room, gamedata);
+                    if (this.SocketsByUser.has(room.client1.token)) {
+                        this.SocketsByUser.delete(room.client1.token);
+                    }
+                    if (this.SocketsByUser.has(room.client2.token)) {
+                        this.SocketsByUser.delete(room.client2.token);
+                    }
                 }
             }
 
@@ -322,11 +354,14 @@ export class SocketEvent  {
             const {_room, gamedata} = data;
             const token = client.handshake.headers.authorization.slice(7);
             const userObj = this.jwtService.verify(token); 
-            if (this.Rooms[_room].IsFull) {
+            // console.log('checking _room in demand event: ', _room);
+            if (this.Rooms[_room] && this.Rooms[_room].IsFull) {
                 if (this.Rooms[_room].setVars === false) {
                     this.Rooms[_room].setVars = true;
                     this.Rooms[_room].client1.inGame = true;
+                    this.Rooms[_room].client1.inQueue = false;
                     this.Rooms[_room].client2.inGame = true;
+                    this.Rooms[_room].client2.inQueue = false;
                     this.Rooms[_room].game.IsStarted = true;
                 }
                 if (this.SocketsByUser.has(token)) {
@@ -407,7 +442,6 @@ export class SocketEvent  {
     @SubscribeMessage('leaveAndStillInGame')
     handleLeaveGame(@ConnectedSocket() client: Socket, @MessageBody() data: {_room: number}) {
 
-        // console.log('here!!!');
         if (data?._room !== undefined) {
             const {_room} = data;
             const token: string = client.handshake.headers.authorization.slice(7);
@@ -416,10 +450,12 @@ export class SocketEvent  {
                 if (this.SocketsByUser.get(token) === client.id) {
                     if (userObj.username === this.Rooms[_room].client1.username){
                         this.Rooms[_room].client1.leave = true;
+                        this.Rooms[_room].client1.inQueue = false;
                         console.log('client1 leaves the game!');
                     }
                     if (userObj.username === this.Rooms[_room].client2.username) {
                         this.Rooms[_room].client2.leave = true;
+                        this.Rooms[_room].client2.inQueue = false;
                         console.log('client2 leaves the game!');
                     }
                     if (this.Rooms[_room].client1.leave && this.Rooms[_room].client2.leave){
@@ -431,7 +467,23 @@ export class SocketEvent  {
                     }
                 }
             }
-            // Rest of your code
+        }
+    }
+
+    @SubscribeMessage('InQueue')
+    handleInQueue(@ConnectedSocket() client: Socket, @MessageBody() roomId: number) {
+        const token: string = client.handshake.headers.authorization.slice(7);
+        if (this.SocketsByUser.has(token)) {
+            if (this.Rooms[roomId]) {
+
+                if (this.Rooms[roomId].client1 && this.Rooms[roomId].client1.id === this.SocketsByUser.get(token)) {
+                    this.Rooms[roomId].client1.inQueue = true;
+                    console.log(`check client1: ${this.Rooms[roomId].client1.id} if he is inQueue : `, this.Rooms[roomId].client1.inQueue);
+                }
+                if (this.Rooms[roomId].client2 && this.Rooms[roomId].client2.id === this.SocketsByUser.get(token)) {
+                    this.Rooms[roomId].client2.inQueue = true;
+                }
+            }
         }
     }
 
@@ -440,6 +492,7 @@ export class SocketEvent  {
         console.log(`checking room Number if exist: ${room}`);
         if (this.Rooms[room] && !this.Rooms[room].client1.inGame) {
             if (this.Rooms[room].client1.id === client.id) {
+                this.Rooms[room].client1.inQueue = false;
                 if (this.SocketsByUser.has(this.Rooms[room].client1.token))
                     this.SocketsByUser.delete(this.Rooms[room].client1.token);
                 this.Rooms[room].client1.socket.leave(`${room}`);

@@ -212,13 +212,7 @@ const leaveQueue = (props: any) => {
 }
 
 const RotatedCircle: React.FC<any> = (props) => {
-  const [isInGame] = useState<boolean>(props.inGame);
-
-  useEffect(() => {
-    return (() => {
-      console.log('Queue comp unmounted!')
-    })
-  }, []);
+  props.socket.emit('InQueue', props.roomId);
 
   return (
     <div className="h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -290,7 +284,7 @@ export default function Multiplayer() {
     console.log("checking IsLeavingQueueWithButton : ", isleavingQueueWithButton);
     if (socket) {
       socket.on("joined", (RoomId: number) => {
-        console.log("joined event received!");
+        console.log("joined event received with this roomId : ", RoomId);
         setRoomNumber(RoomId);
       });
 
@@ -308,6 +302,10 @@ export default function Multiplayer() {
       socket.on('InGame', () => {
         setStillInGame(true);
       })
+
+      // socket.on('leavingQueue', () => {
+      //   socket.emit('leaveQueue', RoomNumber);
+      // })
 
       socket.on("gameEnded", () => {
         console.log("game ended nod tga3ad");
@@ -340,7 +338,10 @@ export default function Multiplayer() {
         if (InGame) {
           // console.log('leaveAndStillInGame event is sent to backend');
           socket.emit('leaveAndStillInGame', {_room: RoomNumber});
-        }
+        } 
+        // else {
+        //   socket.emit("leaveQueue", RoomNumber);
+        // }
         // console.log('game comp unmounted');
         socket.off("joined");
         socket.off("gameStarted");

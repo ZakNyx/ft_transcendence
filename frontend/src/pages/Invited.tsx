@@ -299,6 +299,42 @@ export default function Invited() {
         setInGame(true);
         setIsGameStarted(true);
         setRoomNumber(RoomId);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
       });
 
       socket.on('InGame', () => {
@@ -339,23 +375,10 @@ export default function Invited() {
     };
   }, [RoomNumber, IsGameStarted, socket, inviReceived]);
 
-    // if (!changeSettings) {
-    //   return (
-    //     <div>
-    //       <SettingVars
-    //         paddleColor={settings.paddleColor}
-    //         ballColor={settings.ballColor}
-    //         onSettingsChange={handleSettingsChange}
-    //       />
-    //     </div>
-    //   );
-    // }
-    // else {
       if (isConnected && IsGameStarted && !IsGameEnded) {
         return (
           //background-image removed
           <div>
-            {/* <NavBar /> */}
             <ScoreBar
               score={myScore}
               enemy_score={enemyScore}
@@ -381,7 +404,6 @@ export default function Invited() {
         return (
           //background-image removed
           <div className="h-screen no-scroll">
-            {/* <NavBar /> */}
             <div className="App h-screen flex flex-col items-center justify-center">
               <h2>You are already in game, go finish it first.</h2>
             </div>
@@ -391,16 +413,4 @@ export default function Invited() {
       else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
         return <EndGame result={result} socket={socket} roomId={RoomNumber} />;
       }
-      // else if (isConnected && !IsGameStarted) {
-      //   return (
-      //     //background-image removed
-      //       <div className="h-screen no-scroll">
-      //         {/* <NavBar /> */}
-      //         <div className="App h-screen flex flex-col items-center justify-center">
-      //           <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame}/>
-      //         </div>
-      //       </div>
-      //     );
-      // }
-    // }
 }

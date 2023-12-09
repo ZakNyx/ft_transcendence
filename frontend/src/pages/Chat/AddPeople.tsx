@@ -97,6 +97,8 @@ export default function AddPeople(props: any) {
   const token = Cookies.get("token");
   const navigate = useNavigate();
 
+  console.log('check socket.id in AddPeople.tsx : ', props.socket.id);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
