@@ -65,7 +65,7 @@ CREATE TABLE "Message" (
     "id" SERIAL NOT NULL,
     "sentAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "messageContent" TEXT NOT NULL,
-    "dmId" INTEGER NOT NULL,
+    "dmId" INTEGER,
     "senderId" TEXT NOT NULL,
     "data" TEXT,
     "time" TEXT,
@@ -134,21 +134,6 @@ CREATE TABLE "RoomMember" (
 );
 
 -- CreateTable
-CREATE TABLE "ChatRoom" (
-    "id" SERIAL NOT NULL,
-    "roomName" TEXT NOT NULL,
-    "timeCreate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "admins" TEXT[],
-    "mutedUsers" TEXT[],
-    "bannedUsers" TEXT[],
-    "isDm" BOOLEAN NOT NULL DEFAULT false,
-    "status" TEXT NOT NULL DEFAULT 'public',
-    "password" TEXT,
-
-    CONSTRAINT "ChatRoom_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "_friends" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
@@ -178,12 +163,6 @@ CREATE TABLE "_participants" (
     "B" INTEGER NOT NULL
 );
 
--- CreateTable
-CREATE TABLE "_userInChatRoom" (
-    "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -195,9 +174,6 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_displayname_key" ON "User"("displayname");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ChatRoom_roomName_key" ON "ChatRoom"("roomName");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_friends_AB_unique" ON "_friends"("A", "B");
@@ -229,17 +205,11 @@ CREATE UNIQUE INDEX "_participants_AB_unique" ON "_participants"("A", "B");
 -- CreateIndex
 CREATE INDEX "_participants_B_index" ON "_participants"("B");
 
--- CreateIndex
-CREATE UNIQUE INDEX "_userInChatRoom_AB_unique" ON "_userInChatRoom"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_userInChatRoom_B_index" ON "_userInChatRoom"("B");
-
 -- AddForeignKey
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_reciever_fkey" FOREIGN KEY ("reciever") REFERENCES "User"("username") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Message" ADD CONSTRAINT "Message_dmId_fkey" FOREIGN KEY ("dmId") REFERENCES "DM"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Message" ADD CONSTRAINT "Message_dmId_fkey" FOREIGN KEY ("dmId") REFERENCES "DM"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Message" ADD CONSTRAINT "Message_senderId_fkey" FOREIGN KEY ("senderId") REFERENCES "User"("username") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -248,13 +218,10 @@ ALTER TABLE "Message" ADD CONSTRAINT "Message_senderId_fkey" FOREIGN KEY ("sende
 ALTER TABLE "Message" ADD CONSTRAINT "Message_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Message" ADD CONSTRAINT "MessageRoomData" FOREIGN KEY ("roomId") REFERENCES "ChatRoom"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "RoomMember" ADD CONSTRAINT "RoomMember_RoomId_fkey" FOREIGN KEY ("RoomId") REFERENCES "Room"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "RoomMember" ADD CONSTRAINT "RoomMember_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "User"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "RoomMember" ADD CONSTRAINT "RoomMember_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "User"("username") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_friends" ADD CONSTRAINT "_friends_A_fkey" FOREIGN KEY ("A") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -285,9 +252,3 @@ ALTER TABLE "_participants" ADD CONSTRAINT "_participants_A_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "_participants" ADD CONSTRAINT "_participants_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_userInChatRoom" ADD CONSTRAINT "_userInChatRoom_A_fkey" FOREIGN KEY ("A") REFERENCES "ChatRoom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_userInChatRoom" ADD CONSTRAINT "_userInChatRoom_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

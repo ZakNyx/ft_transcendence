@@ -10,8 +10,6 @@ COPY . .
 
 RUN npx prisma generate
 
-RUN sleep 10
-
-RUN npx prisma migrate dev --name init
+ENTRYPOINT [ "sh" , "script.sh"]
 
 CMD ["npm", "run", "start:dev"]
