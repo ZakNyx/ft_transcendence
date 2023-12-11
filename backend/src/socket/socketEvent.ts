@@ -146,6 +146,7 @@ export class SocketEvent  {
                     Client.join(`${i}`);
                     this.Rooms[i].client1.id = Client.id;
                     this.Rooms[i].client1.socket = Client;
+                    Client.emit('joined', i);
                     console.log('check new socket now : ', this.Rooms[i].client1.id);
                 }
                 if (this.Rooms[i].client2 && this.Rooms[i].client2.id === PreviousId) {
@@ -226,8 +227,6 @@ export class SocketEvent  {
                     this.RoomNum++;
                 }
             }
-            // if (this.Rooms[this.RoomNum].client2) {
-            // }
         }
         catch (err) {
             console.log(`Error123: ${err}`);
@@ -354,7 +353,7 @@ export class SocketEvent  {
             const {_room, gamedata} = data;
             const token = client.handshake.headers.authorization.slice(7);
             const userObj = this.jwtService.verify(token); 
-            // console.log('checking _room in demand event: ', _room);
+            console.log('checking _room in demand event: ', _room);
             if (this.Rooms[_room] && this.Rooms[_room].IsFull) {
                 if (this.Rooms[_room].setVars === false) {
                     this.Rooms[_room].setVars = true;
@@ -493,6 +492,7 @@ export class SocketEvent  {
         if (this.Rooms[room] && !this.Rooms[room].client1.inGame) {
             if (this.Rooms[room].client1.id === client.id) {
                 this.Rooms[room].client1.inQueue = false;
+                this.Rooms[room].client2.inQueue = false;
                 if (this.SocketsByUser.has(this.Rooms[room].client1.token))
                     this.SocketsByUser.delete(this.Rooms[room].client1.token);
                 this.Rooms[room].client1.socket.leave(`${room}`);

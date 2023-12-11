@@ -138,9 +138,9 @@ const GroupConveComponent = (props: any) => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   useEffect(() => {
 

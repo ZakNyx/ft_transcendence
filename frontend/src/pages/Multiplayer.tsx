@@ -5,7 +5,7 @@ import { OrbitControls, RoundedBox, Sphere } from "@react-three/drei";
 import { DoubleSide } from "three";
 import EndGame from "./EndGame";
 import RotatingButton from "./RotatingButton";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
 import { setGameId, setMyGameOppName } from "./variables";
 
@@ -209,6 +209,8 @@ const leaveQueue = (props: any) => {
   if (props.socket) {
     props.socket.emit('leaveQueue', props.roomId);
   }
+  // const navigate = useNavigate();
+  // navigate('/home');
 }
 
 const RotatedCircle: React.FC<any> = (props) => {
@@ -248,7 +250,7 @@ export default function Multiplayer() {
 
   const [result, setResult] = useState<string>("");
 
-  const [RoomNumber, setRoomNumber] = useState<number>(-1);
+  const [RoomNumber, setRoomNumber] = useState<number>(0);
   const [token, setToken] = useState<string | null>(null);
 
   const [myScore, setmyScore] = useState<number>(0);
@@ -281,7 +283,6 @@ export default function Multiplayer() {
   };
 
   useEffect(() => {
-    console.log("checking IsLeavingQueueWithButton : ", isleavingQueueWithButton);
     if (socket) {
       socket.on("joined", (RoomId: number) => {
         console.log("joined event received with this roomId : ", RoomId);
@@ -290,7 +291,7 @@ export default function Multiplayer() {
 
       socket.on("gameStarted", (data: {gamedata: GameData, OppName: string}) => {
         const {gamedata, OppName} = data;
-        console.log("game started :)");
+        console.log("game started :) in this room : ");
         setGameId(gamedata.gameId);
         setGameData(gamedata);
         setOppUsername(OppName);
@@ -368,7 +369,6 @@ export default function Multiplayer() {
     if (isConnected && IsGameStarted && !IsGameEnded) {
       return (
         <div className="">
-          {/* <NavBar /> */}
           <ScoreBar
             score={myScore}
             enemy_score={enemyScore}
