@@ -13,6 +13,7 @@ services:
   backend:
     build: 
       context: ./backend
+    image: backend
     container_name: backend
     networks:
       - transcendence
@@ -26,6 +27,7 @@ services:
   frontend:
     build: 
       context: ./frontend
+    image: frontend
     container_name: frontend
     networks:
       - transcendence
