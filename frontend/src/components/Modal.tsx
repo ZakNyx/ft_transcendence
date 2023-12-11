@@ -112,6 +112,7 @@ function Modal() {
           const expires = `expires=${expirationDate.toUTCString()}`;
           document.cookie = `2faValidated=true; ${expires}; path=/;`;
           console.log("2FA validated:", response.data);
+          window.location.reload();
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
@@ -137,6 +138,7 @@ function Modal() {
           );
           document.cookie = "2faValidated=true; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           console.log("2FA disabled:", response.data);
+          window.location.reload();
         } catch (error) {
           console.error("Error fetching user data:", error);
         }

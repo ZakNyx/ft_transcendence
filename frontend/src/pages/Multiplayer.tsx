@@ -5,7 +5,7 @@ import { OrbitControls, RoundedBox, Sphere } from "@react-three/drei";
 import { DoubleSide } from "three";
 import EndGame from "./EndGame";
 import RotatingButton from "./RotatingButton";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import ScoreBar from "../components/ScoreBar";
 import { setGameId, setMyGameOppName } from "./variables";
 
@@ -221,10 +221,12 @@ const CallEverything = (props: any) => {
 };
 
 const leaveQueue = (props: any) => {
-  if (props.socket) {
-    props.socket.emit("leaveQueue", props.roomId);
-  }
-};
+  // if (props.socket) {
+  //   props.socket.emit('leaveQueue', props.roomId);
+  // }
+  const navigate = useNavigate();
+  navigate('/home');
+}
 
 const RotatedCircle: React.FC<any> = (props) => {
   props.socket.emit("InQueue", props.roomId);
@@ -263,7 +265,7 @@ export default function Multiplayer() {
 
   const [result, setResult] = useState<string>("");
 
-  const [RoomNumber, setRoomNumber] = useState<number>(-1);
+  const [RoomNumber, setRoomNumber] = useState<number>(0);
   const [token, setToken] = useState<string | null>(null);
 
   const [myScore, setmyScore] = useState<number>(0);
@@ -296,37 +298,26 @@ export default function Multiplayer() {
   };
 
   useEffect(() => {
-    console.log(
-      "checking IsLeavingQueueWithButton : ",
-      isleavingQueueWithButton,
-    );
     if (socket) {
       socket.on("joined", (RoomId: number) => {
         console.log("joined event received with this roomId : ", RoomId);
         setRoomNumber(RoomId);
       });
 
-      socket.on(
-        "gameStarted",
-        (data: { gamedata: GameData; OppName: string }) => {
-          const { gamedata, OppName } = data;
-          console.log("game started :)");
-          setGameId(gamedata.gameId);
-          setGameData(gamedata);
-          setOppUsername(OppName);
-          setMyGameOppName(OppName);
-          setInGame(true);
-          setIsGameStarted(true);
-        },
-      );
+      socket.on("gameStarted", (data: {gamedata: GameData, OppName: string}) => {
+        const {gamedata, OppName} = data;
+        console.log("game started :) in this room : ");
+        setGameId(gamedata.gameId);
+        setGameData(gamedata);
+        setOppUsername(OppName);
+        setMyGameOppName(OppName);
+        setInGame(true);
+        setIsGameStarted(true);
+      });
 
       socket.on("InGame", () => {
         setStillInGame(true);
-      });
-
-      // socket.on('leavingQueue', () => {
-      //   socket.emit('leaveQueue', RoomNumber);
-      // })
+      })
 
       socket.on("gameEnded", () => {
         console.log("game ended nod tga3ad");
@@ -360,19 +351,13 @@ export default function Multiplayer() {
       console.log("multiGame comp unmounted!!");
       if (socket) {
         if (InGame) {
-          // console.log('leaveAndStillInGame event is sent to backend');
-          socket.emit("leaveAndStillInGame", { _room: RoomNumber });
+          socket.emit('leaveAndStillInGame', {_room: RoomNumber});
         }
-        // else {
-        //   socket.emit("leaveQueue", RoomNumber);
-        // }
-        // console.log('game comp unmounted');
         socket.off("joined");
         socket.off("gameStarted");
         socket.off("gameEnded");
         socket.off("won");
         socket.off("lost");
-        // socket.disconnect();
       }
     };
   }, [RoomNumber, IsGameStarted, socket, isleavingQueueWithButton]);
@@ -414,25 +399,17 @@ export default function Multiplayer() {
       );
     } else if (isConnected && StillInGame) {
       return (
-        //background-image removed
         <div className="h-screen no-scroll">
-          {/* <NavBar /> */}
           <div className="App h-screen flex flex-col items-center justify-center">
             <h2>You are already in game, go finish it first.</h2>
           </div>
         </div>
       );
-    } else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
-      // console.log(`check result before send it to EndGame component : ${result}`);
-      return (
-        <EndGame
-          result={result}
-          socket={socket}
-          gamedata={gameData}
-          roomId={RoomNumber}
-        />
-      );
-    } else if (isConnected && !IsGameStarted) {
+    }
+    else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
+      return <EndGame result={result} socket={socket} gamedata={gameData} roomId={RoomNumber} />;
+    }
+    else if (isConnected && !IsGameStarted) {
       return (
         <div className="h-screen no-scroll">
           <div className="App h-screen flex flex-col items-center justify-center">

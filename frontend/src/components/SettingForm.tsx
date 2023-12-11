@@ -92,6 +92,7 @@ export default function SettingForm() {
           background: "#252526",
           timer: 2000,
         });
+        window.location.reload();
       }
     } catch (error: any) {
       console.error("Error uploading user picture:", error);
@@ -129,6 +130,7 @@ export default function SettingForm() {
           background: "#252526",
           timer: 2000,
         });
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error deleting user picture:", error);
@@ -171,6 +173,7 @@ export default function SettingForm() {
           timer: 2000,
         });
         setUserdisplayname("");
+        window.location.reload();
       }
     } catch (error: any) {
       console.error("Error Changing Display Name:", error);

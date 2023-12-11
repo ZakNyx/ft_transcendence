@@ -96,6 +96,7 @@ const Validate: React.FC = () => {
         document.cookie = `2faValidated=true; ${expires}; path=/;`;
         console.log("2FA validated:", response.data);
         close();
+        // window.location.reload();
       } catch (error: any) {
         if (error.response && error.response.status == 400) {
           Swal.fire({

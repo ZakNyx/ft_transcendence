@@ -63,7 +63,6 @@ export class SocketEvent  {
     }
 
     async updateGameResult(gameId: number, player1Score: string, player2Score: string) {
-        // Access the Prisma client directly from this.prisma
         const prisma = this.prisma;
 
         // Update the game record in the database
@@ -146,6 +145,7 @@ export class SocketEvent  {
                     Client.join(`${i}`);
                     this.Rooms[i].client1.id = Client.id;
                     this.Rooms[i].client1.socket = Client;
+                    Client.emit('joined', i);
                     console.log('check new socket now : ', this.Rooms[i].client1.id);
                 }
                 if (this.Rooms[i].client2 && this.Rooms[i].client2.id === PreviousId) {
@@ -226,8 +226,6 @@ export class SocketEvent  {
                     this.RoomNum++;
                 }
             }
-            // if (this.Rooms[this.RoomNum].client2) {
-            // }
         }
         catch (err) {
             console.log(`Error123: ${err}`);
@@ -348,13 +346,31 @@ export class SocketEvent  {
         }
     }
 
+    updatingInGameValue = async (client1: string, client2: string) => {
+        await this.prismaService.user.update({
+            where: {
+                username: client1,
+            },
+            data: {
+                status: 'INGAME',
+            },
+        })
+        await this.prismaService.user.update({
+            where: {
+                username: client2,
+            },
+            data: {
+                status: 'INGAME',
+            },
+        })
+    }
+
     @SubscribeMessage('demand')
     handleBallDemand(@ConnectedSocket() client: Socket,  @MessageBody() data: {_room: number, gamedata: GameData}) {
         try {
             const {_room, gamedata} = data;
             const token = client.handshake.headers.authorization.slice(7);
             const userObj = this.jwtService.verify(token); 
-            // console.log('checking _room in demand event: ', _room);
             if (this.Rooms[_room] && this.Rooms[_room].IsFull) {
                 if (this.Rooms[_room].setVars === false) {
                     this.Rooms[_room].setVars = true;
@@ -363,6 +379,7 @@ export class SocketEvent  {
                     this.Rooms[_room].client2.inGame = true;
                     this.Rooms[_room].client2.inQueue = false;
                     this.Rooms[_room].game.IsStarted = true;
+                    this.updatingInGameValue(this.Rooms[_room].client1.username, this.Rooms[_room].client2.username);
                 }
                 if (this.SocketsByUser.has(token)) {
                     if ((this.SocketsByUser.get(token) === client.id) && (_room < this.RoomNum &&
@@ -404,7 +421,8 @@ export class SocketEvent  {
                     },
                     gamesPlayed: {
                         increment: 1,
-                    }
+                    },
+                    status: 'ONLINE'
                 }
             })
             const user = await prisma.user.findUnique({
@@ -432,7 +450,9 @@ export class SocketEvent  {
                     where: {
                         username: room.loser,
                     },
-                    data,
+                    data: {
+                        status: 'ONLINE',
+                    }
                 });
                 room.isDatabaseUpdated = false;
             }
@@ -493,6 +513,7 @@ export class SocketEvent  {
         if (this.Rooms[room] && !this.Rooms[room].client1.inGame) {
             if (this.Rooms[room].client1.id === client.id) {
                 this.Rooms[room].client1.inQueue = false;
+                if (this.Rooms[room].client2) this.Rooms[room].client2.inQueue = false;
                 if (this.SocketsByUser.has(this.Rooms[room].client1.token))
                     this.SocketsByUser.delete(this.Rooms[room].client1.token);
                 this.Rooms[room].client1.socket.leave(`${room}`);

@@ -6,7 +6,7 @@ import axios from "axios";
 import { initializeSocket } from "./socketManager";
 import Validate from "../components/Validate";
 import Notification from "./Notification";
-import { RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../pages/variables";
+import { InitSocket, RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../pages/variables";
 import Swal from "sweetalert2";
 import { Socket } from "socket.io-client";
 
@@ -47,6 +47,7 @@ function NavBar() {
   const isLoginPage = location.pathname === "/"
 
   const navigate = useNavigate();
+  InitSocket();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const openDropdown = () => {
@@ -126,8 +127,14 @@ function NavBar() {
         }
       }
     };
+    const pollInterval = setInterval(() => {
+      fetchNotifications();
+    }, 700);
 
     fetchNotifications();
+    return (() => {
+      clearInterval(pollInterval);
+    })
   }, [notifications]);
 
   const closeDropdown = () => {
