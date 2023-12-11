@@ -121,7 +121,7 @@ const ContactBar = (barData: any) => {
   
   if (invitationReceived) {
     Swal.fire({
-      title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
+      title: `${myGameOppName} invited you to a game!`,
       showDenyButton: true,
       showCancelButton: false,
       allowOutsideClick: false,

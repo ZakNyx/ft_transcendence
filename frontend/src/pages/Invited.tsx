@@ -277,10 +277,10 @@ export default function Invited() {
   //   setRoomNumber(RoomId);
   // }
 
-  const handleSettingsChange = (paddleColor: string, ballColor: string) => {
-    setSettings({ paddleColor, ballColor });
-    setChangeSettings(true);
-  };
+  // const handleSettingsChange = (paddleColor: string, ballColor: string) => {
+  //   setSettings({ paddleColor, ballColor });
+  //   setChangeSettings(true);
+  // };
 
   useEffect(() => {
     if (socket) {
@@ -294,47 +294,14 @@ export default function Invited() {
       //   setRoomNumber(RoomId);
       // });
 
-      socket.on("gameStarted", (RoomId: number) => {
+      socket.on("gameStarted", (data: {roomId: number, OppName: string}) => {
         console.log('game Started ;)');
+        console.log("my Opponent name is : ", data.OppName);
+        const {roomId, OppName} = data;
         setInGame(true);
         setIsGameStarted(true);
-        setRoomNumber(RoomId);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
+        setRoomNumber(roomId);
+        setOppUsername(OppName);
       });
 
       socket.on('InGame', () => {

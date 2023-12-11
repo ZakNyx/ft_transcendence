@@ -75,7 +75,7 @@ export class InvitedEvent  {
 
     //Moving the players paddle
     MoveEverthing = (x: number, room: Room, clientId: string) => {
-        if (room.IsFull) {
+        if (room && room.IsFull) {
             this.MovePaddles(x, room, clientId);
         }
     }
@@ -354,14 +354,37 @@ export class InvitedEvent  {
     handlePaddleMovement(@ConnectedSocket() client: Socket, @MessageBody() data: { x: number, room: number }) {
         const {x, room} = data;
         const token = client.handshake.headers.authorization.slice(7);
+        // console.log('checking roomId in paddleMovement : ', room);
         if (this.SocketsByUser.has(token)) {
-            if (this.SocketsByUser.get(token) === client.id)
+            if (this.SocketsByUser.get(token) === client.id) {
                 this.MoveEverthing(x, this.Rooms[room], client.id);
+            }
         }
     }
 
     @SubscribeMessage('InvitedCompCalled')
     handleInvitedCompCalled(@ConnectedSocket() client: Socket){
-        this.server.to(`${client.id}`).emit('gameStarted', (this.RoomNum - 1));
+        // const token: string = client.handshake.headers.authorization.slice(7);
+        // if (this.SocketsByUser.has(token)) {
+
+        // }
+        if (this.Rooms[this.RoomNum - 1]) {
+            if (this.Rooms[this.RoomNum - 1].client1 || this.Rooms[this.RoomNum - 1].client2) {
+                if (this.Rooms[this.RoomNum - 1].client1.id === client.id) {
+                    this.server.to(`${client.id}`).emit('gameStarted', {
+                        roomId: this.RoomNum - 1,
+                        OppName: this.Rooms[this.RoomNum - 1].client2.username
+                    });
+                }
+                else if (this.Rooms[this.RoomNum - 1].client2 
+                    && this.Rooms[this.RoomNum - 1].client2.id === client.id) {
+                        this.server.to(`${client.id}`).emit('gameStarted', {
+                            roomId: this.RoomNum - 1,
+                            OppName: this.Rooms[this.RoomNum - 1].client1.username
+                        }); 
+                }
+            }
+            // if () this.Rooms[this.RoomNum - 1].client2.id === client.id; 
+        }
     }
 }
