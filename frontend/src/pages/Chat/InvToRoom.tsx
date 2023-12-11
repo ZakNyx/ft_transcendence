@@ -39,15 +39,7 @@ const InvToRoomButton = (props: any) => {
           />
 
           <div
-            className="groupName text-black dark:text-white w-full ml-[20px]"
-            style={{
-              fontFamily: "poppins",
-              fontSize: "15px",
-              fontStyle: "normal",
-              fontWeight: 600,
-              lineHeight: "normal",
-              letterSpacing: "0.75px",
-            }}
+            className="groupName text-white w-full ml-[20px]"
           >
             {props.dataState.dataState.displayname}
           </div>
@@ -58,18 +50,10 @@ const InvToRoomButton = (props: any) => {
             type="submit"
             disabled={isButtonDisabled}
             onClick={toggleDiv}
-            className={`w-[50px] h-[30px] bg-[#6F37CF] rounded-[25%] mr-[10px] hover:dark:shadow-lg hover:shadow-lg ${isButtonDisabled} ? 'bg-[#9d88c0] hover:shadow-none' : 'enabled-button' `}
+            className={`w-[50px] h-[30px] bg-npc-purple hover:bg-purple-hover rounded-xl text-sm mr-[10px] hover:dark:shadow-lg hover:shadow-lg ${isButtonDisabled} ? 'bg-npc-gray hover:shadow-none' : 'enabled-button' `}
           >
             <div
-              className="w-full h-full text-white text-center mt-[5px]"
-              style={{
-                fontFamily: "poppins",
-                fontSize: "14px",
-                fontStyle: "normal",
-                fontWeight: 600,
-                lineHeight: "normal",
-                letterSpacing: "0.13px",
-              }}
+              className="w-full h-full text-gray-200 text-center mt-[5px]"
             >
               Invite
             </div>
@@ -84,8 +68,8 @@ function ExistinUser(props: any) {
   return (
     <div
       key={props.index}
-      className="w-[350px] max-h-[80px] m-auto my-[40px] p-auto border-3 rounded-[25px] border-solid bg-[#EEEEFF]
-     dark:bg-[#1A1C26] shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]"
+      className="w-[350px] max-h-[80px] m-auto my-[40px] p-auto border-3 rounded-2xl border-solid
+     bg-npc-gray shadow-xl dark:shadow-[0_25px_5px_-15px_rgba(20,0,50,0.3)]"
     >
       <InvToRoomButton dataState={props} />
     </div>

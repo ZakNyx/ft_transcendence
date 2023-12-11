@@ -73,15 +73,6 @@ export default function FriendList() {
               <p className="text-gray-200 text-sm sm:text-base md:text-lg xl:text-xl 2xl:text-2xl max-w-[6rem] break-words hover:text-gray-400 active :text-gray-500">
                 {friend.displayname}  
               </p>
-                <button
-                  className="p-1 md:p-2 bg-npc-purple hover:bg-purple-hover text-gray-200 text-xs md:text-base rounded-md"
-                  onClick={() => {
-                    setMyGameOppName(friend.username);
-                    setIsSent(true);
-                  }}
-                >
-                  Invite Game
-                </button>
             </Link>
           ))}
         </div>

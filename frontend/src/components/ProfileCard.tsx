@@ -135,14 +135,6 @@ export default function ProfileCard() {
               />
               Elo - {user ? user.elo : "..."}
             </h2>
-            <h2 className= "max-w-[10rem] pl-3 break-words text-white font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-2xl flex items-center">
-              <img
-                className="w-6 h-6 mr-2"
-                src="../../public/images/rank.png"
-                alt="Medal"
-              />
-              Rank - #1
-            </h2>
           </div>
         </div>
         <div className="">
