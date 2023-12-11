@@ -127,8 +127,14 @@ function NavBar() {
         }
       }
     };
+    const pollInterval = setInterval(() => {
+      fetchNotifications();
+    }, 700);
 
     fetchNotifications();
+    return (() => {
+      clearInterval(pollInterval);
+    })
   }, [notifications]);
 
   const closeDropdown = () => {

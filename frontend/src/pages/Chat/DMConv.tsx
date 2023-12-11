@@ -255,18 +255,18 @@ const DMConveComponent = (props: any) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (receivedData) {
-  //     fetchData();
-  //   }
-  // },[receivedData])
+  useEffect(() => {
+    if (receivedData) {
+      fetchData();
+    }
+  },[receivedData])
 
   useEffect(() => {
     if (receivedData) {
 
-      const pollInterval = setInterval(() => {
-        fetchData();
-      }, 700);
+      // const pollInterval = setInterval(() => {
+      //   fetchData();
+      // }, 700);
 
       props.socket.on("dmDeleted", () => {
         const path: string =
@@ -301,7 +301,7 @@ const DMConveComponent = (props: any) => {
       props.socket.on("createdMessage", messageListener);
 
       return () => {
-        clearInterval(pollInterval);
+        // clearInterval(pollInterval);
         props.socket.removeListener("createdMessage", messageListener);
       };
     }
