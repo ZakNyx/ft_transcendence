@@ -42,7 +42,7 @@ function DMsComponent (props:any) {
     })
     props.socket.on("createdDm", () => {
       fetchData();
-      window.location.reload();
+      // window.location.reload();
     });
     props.socket.on("createdMessage", () => {
       fetchData();

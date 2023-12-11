@@ -11,7 +11,6 @@ interface PropsType {
 }
 
 const Chat = (props: PropsType) => {
-  InitSocket();
   const userId = props.userId;
   if (props.socket) console.log('check props.socket.id in Chat Comp : ', props.socket.id);
 

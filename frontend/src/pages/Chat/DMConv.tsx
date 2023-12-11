@@ -61,6 +61,15 @@ const ContactBar = (barData: any) => {
         // Set the user data in the state
         setOpponent(response.data);
         console.log('check Opponent status : ', response.data.status);
+        if (response.data.status == "ONLINE") {
+          sock?.emit("sendInvitationToServer", barData.barData.participants[0].displayname);
+          setIsSent(true);
+        }
+        if (response.data.status == 'OFFLINE') {
+          Swal.fire({
+            title: `${myGameOppName} is Offline!`
+          });
+        }
       } catch (error: any) {
         if (error.response && error.response.status === 401) {
           // Redirect to localhost:5137/ if Axios returns a 401 error
@@ -168,18 +177,6 @@ const ContactBar = (barData: any) => {
             onClick={() => {
               setMyGameOppName(barData.barData.participants[0].displayname);
               fetchUserData();
-
-              if (opponent?.status == "ONLINE") {
-                sock?.emit("sendInvitationToServer", barData.barData.participants[0].displayname);
-                setIsSent(true);
-              }
-
-              else if (opponent?.status == 'OFFLINE') {
-                Swal.fire({
-                  title: `${myGameOppName} is Offline!`
-                });
-              }
-
             }}
             className={` bg-npc-purple hover:bg-purple-hover   transition-all rounded-xl mr-3 hover:dark:shadow-lg hover:shadow-lg mt-5 pb-1`}
           >

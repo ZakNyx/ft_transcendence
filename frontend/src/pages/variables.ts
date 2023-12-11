@@ -65,7 +65,7 @@ export  function InitSocket() {
 
         test.on('connect', () => {
             sock = test;
-            // console.log(`checking sock.id in variables: ${sock?.id}`);
+            console.log(`checking sock.id in variables: ${sock?.id}`);
             setSocket(test);
         })
         isSocketSet = true;
