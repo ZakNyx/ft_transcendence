@@ -140,7 +140,7 @@ function BannedList (props:any)
     if (banData)
     {
         return (
-            <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
+            <div className="w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
                 <div className='w-full h-full flex-wrap justify-center'>
                 <div className="w-full h-[10%] m-[1px] flex items-center justify-center text-gray-200 text-center text-xl md:text-2xl tracking-wider">
                    Banned Users

@@ -14,7 +14,7 @@ BPurple=\033[1;35m
 all : help
 
 up : 
-	@docker compose up -d
+	@docker-compose up --build -d
 	@echo "$(C_GREEN)[PONG's up!]$(C_RES)"
 
 down : 

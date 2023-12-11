@@ -63,7 +63,7 @@ export default function Leaderboard() {
         {data &&
           data.map((item, index) => (
             <div
-              key={item.userID}
+              key={index}
               className="flex rounded-2xl p-4 mb-4 justify-between bg-npc-gray shadow-[0px_2px_4px_2px_#00000006]"
             >
               <div className="flex flex-col justify-center mr-4">
@@ -127,7 +127,7 @@ export default function Leaderboard() {
               <div className="flex flex-col justify-center ">
                 <Link to={`/profile/${item.username}`}>
                   <img
-                    src="../../public/images/greaterthan.svg"
+                    src="../../images/greaterthan.svg"
                     className="w-8 md:w-10 lg:w-12 xl:w-12 h-8 md:h-10 lg:h-12 xl:h-12"
                     alt="greater than symbol"
                   ></img>

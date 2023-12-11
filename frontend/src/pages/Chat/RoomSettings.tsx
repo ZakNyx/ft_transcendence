@@ -1,9 +1,9 @@
 import { useLocation } from "react-router-dom";
-import logoImg from "../../../public/images/panda.svg";
+import logoImg from "../../../images/panda.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import BannedUsers from "../../../public/images/userBanned.svg";
+import BannedUsers from "../../../images/userBanned.svg";
 import Cookies from "js-cookie";
 
 const GroupBar = (props: any) => {
@@ -77,13 +77,13 @@ const ParticipantOwner = (props: any) => {
     >
       <div className="w-full h-full flex p-[auto] items-center justify-start">
         <img
-          className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px] mr-[25px]"
-          src={props.roomState.image}
+          className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px] mr-[25px] mt-3"
+          src={props.roomState.picture}
           alt={""}
         />
 
         <div className=" text-black dark:text-white w-[20%] h-full flex items-center">
-          {props.roomState.username}
+          {props.roomState.displayname}
         </div>
         <div className="w-full h-full flex-wrap items-center">
           <div className="w-full h-full flex items-center justify-end">
@@ -204,13 +204,13 @@ const ParticipantAdmin = (props: any) => {
     >
       <div className="w-full h-full flex p-[auto] items-center justify-start">
         <img
-          className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px] mr-[25px]"
-          src={props.roomState.image}
+          className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px] mr-[25px] mt-3"
+          src={props.roomState.picture}
           alt={""}
         />
 
         <div className=" text-black dark:text-white w-full h-full flex items-center ">
-          {props.roomState.username}
+          {props.roomState.displayname}
         </div>
         <div className="w-full h-full flex-wrap justify-end items-center">
           <div className="w-full h-full flex items-center justify-end">
@@ -298,13 +298,13 @@ const ParticipantAdmin1 = (props: any) => {
     >
       <div className="w-full h-full flex p-[auto] items-center justify-start">
         <img
-          className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px] mr-[25px]"
-          src={props.roomState.image}
+          className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px] mr-[25px] mt-3"
+          src={props.roomState.picture}
           alt={""}
         />
 
         <div className=" text-black dark:text-white w-full h-full flex items-center">
-          {props.roomState.username}
+          {props.roomState.displayname}
         </div>
         <div className="w-[30%] h-full flex items-center justify-end mr-[30px]">
           <div
@@ -330,13 +330,13 @@ const ParticipantUser = (props: any) => {
     >
       <div className="w-full h-full flex p-[auto] items-center justify-start">
         <img
-          className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px] mr-[25px]"
-          src={props.roomState.image}
+          className="logoImg rounded-[50px] ml-[30px] w-[40px] h-[40px] mr-[25px] mt-3"
+          src={props.roomState.picture}
           alt={""}
         />
 
         <div className=" text-black dark:text-white w-full h-full flex items-center">
-          {props.roomState.username}
+          {props.roomState.displayname}
         </div>
         <div className="w-[20%] h-full flex items-center justify-around">
           <div
@@ -569,7 +569,7 @@ const RoomSettings = (props: any) => {
       }
     };
     return (
-      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
+      <div className="w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
         <div className="w-full h-full flex-wrap">
           <div className="w-full h-[11%] border-solid flex items-center font-semibold text-2xl tracking-wider ">
             <GroupBar roomState={roomState} socket={props.socket} />

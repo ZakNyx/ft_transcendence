@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import joystickSvg from "../../public/images/joystick.svg";
-import robotSvg from "../../public/images/robot.svg";
+import joystickSvg from "../../images/joystick.svg";
+import robotSvg from "../../images/robot.svg";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { InitSocket, setUsername } from "./variables";

@@ -22,7 +22,7 @@ export default function LoginPage() {
       {/* Logo */}
       <img
         className="absolute top-2 left-2 w-32 h-auto"
-        src="../../public/images/pingpong.png"
+        src="../../images/pingpong.png"
         alt="Ping Pong"
       />
 
@@ -30,7 +30,7 @@ export default function LoginPage() {
       <div className="col-span-2 row-span-4 row-start-2 flex justify-center items-center animate-float">
         <img
           className="max-w-full max-h-full"
-          src="../../public/images/PPimg.png"
+          src="../../images/PPimg.png"
           alt="Ping pong bats and balls"
         />
       </div>
@@ -45,7 +45,7 @@ export default function LoginPage() {
             {/* 42 Logo */}
             <img
               className="w-10 h-10 mr-4"
-              src="../../public/images/42_Logo.svg.png"
+              src="../../images/42_Logo.svg.png"
               alt="42 Logo"
             />
             Sign in with 42

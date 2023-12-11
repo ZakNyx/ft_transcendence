@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoImg from "../../../public/images/panda.svg"
+import logoImg from "../../../images/panda.svg"
 
 
   const GroupComp = (groupData:any) => {

@@ -63,7 +63,7 @@ const MatchHistory = () => {
           setUserPicture(response.data.picture);
         } else {
           // Handle the case when there is no token (e.g., display a placeholder image)
-          setUserPicture("../../public/images/default.png");
+          setUserPicture("../../images/default.png");
         }
       } catch (error) {
         // Handle errors gracefully (e.g., display an error message to the user)
@@ -96,7 +96,7 @@ const MatchHistory = () => {
   //         setOppPicture(response.data.picture);
   //       } else {
   //         // Handle the case when there is no token (e.g., display a placeholder image)
-  //         setOppPicture("../../public/images/default.png");
+  //         setOppPicture("../../images/default.png");
   //       }
   //     } catch (error) {
   //       // Handle errors gracefully (e.g., display an error message to the user)
@@ -154,7 +154,7 @@ const MatchHistory = () => {
             >
               <div className="flex items-center space-x-2">
                 <img
-                  src={userPicture || "../../public/images/default.png"}
+                  src={userPicture || "../../images/default.png"}
                   alt={`Your profile`}
                   className="w-12 h-12 rounded-full"
                 />
@@ -179,7 +179,7 @@ const MatchHistory = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <img
-                  src={getOpponentImage(match) || "../../public/images/default.png"}
+                  src={getOpponentImage(match) || "../../images/default.png"}
                   alt={`Your profile`}
                   className="w-12 h-12 rounded-full"
                 />

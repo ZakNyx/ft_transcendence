@@ -234,7 +234,7 @@ export default function SettingForm() {
               onClick={deleteProfilePicture}
               className="bg-red-500 hover:bg-red-600 text-gray-200 cursor-pointer rounded-full px-4 py-2 ml-3 transition"
             >
-              <img src="../../public/images/trash.svg" className="h-8 w-8" />
+              <img src="../../images/trash.svg" className="h-8 w-8" />
             </button>
           </div>
       </div>

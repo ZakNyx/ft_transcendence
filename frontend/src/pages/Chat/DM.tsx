@@ -29,7 +29,7 @@ const DMComp = (props: any) => {
             <div className="w-[70%] h-full ">
               <img
                 className="logoImg rounded-[50px] w-[40px] h-[40px]"
-                src={props.dmData[2][0].image}
+                src={props.dmData[2][0].picture}
                 alt={""}
               />
     

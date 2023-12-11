@@ -71,7 +71,7 @@ export default function Achievements() {
               {friend && (
                 <li className="flex items-center space-x-4 mb-4">
                   <img
-                    src="../../public/images/bronze.png"
+                    src="../../images/bronze.png"
                     alt="bronze"
                     className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl"
                   />
@@ -84,7 +84,7 @@ export default function Achievements() {
               {played && (
                 <li className="flex items-center space-x-4 mb-4">
                   <img
-                    src="../../public/images/silver.png"
+                    src="../../images/silver.png"
                     alt="silver"
                     className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl "
                   />
@@ -97,7 +97,7 @@ export default function Achievements() {
               {won && (
                 <li className="flex items-center space-x-4 mb-4">
                   <img
-                    src="../../public/images/gold.png"
+                    src="../../images/gold.png"
                     alt="gold"
                     className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl"
                   />

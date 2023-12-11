@@ -34,7 +34,7 @@ const InvToRoomButton = (props: any) => {
         <div className="w-full h-full flex items-center">
           <img
             className="logoImg rounded-[40px] w-[40px] h-[40px]"
-            src={props.dataState.dataState.image}
+            src={props.dataState.dataState.picture}
             alt={""}
           />
 
@@ -149,7 +149,7 @@ export default function invToRoom(props: any) {
 
   if (dataState) {
     return (
-      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
+      <div className="w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
         <div className="w-full h-full flex-wrap justify-center">
           <div className="w-full h-1/12 m-1 flex items-center justify-center text-gray-200 text-center font-bold text-xl md:text-3xl">
             Join a Room

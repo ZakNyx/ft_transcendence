@@ -69,7 +69,10 @@ const DrawBall = (props: any) => {
   const [ball, setBall] = useState([0, 0]);
 
   useFrame(() => {
-    props.socket.emit("demand", {_room: props.room, gamedata: props.gamedata});
+    props.socket.emit("demand", {
+      _room: props.room,
+      gamedata: props.gamedata,
+    });
   });
 
   useEffect(() => {
@@ -118,13 +121,11 @@ const OpponentPlayerPaddle = (props: any) => {
   );
 };
 
-const  SettingVars = (props: any) => {
-
+const SettingVars = (props: any) => {
   const paddleColorRef: React.RefObject<HTMLInputElement> =
     useRef<HTMLInputElement>(null);
   const ballColorRef: React.RefObject<HTMLInputElement> =
     useRef<HTMLInputElement>(null);
-
 
   const [paddleColor, setPaddleColor] = useState<string>(props.paddleColor);
   const [ballColor, setBallColor] = useState<string>(props.ballColor);
@@ -136,7 +137,7 @@ const  SettingVars = (props: any) => {
   };
 
   const handleBallColorChange = () => {
-    if (ballColorRef.current) { 
+    if (ballColorRef.current) {
       setBallColor(ballColorRef.current.value);
     }
   };
@@ -184,35 +185,49 @@ const  SettingVars = (props: any) => {
           ></input>
         </div>
         <div className="col-span-3 flex justify-center items-center mt-4">
-          <button 
+          <button
             onClick={handleSaveChanges}
-            className="p-1 bg-npc-purple hover:bg-purple-hover rounded-lg hover:translate-y-[-3px] text-white font-montserrat transition-all">
+            className="p-1 bg-npc-purple hover:bg-purple-hover rounded-lg hover:translate-y-[-3px] text-white font-montserrat transition-all"
+          >
             Save changes
           </button>
         </div>
       </div>
     </div>
   );
-}
+};
 
 const CallEverything = (props: any) => {
   return (
     <>
-      <PlayerPaddle socket={props.socket} roomId={props.roomId} paddlecolor={props.paddlecolor} gamedata={props.gameData}/>
-      <OpponentPlayerPaddle socket={props.socket} paddlecolor={props.paddlecolor} />
-      <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} gamedata={props.gamedata}/>
+      <PlayerPaddle
+        socket={props.socket}
+        roomId={props.roomId}
+        paddlecolor={props.paddlecolor}
+        gamedata={props.gameData}
+      />
+      <OpponentPlayerPaddle
+        socket={props.socket}
+        paddlecolor={props.paddlecolor}
+      />
+      <DrawBall
+        socket={props.socket}
+        room={props.roomId}
+        ballcolor={props.ballcolor}
+        gamedata={props.gamedata}
+      />
     </>
   );
 };
 
 const leaveQueue = (props: any) => {
   if (props.socket) {
-    props.socket.emit('leaveQueue', props.roomId);
+    props.socket.emit("leaveQueue", props.roomId);
   }
-}
+};
 
 const RotatedCircle: React.FC<any> = (props) => {
-  props.socket.emit('InQueue', props.roomId);
+  props.socket.emit("InQueue", props.roomId);
 
   return (
     <div className="h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -281,27 +296,33 @@ export default function Multiplayer() {
   };
 
   useEffect(() => {
-    console.log("checking IsLeavingQueueWithButton : ", isleavingQueueWithButton);
+    console.log(
+      "checking IsLeavingQueueWithButton : ",
+      isleavingQueueWithButton,
+    );
     if (socket) {
       socket.on("joined", (RoomId: number) => {
         console.log("joined event received with this roomId : ", RoomId);
         setRoomNumber(RoomId);
       });
 
-      socket.on("gameStarted", (data: {gamedata: GameData, OppName: string}) => {
-        const {gamedata, OppName} = data;
-        console.log("game started :)");
-        setGameId(gamedata.gameId);
-        setGameData(gamedata);
-        setOppUsername(OppName);
-        setMyGameOppName(OppName);
-        setInGame(true);
-        setIsGameStarted(true);
-      });
+      socket.on(
+        "gameStarted",
+        (data: { gamedata: GameData; OppName: string }) => {
+          const { gamedata, OppName } = data;
+          console.log("game started :)");
+          setGameId(gamedata.gameId);
+          setGameData(gamedata);
+          setOppUsername(OppName);
+          setMyGameOppName(OppName);
+          setInGame(true);
+          setIsGameStarted(true);
+        },
+      );
 
-      socket.on('InGame', () => {
+      socket.on("InGame", () => {
         setStillInGame(true);
-      })
+      });
 
       // socket.on('leavingQueue', () => {
       //   socket.emit('leaveQueue', RoomNumber);
@@ -315,30 +336,33 @@ export default function Multiplayer() {
       });
 
       socket.on("won", () => {
-        console.log('you won the game');
+        console.log("you won the game");
         setResult("won");
       });
 
       socket.on("lost", () => {
         setResult("lost");
-        console.log('you lost the game');
+        console.log("you lost the game");
       });
 
-      socket.on("Score", (data: { p1: number, p2: number, oppName: string }) => {
-        const { p1, p2, oppName } = data;
-        setmyScore(p1);
-        setenemyScore(p2);
-        setOppUsername(oppName);
-      });
+      socket.on(
+        "Score",
+        (data: { p1: number; p2: number; oppName: string }) => {
+          const { p1, p2, oppName } = data;
+          setmyScore(p1);
+          setenemyScore(p2);
+          setOppUsername(oppName);
+        },
+      );
     }
 
     return () => {
-      console.log('multiGame comp unmounted!!')
+      console.log("multiGame comp unmounted!!");
       if (socket) {
         if (InGame) {
           // console.log('leaveAndStillInGame event is sent to backend');
-          socket.emit('leaveAndStillInGame', {_room: RoomNumber});
-        } 
+          socket.emit("leaveAndStillInGame", { _room: RoomNumber });
+        }
         // else {
         //   socket.emit("leaveQueue", RoomNumber);
         // }
@@ -363,19 +387,17 @@ export default function Multiplayer() {
         />
       </div>
     );
-  }
-  else {
+  } else {
     if (isConnected && IsGameStarted && !IsGameEnded) {
       return (
-        <div className="">
-          {/* <NavBar /> */}
+        <div className="flex flex-col items-center justify-center h-screen mt-12">
           <ScoreBar
             score={myScore}
             enemy_score={enemyScore}
             you="you"
             opps={oppUsername}
           />
-          <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center">
+          <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center mb-6">
             <Canvas camera={{ position: [0.0005, 15, 0] }}>
               <OrbitControls enableRotate={false} enableZoom={true} />
               <PlayArea />
@@ -390,8 +412,7 @@ export default function Multiplayer() {
           </div>
         </div>
       );
-    }
-    else if (isConnected && StillInGame) {
+    } else if (isConnected && StillInGame) {
       return (
         //background-image removed
         <div className="h-screen no-scroll">
@@ -401,19 +422,29 @@ export default function Multiplayer() {
           </div>
         </div>
       );
-    }
-    else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
+    } else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
       // console.log(`check result before send it to EndGame component : ${result}`);
-      return <EndGame result={result} socket={socket} gamedata={gameData} roomId={RoomNumber} />;
-    }
-    else if (isConnected && !IsGameStarted) {
       return (
-          <div className="h-screen no-scroll">
-            <div className="App h-screen flex flex-col items-center justify-center">
-              <RotatedCircle socket={socket} roomId={RoomNumber} inGame={InGame} isGameStarted={IsGameStarted} />
-            </div>
+        <EndGame
+          result={result}
+          socket={socket}
+          gamedata={gameData}
+          roomId={RoomNumber}
+        />
+      );
+    } else if (isConnected && !IsGameStarted) {
+      return (
+        <div className="h-screen no-scroll">
+          <div className="App h-screen flex flex-col items-center justify-center">
+            <RotatedCircle
+              socket={socket}
+              roomId={RoomNumber}
+              inGame={InGame}
+              isGameStarted={IsGameStarted}
+            />
           </div>
-        );
+        </div>
+      );
     }
   }
 }

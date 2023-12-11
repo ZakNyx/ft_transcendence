@@ -110,13 +110,11 @@ const OpponentPlayerPaddle = (props: any) => {
   );
 };
 
-const  SettingVars = (props: any) => {
-
+const SettingVars = (props: any) => {
   const paddleColorRef: React.RefObject<HTMLInputElement> =
     useRef<HTMLInputElement>(null);
   const ballColorRef: React.RefObject<HTMLInputElement> =
     useRef<HTMLInputElement>(null);
-
 
   const [paddleColor, setPaddleColor] = useState<string>(props.paddleColor);
   const [ballColor, setBallColor] = useState<string>(props.ballColor);
@@ -128,7 +126,7 @@ const  SettingVars = (props: any) => {
   };
 
   const handleBallColorChange = () => {
-    if (ballColorRef.current) { 
+    if (ballColorRef.current) {
       setBallColor(ballColorRef.current.value);
     }
   };
@@ -177,32 +175,44 @@ const  SettingVars = (props: any) => {
           ></input>
         </div>
         <div className="col-span-3 flex justify-center items-center mt-4">
-          <button 
+          <button
             onClick={handleSaveChanges}
-            className="p-1 bg-npc-purple hover:bg-purple-hover rounded-lg hover:translate-y-[-3px] text-white font-montserrat transition-all">
+            className="p-1 bg-npc-purple hover:bg-purple-hover rounded-lg hover:translate-y-[-3px] text-white font-montserrat transition-all"
+          >
             Save changes
           </button>
         </div>
       </div>
     </div>
   );
-}
+};
 
 const CallEverything = (props: any) => {
   return (
     <>
-      <PlayerPaddle socket={props.socket} roomId={props.roomId} paddlecolor={props.paddlecolor}/>
-      <OpponentPlayerPaddle socket={props.socket} paddlecolor={props.paddlecolor} />
-      <DrawBall socket={props.socket} room={props.roomId} ballcolor={props.ballcolor} />
+      <PlayerPaddle
+        socket={props.socket}
+        roomId={props.roomId}
+        paddlecolor={props.paddlecolor}
+      />
+      <OpponentPlayerPaddle
+        socket={props.socket}
+        paddlecolor={props.paddlecolor}
+      />
+      <DrawBall
+        socket={props.socket}
+        room={props.roomId}
+        ballcolor={props.ballcolor}
+      />
     </>
   );
 };
 
 const leaveQueue = (props: any) => {
   if (props.socket) {
-    props.socket.emit('leaveQueue', props.roomId);
+    props.socket.emit("leaveQueue", props.roomId);
   }
-}
+};
 
 const RotatedCircle: React.FC<any> = (props) => {
   const [isInGame] = useState<boolean>(props.inGame);
@@ -265,11 +275,11 @@ export default function Invited() {
   if (!token) {
     setToken(notifToken);
   }
-  
+
   if (!socket && token) {
     setSocket(sock);
     setIsConnected(true);
-    sock?.emit('InvitedCompCalled');
+    sock?.emit("InvitedCompCalled");
   }
 
   // if (RoomNumber === -1){
@@ -284,7 +294,6 @@ export default function Invited() {
 
   useEffect(() => {
     if (socket) {
-
       // if (RoomNumber !== -1) {
       //   console.log('check room ID in invited.tsx : ', RoomNumber);
       // }
@@ -294,19 +303,19 @@ export default function Invited() {
       //   setRoomNumber(RoomId);
       // });
 
-      socket.on("gameStarted", (data: {roomId: number, OppName: string}) => {
-        console.log('game Started ;)');
+      socket.on("gameStarted", (data: { roomId: number; OppName: string }) => {
+        console.log("game Started ;)");
         console.log("my Opponent name is : ", data.OppName);
-        const {roomId, OppName} = data;
+        const { roomId, OppName } = data;
         setInGame(true);
         setIsGameStarted(true);
         setRoomNumber(roomId);
         setOppUsername(OppName);
       });
 
-      socket.on('InGame', () => {
+      socket.on("InGame", () => {
         setStillInGame(true);
-      })
+      });
 
       socket.on("gameEnded", () => {
         console.log("game ended nod tga3ad");
@@ -322,12 +331,15 @@ export default function Invited() {
         setResult("lost");
       });
 
-      socket.on("Score", (data: { p1: number, p2: number, oppName: string }) => {
-        const { p1, p2, oppName } = data;
-        setmyScore(p1);
-        setenemyScore(p2);
-        setOppUsername(oppName);
-      });
+      socket.on(
+        "Score",
+        (data: { p1: number; p2: number; oppName: string }) => {
+          const { p1, p2, oppName } = data;
+          setmyScore(p1);
+          setenemyScore(p2);
+          setOppUsername(oppName);
+        },
+      );
     }
 
     return () => {
@@ -342,42 +354,40 @@ export default function Invited() {
     };
   }, [RoomNumber, IsGameStarted, socket, inviReceived]);
 
-      if (isConnected && IsGameStarted && !IsGameEnded) {
-        return (
-          //background-image removed
-          <div>
-            <ScoreBar
-              score={myScore}
-              enemy_score={enemyScore}
-              you="you"
-              opps={oppUsername}
+  if (isConnected && IsGameStarted && !IsGameEnded) {
+    return (
+      //background-image removed
+      <div className="flex flex-col items-center justify-center h-screen mt-12">
+        <ScoreBar
+          score={myScore}
+          enemy_score={enemyScore}
+          you="you"
+          opps={oppUsername}
+        />
+        <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center mb-6">
+          <Canvas camera={{ position: [0.0005, 15, 0] }}>
+            <OrbitControls enableRotate={false} enableZoom={false} />
+            <PlayArea />
+            <CallEverything
+              socket={socket}
+              roomId={RoomNumber}
+              paddlecolor={settings.paddleColor}
+              ballcolor={settings.ballColor}
             />
-            <div className="flex flex-col App min-h-screen w-screen h-screen justify-center items-center">
-              <Canvas camera={{ position: [0.0005, 15, 0] }}>
-                <OrbitControls enableRotate={false} enableZoom={false} />
-                <PlayArea />
-                <CallEverything
-                  socket={socket}
-                  roomId={RoomNumber}
-                  paddlecolor={settings.paddleColor}
-                  ballcolor={settings.ballColor}
-                />
-              </Canvas>
-            </div>
-          </div>
-        );
-      }
-      else if (isConnected && StillInGame) {
-        return (
-          //background-image removed
-          <div className="h-screen no-scroll">
-            <div className="App h-screen flex flex-col items-center justify-center">
-              <h2>You are already in game, go finish it first.</h2>
-            </div>
-          </div>
-        );
-      }
-      else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
-        return <EndGame result={result} socket={socket} roomId={RoomNumber} />;
-      }
+          </Canvas>
+        </div>
+      </div>
+    );
+  } else if (isConnected && StillInGame) {
+    return (
+      //background-image removed
+      <div className="h-screen no-scroll">
+        <div className="App h-screen flex flex-col items-center justify-center">
+          <h2>You are already in game, go finish it first.</h2>
+        </div>
+      </div>
+    );
+  } else if (isConnected && IsGameStarted && IsGameEnded && !StillInGame) {
+    return <EndGame result={result} socket={socket} roomId={RoomNumber} />;
+  }
 }

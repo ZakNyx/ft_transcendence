@@ -2,11 +2,17 @@ import { useState, FormEvent, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
-import Popup from "reactjs-popup";
-import ChatUserProfile from "./ChatUserProfile";
-import { RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../variables";
+import {
+  RoomId,
+  isSent,
+  myGameOppName,
+  setIsSent,
+  setMyGameOppName,
+  setRoomId,
+  sock,
+} from "../variables";
 import Swal from "sweetalert2";
-
+import ChatStatus from "../../components/ChatStatus";
 
 interface UserData {
   userID: string;
@@ -37,13 +43,12 @@ interface notifData {
 }
 
 const ContactBar = (barData: any) => {
-  
   const [opponent, setOpponent] = useState<UserData | null>(null);
   const [isGameDeclined, setIsGameDeclined] = useState<boolean>(false);
   const [invitationReceived, setInvitationReceived] = useState<boolean>(false);
 
   const navigate = useNavigate();
-  
+
   const fetchUserData = async () => {
     const tokenCookie = document.cookie
       .split("; ")
@@ -53,27 +58,22 @@ const ContactBar = (barData: any) => {
       const token = tokenCookie.split("=")[1];
       try {
         // Configure Axios to send the token in the headers
-        const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await axios.get(
+          `http://localhost:3000/profile/${myGameOppName}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
         // Set the user data in the state
         setOpponent(response.data);
-        console.log('check Opponent status : ', response.data.status);
-        if (response.data.status == "ONLINE") {
-          sock?.emit("sendInvitationToServer", barData.barData.participants[0].displayname);
-          setIsSent(true);
-        }
-        if (response.data.status == 'OFFLINE') {
-          Swal.fire({
-            title: `${myGameOppName} is Offline!`
-          });
-        }
+        console.log("check Opponent status : ", response.data.status);
       } catch (error: any) {
         if (error.response && error.response.status === 401) {
           // Redirect to localhost:5137/ if Axios returns a 401 error
-          document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          document.cookie =
+            "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           navigate("/");
         } // Redirect to the root path
         console.error("Error fetching user data:", error);
@@ -82,50 +82,57 @@ const ContactBar = (barData: any) => {
   };
 
   useEffect(() => {
-
     if (sock) {
-      sock.on('joined', (roomNumber: number) => {
-          console.log('listening to joined event to set room Id in NavBar : ', roomNumber);
-          setRoomId(roomNumber);
-      })
+      sock.on("joined", (roomNumber: number) => {
+        console.log(
+          "listening to joined event to set room Id in NavBar : ",
+          roomNumber,
+        );
+        setRoomId(roomNumber);
+      });
 
-      sock.on('sendInvitationToOpp', (inviSender: string) => {
+      sock.on("sendInvitationToOpp", (inviSender: string) => {
         setMyGameOppName(inviSender);
-        console.log('you received a game invitation from : ', inviSender);
+        console.log("you received a game invitation from : ", inviSender);
         setInvitationReceived(true);
         setIsSent(true);
-      })
-  
-      sock.on('IsGameAccepted', () => {
-        navigate('/game/invited');
-      })
-  
-      sock.on('IsGameDeclined', () => {
-        setIsGameDeclined(true);
-      })
-    }
+      });
 
-  }, [isSent, myGameOppName, invitationReceived, RoomId, sock])
+      sock.on("IsGameAccepted", () => {
+        navigate("/game/invited");
+      });
+
+      sock.on("IsGameDeclined", () => {
+        setIsGameDeclined(true);
+      });
+    }
+  }, [isSent, myGameOppName, invitationReceived, RoomId, sock]);
 
   const redirectToInvitedGame = () => {
     if (sock)
-      sock.emit('AcceptingInvitation', {acceptation: true, OppName: myGameOppName});
-  }
+      sock.emit("AcceptingInvitation", {
+        acceptation: true,
+        OppName: myGameOppName,
+      });
+  };
 
   const invitationDenied = () => {
     if (sock) {
-      sock.emit('AcceptingInvitation', {acceptation: false, OppName: myGameOppName});
-      navigate('/home');
+      sock.emit("AcceptingInvitation", {
+        acceptation: false,
+        OppName: myGameOppName,
+      });
+      navigate("/home");
     }
-  } 
-  
+  };
+
   if (invitationReceived) {
     Swal.fire({
-      title: `${myGameOppName} invited you to a game!`,
+      title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
       showDenyButton: true,
       showCancelButton: false,
       allowOutsideClick: false,
-      confirmButtonText: 'Accept',
+      confirmButtonText: "Accept",
       denyButtonText: `Deny`,
     }).then((result) => {
       if (result.isConfirmed) {
@@ -134,49 +141,51 @@ const ContactBar = (barData: any) => {
         invitationDenied();
       }
       setInvitationReceived(false);
-    })
+    });
   }
 
   if (isGameDeclined) {
     Swal.fire({
-      title: `${myGameOppName} denied your invitation!`
+      title: `${myGameOppName} denied your invitation!`,
     });
     setIsGameDeclined(false);
   }
-  
+  console.log(barData.barData.participants[0].status, "statu");
   return (
     <div className="w-[98%] ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll flex-wrap justify-center">
-    <div className="w-full h-full flex items-center justify-start">
-        <Popup
-          trigger={
-            <img
-              className="logoImg rounded-full mt-5 w-[50px] h-[50px] flex items-center"
-              src={barData.barData.participants[0].image}
-              alt={""}
-            />
-          }
-          modal
-        >
-          {
-            // @ts-ignore
-            (close) => (
-              <ChatUserProfile
-                close={close}
-                userId={barData.barData.participants[0].userId}
-              />
-            )
-          }
-        </Popup>
-
+      <div className="w-full h-full flex items-center justify-start">
+        <Link to={`/profile/${barData.barData.participants[0].username}`}>
+          <img
+            className="logoImg rounded-full mt-5 w-[60px] h-auto flex items-center"
+            src={barData.barData.participants[0].picture}
+            alt={""}
+          />
+        </Link>
+        {barData.barData.participants[0].status && (
+          <ChatStatus status={barData.barData.participants[0].status} />
+        )}
         <div className="w-full h-full ml-[55px] flex justify-around items-center">
           <div className=" text-white w-full flex items-center text-md lg:text-xl mt-5">
             {barData.barData.participants[0].displayname}
           </div>
+          <div></div>
           {/* <div> */}
           <button
             onClick={() => {
               setMyGameOppName(barData.barData.participants[0].displayname);
               fetchUserData();
+
+              if (opponent?.status == "ONLINE") {
+                sock?.emit(
+                  "sendInvitationToServer",
+                  barData.barData.participants[0].displayname,
+                );
+                setIsSent(true);
+              } else if (opponent?.status == "OFFLINE") {
+                Swal.fire({
+                  title: `${myGameOppName} is Offline!`,
+                });
+              }
             }}
             className={` bg-npc-purple hover:bg-purple-hover   transition-all rounded-xl mr-3 hover:dark:shadow-lg hover:shadow-lg mt-5 pb-1`}
           >
@@ -205,9 +214,7 @@ const Mssg = (msgData: any) => {
     );
   } else {
     return (
-      <div
-        className="w-[100%] max-h-[90%] m-[15px] ml-[-30px]"
-      >
+      <div className="w-[100%] max-h-[90%] m-[15px] ml-[-30px]">
         <div className="w-full h-full flex flex-row-reverse justify-start ml-[20px]">
           <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
           <div className="p-[10px] text-sm md:text-base mt-[10px] max-w-[60%] h-fit rounded-3xl bg-[#6F37CF] text-left text-white text-clip break-words whitespace-pre-wrap">
@@ -249,6 +256,7 @@ const DMConveComponent = (props: any) => {
       );
       if (response.status === 200) {
         setDataState(response.data);
+        console.log(response.data, "lfoog");
       }
     } catch (error) {
       navigate("/chat", { replace: true });
@@ -259,11 +267,10 @@ const DMConveComponent = (props: any) => {
     if (receivedData) {
       fetchData();
     }
-  },[receivedData])
+  }, [receivedData]);
 
   useEffect(() => {
     if (receivedData) {
-
       // const pollInterval = setInterval(() => {
       //   fetchData();
       // }, 700);
@@ -320,10 +327,10 @@ const DMConveComponent = (props: any) => {
       setMessage("");
     }
   };
-
   if (dataState) {
+    console.log(dataState, "geheh");
     return (
-      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
+      <div className="w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
         <div className="w-full h-12 border-solid mb-5">
           <ContactBar
             barData={dataState.dm}
@@ -347,40 +354,40 @@ const DMConveComponent = (props: any) => {
         <div className="w-90 h-20 flex items-center justify-between mx-auto">
           <img
             className="logoImg rounded-3xl w-12 h-12 ml-2 mr-4 mb-1.5"
-            src={dataState.image.image}
+            src={dataState.image.picture}
             alt=""
           />
-              <form
-                onSubmit={handleSubmit}
-                className="flex-grow flex items-center w-full"
+          <form
+            onSubmit={handleSubmit}
+            className="flex-grow flex items-center w-full"
+          >
+            <input
+              type="text"
+              maxLength={maxLength}
+              placeholder="Enter your message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="w-full h-full bg-[#1A1C26] text-white rounded-3xl border border-gray-500 active:border-gray-700 pl-2 text-sm focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="w-10 h-full ml-2 flex justify-center items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="#6F37CF"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-6 h-6 text-[#6F37CC]"
               >
-                <input
-                  type="text"
-                  maxLength={maxLength}
-                  placeholder="Enter your message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="w-full h-full bg-[#1A1C26] text-white rounded-3xl border border-gray-500 active:border-gray-700 pl-2 text-sm focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="w-10 h-full ml-2 flex justify-center items-center"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="#6F37CF"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-6 h-6 text-[#6F37CC]"
-                  >
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                  </svg>
-                </button>
-              </form>
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </form>
         </div>
       </div>
     );

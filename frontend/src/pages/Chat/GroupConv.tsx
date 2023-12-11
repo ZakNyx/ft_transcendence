@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import logoImg from "../../../public/images/panda.svg";
+import logoImg from "../../../images/panda.svg";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -227,7 +227,7 @@ const GroupConveComponent = (props: any) => {
     return (
       <div
         // key={componentKey}
-        className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl"
+        className="w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl"
       >
         <div className="w-full h-12 border-solid mb-5">
           <ContactBar barData={dataState} />

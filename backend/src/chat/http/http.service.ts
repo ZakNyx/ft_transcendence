@@ -115,7 +115,7 @@ export class HttpService {
         username: userId,
       },
       select: {
-        image: true,
+        picture: true,
         rooms: true,
       },
     });
@@ -143,7 +143,7 @@ export class HttpService {
             username: msg.senderId,
           },
         });
-        customArray.push([msg, sender.image]);
+        customArray.push([msg, sender.picture]);
       }
     });
     for (let i = 0; i < user.rooms.length; i++) {
@@ -157,7 +157,7 @@ export class HttpService {
       roomName: room.RoomName,
       roomImage: room.image,
       roomId: room.id,
-      userImage: user.image,
+      userImage: user.picture,
       muted: muted,
     };
   }
@@ -228,7 +228,7 @@ export class HttpService {
           select: {
             userId: true,
             username: true,
-            image: true,
+            picture: true,
             blockedUsers: true,
           },
         },
@@ -297,7 +297,9 @@ export class HttpService {
           select: {
             userId: true,
             displayname: true,
-            image: true,
+            username: true,
+            picture: true,
+            status: true,
           },
         },
         msg: true,
@@ -309,7 +311,7 @@ export class HttpService {
         username: userId,
       },
       select: {
-        image: true,
+        picture: true,
       },
     });
 
