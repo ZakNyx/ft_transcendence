@@ -101,6 +101,36 @@ function NavBar() {
     fetchUserData();
   }, [username]);
 
+  const [notifications, setNotifications] = useState<notifData[] | null>(null);
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+
+        try {
+          const response = await axios.get<notifData[]>(
+            `http://localhost:3000/profile/notifications/`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          setNotifications(response.data);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    fetchNotifications();
+  }, [notifications]);
+
   const closeDropdown = () => {
     const timeout = setTimeout(() => {
       setIsDropdownOpen(false);
@@ -308,9 +338,9 @@ function NavBar() {
                   isActive={isNotificationOpen}
                 />
                 {/* Notification counter */}
-                {!isNotificationOpen && (user && user.notifications.length > 0) && (
+                {!isNotificationOpen && (notifications && notifications.length > 0) && (
                   <div className="absolute w-4 h-4 bg-red-600 rounded-full text-white text-xs -top-1 -right-1 flex items-center justify-center">
-                    {user.notifications.length}
+                    {notifications.length}
                   </div>
                 )}
               </li>
