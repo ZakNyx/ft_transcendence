@@ -2,17 +2,11 @@ import { useState, FormEvent, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
-import {
-  RoomId,
-  isSent,
-  myGameOppName,
-  setIsSent,
-  setMyGameOppName,
-  setRoomId,
-  sock,
-} from "../variables";
+import { RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../variables";
 import Swal from "sweetalert2";
 import ChatStatus from "../../components/ChatStatus";
+import FriendsStatus from "../../components/FriendsStatus";
+
 
 interface UserData {
   userID: string;
@@ -42,13 +36,16 @@ interface notifData {
   data: string;
 }
 
+
+
 const ContactBar = (barData: any) => {
+  
   const [opponent, setOpponent] = useState<UserData | null>(null);
   const [isGameDeclined, setIsGameDeclined] = useState<boolean>(false);
   const [invitationReceived, setInvitationReceived] = useState<boolean>(false);
 
   const navigate = useNavigate();
-
+  
   const fetchUserData = async () => {
     const tokenCookie = document.cookie
       .split("; ")
@@ -58,22 +55,18 @@ const ContactBar = (barData: any) => {
       const token = tokenCookie.split("=")[1];
       try {
         // Configure Axios to send the token in the headers
-        const response = await axios.get(
-          `http://localhost:3000/profile/${myGameOppName}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await axios.get(`http://localhost:3000/profile/${myGameOppName}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
         // Set the user data in the state
         setOpponent(response.data);
-        console.log("check Opponent status : ", response.data.status);
+        console.log('check Opponent status : ', response.data.status);
       } catch (error: any) {
         if (error.response && error.response.status === 401) {
           // Redirect to localhost:5137/ if Axios returns a 401 error
-          document.cookie =
-            "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           navigate("/");
         } // Redirect to the root path
         console.error("Error fetching user data:", error);
@@ -82,90 +75,103 @@ const ContactBar = (barData: any) => {
   };
 
   useEffect(() => {
-    if (sock) {
-      sock.on("joined", (roomNumber: number) => {
-        console.log(
-          "listening to joined event to set room Id in NavBar : ",
-          roomNumber,
-        );
-        setRoomId(roomNumber);
-      });
 
-      sock.on("sendInvitationToOpp", (inviSender: string) => {
+    if (sock) {
+      sock.on('joined', (roomNumber: number) => {
+          console.log('listening to joined event to set room Id in NavBar : ', roomNumber);
+          setRoomId(roomNumber);
+      })
+
+      sock.on('sendInvitationToOpp', (inviSender: string) => {
         setMyGameOppName(inviSender);
-        console.log("you received a game invitation from : ", inviSender);
+        console.log('you received a game invitation from : ', inviSender);
         setInvitationReceived(true);
         setIsSent(true);
-      });
-
-      sock.on("IsGameAccepted", () => {
-        navigate("/game/invited");
-      });
-
-      sock.on("IsGameDeclined", () => {
+      })
+  
+      sock.on('IsGameAccepted', () => {
+        navigate('/game/invited');
+      })
+  
+      sock.on('IsGameDeclined', () => {
         setIsGameDeclined(true);
-      });
+      })
     }
-  }, [isSent, myGameOppName, invitationReceived, RoomId, sock]);
+
+  }, [isSent, myGameOppName, invitationReceived, RoomId, sock])
 
   const redirectToInvitedGame = () => {
     if (sock)
-      sock.emit("AcceptingInvitation", {
-        acceptation: true,
-        OppName: myGameOppName,
-      });
-  };
+      sock.emit('AcceptingInvitation', {acceptation: true, OppName: myGameOppName});
+  }
 
   const invitationDenied = () => {
     if (sock) {
-      sock.emit("AcceptingInvitation", {
-        acceptation: false,
-        OppName: myGameOppName,
-      });
-      navigate("/home");
+      sock.emit('AcceptingInvitation', {acceptation: false, OppName: myGameOppName});
+      navigate('/home');
     }
-  };
-
-  if (invitationReceived) {
-    Swal.fire({
-      title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
-      showDenyButton: true,
-      showCancelButton: false,
-      allowOutsideClick: false,
-      confirmButtonText: "Accept",
-      denyButtonText: `Deny`,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        redirectToInvitedGame();
-      } else if (result.isDenied) {
-        invitationDenied();
-      }
-      setInvitationReceived(false);
-    });
+  } 
+  interface UserStatus {
+    status: "ONLINE" | "OFFLINE" | "INGAME" ;
   }
-
-  if (isGameDeclined) {
-    Swal.fire({
-      title: `${myGameOppName} denied your invitation!`,
-    });
-    setIsGameDeclined(false);
-  }
-  console.log(barData.barData.participants[0].status, "statu");
-  return (
-    <div className="w-[98%] ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll flex-wrap justify-center">
-      <div className="w-full h-full flex items-center justify-start">
-        <Link to={`/profile/${barData.barData.participants[0].username}`}>
-          <img
-            className="logoImg rounded-full mt-5 w-[60px] h-auto flex items-center"
-            src={barData.barData.participants[0].picture}
-            alt={""}
-          />
-        </Link>
-        {barData.barData.participants[0].status && (
-          <ChatStatus status={barData.barData.participants[0].status} />
-        )}
+  
+  
+  const UserStatus: React.FC<{ status: string }> = ({ status }) => {
+    let statusColorClass = "bg-gray-500"; // Default gray color
+    console.log("status   " + status);
+    switch (status) {
+      case "ONLINE":
+        statusColorClass = "bg-green-500"; // Green for online status
+        break;
+        case "OFFLINE":
+          statusColorClass = "bg-gray-500"; // Red for offline status
+          break;
+          case "INGAME":
+            statusColorClass = "bg-blue-500"; // Blue for in-game status (adjust as needed)
+            break;
+            
+            default:
+              break;
+            }
+            
+            return (
+              <div className={`absolute right-6 bottom-2.5 sm:bottom-1 md:bottom-1 sm:right-6 md:right-9 w-4 md:w-6 lg:w-7 xl:w-8 h-4 md:h-6 lg:h-7 xl:h-8 rounded-full border-2 border-white  ${statusColorClass}`}></div>
+              );
+            };
+            if (invitationReceived) {
+              Swal.fire({
+                title: `${myGameOppName} invited you to a game in room Number : ${RoomId}!`,
+                showDenyButton: true,
+                showCancelButton: false,
+                allowOutsideClick: false,
+                confirmButtonText: 'Accept',
+                denyButtonText: `Deny`,
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  redirectToInvitedGame();
+                } else if (result.isDenied) {
+                  invitationDenied();
+                }
+                setInvitationReceived(false);
+              })
+            }
+            
+            if (isGameDeclined) {
+              Swal.fire({
+                title: `${myGameOppName} denied your invitation!`
+              });
+              setIsGameDeclined(false);
+            }
+            console.log(barData.barData.participants[0].status, "statu");
+            return (
+              <div className="w-[98%] ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll flex-wrap justify-center">
+    <div className="w-full h-full flex items-center justify-start">
+      <Link 
+        to={`/profile/${barData.barData.participants[0].username}`}>
+              {barData.barData.participants[0].status && <ChatStatus status={barData.barData.participants[0].status} image={barData.barData.participants[0].picture} />}
+          </Link>
         <div className="w-full h-full ml-[55px] flex justify-around items-center">
-          <div className=" text-white w-full flex items-center text-md lg:text-xl mt-5">
+          <div className=" text-white w-full flex items-center text-sm md:text-base lg:text-xl mt-5">
             {barData.barData.participants[0].displayname}
           </div>
           <div></div>
@@ -174,21 +180,21 @@ const ContactBar = (barData: any) => {
             onClick={() => {
               setMyGameOppName(barData.barData.participants[0].displayname);
               fetchUserData();
-
+              
               if (opponent?.status == "ONLINE") {
-                sock?.emit(
-                  "sendInvitationToServer",
-                  barData.barData.participants[0].displayname,
-                );
+                sock?.emit("sendInvitationToServer", barData.barData.participants[0].displayname);
                 setIsSent(true);
-              } else if (opponent?.status == "OFFLINE") {
+              }
+              
+              else if (opponent?.status == 'OFFLINE') {
                 Swal.fire({
-                  title: `${myGameOppName} is Offline!`,
+                  title: `${myGameOppName} is Offline!`
                 });
               }
+              
             }}
             className={` bg-npc-purple hover:bg-purple-hover   transition-all rounded-xl mr-3 hover:dark:shadow-lg hover:shadow-lg mt-5 pb-1`}
-          >
+            >
             <div className="w-full h-full text-white text-center mt-[5px] text-sm">
               Invite Game
             </div>
@@ -214,7 +220,9 @@ const Mssg = (msgData: any) => {
     );
   } else {
     return (
-      <div className="w-[100%] max-h-[90%] m-[15px] ml-[-30px]">
+      <div
+        className="w-[100%] max-h-[90%] m-[15px] ml-[-30px]"
+      >
         <div className="w-full h-full flex flex-row-reverse justify-start ml-[20px]">
           <div className=" w-[15px] h-[15px] mt-[15px%] bg-[#6F37CF] rounded-full"></div>
           <div className="p-[10px] text-sm md:text-base mt-[10px] max-w-[60%] h-fit rounded-3xl bg-[#6F37CF] text-left text-white text-clip break-words whitespace-pre-wrap">
@@ -267,10 +275,11 @@ const DMConveComponent = (props: any) => {
     if (receivedData) {
       fetchData();
     }
-  }, [receivedData]);
+  },[receivedData])
 
   useEffect(() => {
     if (receivedData) {
+
       // const pollInterval = setInterval(() => {
       //   fetchData();
       // }, 700);
@@ -330,7 +339,7 @@ const DMConveComponent = (props: any) => {
   if (dataState) {
     console.log(dataState, "geheh");
     return (
-      <div className="w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
+      <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
         <div className="w-full h-12 border-solid mb-5">
           <ContactBar
             barData={dataState.dm}
@@ -357,37 +366,37 @@ const DMConveComponent = (props: any) => {
             src={dataState.image.picture}
             alt=""
           />
-          <form
-            onSubmit={handleSubmit}
-            className="flex-grow flex items-center w-full"
-          >
-            <input
-              type="text"
-              maxLength={maxLength}
-              placeholder="Enter your message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="w-full h-full bg-[#1A1C26] text-white rounded-3xl border border-gray-500 active:border-gray-700 pl-2 text-sm focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="w-10 h-full ml-2 flex justify-center items-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="#6F37CF"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-6 h-6 text-[#6F37CC]"
+              <form
+                onSubmit={handleSubmit}
+                className="flex-grow flex items-center w-full"
               >
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-            </button>
-          </form>
+                <input
+                  type="text"
+                  maxLength={maxLength}
+                  placeholder="Enter your message"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full h-full bg-[#1A1C26] text-white rounded-3xl border border-gray-500 active:border-gray-700 pl-2 text-sm focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  className="w-10 h-full ml-2 flex justify-center items-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="#6F37CF"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-6 h-6 text-[#6F37CC]"
+                  >
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </form>
         </div>
       </div>
     );

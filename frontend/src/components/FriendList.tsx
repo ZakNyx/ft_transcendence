@@ -1,13 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { setIsSent, setMyGameOppName } from "../pages/variables";
+import FriendsStatus from "./FriendsStatus";
 
 interface userData {
   username: string;
   displayname: string;
   picture: string;
   friends: userData[];
+  status: string;
 }
 
 export default function FriendList() {
@@ -65,11 +66,7 @@ export default function FriendList() {
               to={`/profile/${friend.username}`} // <---- Link to the profile
               className="w-1/4 p-2 flex flex-col items-center text-center"
             >
-              <img
-                className="w-14 sm:w-16 md:w-20 lg:w-24 h-14 sm:h-16 md:h-20 lg:h-24 rounded-full mb-2"
-                src={friend.picture}
-                alt="User profile picture"
-              />
+              {<FriendsStatus status={friend.status} image={friend.picture}/>}
               <p className="text-gray-200 text-sm sm:text-base md:text-lg xl:text-xl 2xl:text-2xl max-w-[6rem] break-words hover:text-gray-400 active :text-gray-500">
                 {friend.displayname}  
               </p>
