@@ -229,6 +229,7 @@ export class HttpService {
             userId: true,
             username: true,
             image: true,
+            picture: true,
             blockedUsers: true,
             blocks: true,
             blockedBy: true

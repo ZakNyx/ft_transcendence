@@ -117,6 +117,20 @@ export class NotificationsService {
         type: "friendRequest",
       },
     });
+    const reciever = await this.prismaService.user.findUnique({
+      where: {
+        username: notifBody.reciever,
+      },
+    });
+
+    if (socketsByUser.has(notifBody.reciever)) {
+      for (let i = 0; i < socketsByUser.get(reciever.username).length; i++) {
+        socketsByUser
+          .get(reciever.username)
+          [i].emit("notification");
+          console.log("notif sent");
+      }
+    }
 
   }
 

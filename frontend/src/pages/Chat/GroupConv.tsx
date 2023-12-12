@@ -144,7 +144,9 @@ const GroupConveComponent = (props: any) => {
 
   useEffect(() => {
 
-    // fetchData();
+    const pollInterval = setInterval(() => {
+      fetchData();
+    }, 200);
 
     props.socket.on("blocked", () => {
       fetchData();
@@ -193,6 +195,7 @@ const GroupConveComponent = (props: any) => {
     props.socket.on("createdMessage", messageListener);
 
     return () => {
+      clearInterval(pollInterval);
       props.socket.removeListener("createdMessage", messageListener);
       props.socket.off("unmuted");
       props.socket.off("muted");

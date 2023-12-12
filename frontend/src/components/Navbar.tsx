@@ -130,18 +130,12 @@ function NavBar() {
 
     if(socket)
     {
-      socket.on("notification", () => console.log("notif"))
+      socket.on("notification", async() => await fetchNotifications())
     }
-
-    const pollInterval = setInterval(() => {
-      fetchNotifications();
-    }, 700);
-
-    fetchNotifications();
     return (() => {
       socket?.off("notification");
     })
-  }, [notifications]);
+  });
 
   const closeDropdown = () => {
     const timeout = setTimeout(() => {

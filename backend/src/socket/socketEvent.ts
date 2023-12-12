@@ -422,7 +422,7 @@ export class SocketEvent  {
                     gamesPlayed: {
                         increment: 1,
                     },
-                    status: 'ONLINE'
+                    status: 'ONLINE',
                 }
             })
             const user = await prisma.user.findUnique({
@@ -439,6 +439,7 @@ export class SocketEvent  {
                         increment: 1,
                     },
                     elo: undefined,
+                    status: undefined,
                 };
     
                 if (user.elo >= 10) {
@@ -446,13 +447,12 @@ export class SocketEvent  {
                         decrement: 10,
                     };
                 }
+                data.status = 'ONLINE'
                 await prisma.user.update({
                     where: {
                         username: room.loser,
                     },
-                    data: {
-                        status: 'ONLINE',
-                    }
+                    data,
                 });
                 room.isDatabaseUpdated = false;
             }
