@@ -134,9 +134,6 @@ export class SocketEvent  {
     IfClientInQueue = (Client: Socket, PreviousId: string, token: string) => {
         for (let i: number = 0; i <= this.RoomNum; i++) {
             if (this.Rooms[i]) {
-                console.log('rooms[i] : ', i);
-                console.log('PreviousId  : ', PreviousId);
-                console.log('this.Rooms[i].client1.inQueue : ', this.Rooms[i].client1.inQueue);
                 if (this.Rooms[i].client1 && this.Rooms[i].client1.id === PreviousId
                     && this.Rooms[i].client1.inQueue) {
                     console.log('test');

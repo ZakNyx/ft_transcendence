@@ -26,8 +26,8 @@ const ChatStatus: React.FC<{ status: string, image: string }> = ({ status, image
 
   return (
     <img
-    className={`logoImg rounded-[50px] mt-2  h-[50px] md:h-[70px] flex items-center border-[5px] ${statusColorClass}`}
-    src={image}
+    className={`logoImg rounded-full object-cover mx-auto mt-2 h-10 w-10 md:h-20 md:w-20 flex items-center border-[5px] ${statusColorClass}`}
+      src={image}
     alt="User profile picture"
   />  );
 };

@@ -12,43 +12,44 @@ interface GameData {
   MyOpponentScore: string;
   users: any;
 }
+interface UserData {
+  userID: string;
+  username: string;
+  profilePicture: string;
+  displayname: string;
+  gamesPlayed: number;
+  wins: number;
+  loses: number;
+  winrate: number;
+  elo: number;
+  status2fa: boolean;
+  secret2fa: boolean;
+  secretAuthUrl: boolean;
+}
 
 const MatchHistory = () => {
   const [gameData, setGameData] = useState<any>();
   const [userPicture, setUserPicture] = useState<string | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [oppPicture, setOppPicture] = useState<string | null>(null);
   const [myName, setMyName] = useState<string>("");
   const [myOpponentName, setMyOpponentName] = useState<string>("");
   const [myScore, setMyScore] = useState<string>("");
   const [myOpponentScore, setMyOpponentScore] = useState<string>("");
-  const Playerusername = localStorage.getItem("Username");
+  let Playerusername = localStorage.getItem("Username");
   let { username } = useParams(); // Get the username parameter from the URL
   if (!username) {
     username = "me";
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/games/user/${Playerusername}`, // Update the URL to match your API endpoint
-        );
-        setGameData(response.data);
-      } catch (error) {
-        console.error("Error fetching game data:", error);
-      }
-    };
-
-    fetchData();
-  }, [Playerusername]);
-
+  
   useEffect(() => {
     // Function to fetch user picture
     const fetchUserPicture = async () => {
       const tokenCookie = document.cookie
-        .split("; ")
-        .find((cookie) => cookie.startsWith("token="));
-
+      .split("; ")
+      .find((cookie) => cookie.startsWith("token="));
+      
       try {
         if (tokenCookie) {
           const token = tokenCookie.split("=")[1];
@@ -59,25 +60,41 @@ const MatchHistory = () => {
                 Authorization: `Bearer ${token}`,
               },
             },
-          );
-          setUserPicture(response.data.picture);
-        } else {
-          // Handle the case when there is no token (e.g., display a placeholder image)
-          setUserPicture("../../images/default.png");
+            );
+            setUser(response.data);
+            setUserPicture(response.data.picture);
+          } else {
+            // Handle the case when there is no token (e.g., display a placeholder image)
+            setUserPicture("../../images/default.png");
+          }
+        } catch (error) {
+          // Handle errors gracefully (e.g., display an error message to the user)
+          console.error("Error fetching user picture:", error);
         }
-      } catch (error) {
-        // Handle errors gracefully (e.g., display an error message to the user)
-        console.error("Error fetching user picture:", error);
-      }
-    };
-
-    // Call the fetchUserPicture function
-    fetchUserPicture();
-  }, [username]);
-
-  // useEffect(() => {
-  //   // Function to fetch user picture
-  //   const fetchUserPicture = async () => {
+      };
+      
+      // Call the fetchUserPicture function
+      fetchUserPicture();
+    }, [username]);
+    
+    // useEffect(() => {
+      //   // Function to fetch user picture
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            if(user) {const response = await axios.get(
+              `http://localhost:3000/games/user/${user.username}`, // Update the URL to match your API endpoint
+            );
+            setGameData(response.data);
+            console.log(gameData);}
+          } catch (error) {
+            console.error("Error fetching game data:", error);
+          }
+        };
+    
+        fetchData();
+      }, [user]);
+      //   const fetchUserPicture = async () => {
   //     const tokenCookie = document.cookie
   //       .split("; ")
   //       .find((cookie) => cookie.startsWith("token="));
@@ -111,24 +128,27 @@ const MatchHistory = () => {
   useEffect(() => {
     if (gameData) {
       gameData.map((match: any, index: any) => {
-        if (match.player1 === Playerusername) {
+        if (match.player1 === user?.username) {
+          console.log(match.player1 + "   " + user?.username)
           setMyName(match.player1);
           setMyScore(match.score1);
           setMyOpponentName(match.player2);
           setMyOpponentScore(match.score2);
         }
-        if (match.player2 === Playerusername) {
+        if (match.player2 === user?.username) {
           setMyName(match.player2);
           setMyScore(match.score2);
           setMyOpponentName(match.player1);
           setMyOpponentScore(match.score1);
         }
         });
+
+        console.log("hnaaaaa",user?.username ,gameData)
     }
-  }, [myName, myOpponentName, myScore, myOpponentScore]);
+  }, [myName, myOpponentName, myScore, myOpponentScore, username, gameData]);
 
   const getOpponentImage = (game : any) => {
-    if (game?.users?.[0]?.username === Playerusername) {
+    if (game?.users?.[0]?.username === user?.username) {
       return game?.users?.[1]?.image || null;
     } else {
       return game?.users?.[0]?.image || null;
@@ -146,8 +166,8 @@ const MatchHistory = () => {
             <li
               key={index}
               className={`flex items-center justify-between text-gray-100 font-[Rubik] text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl rounded-md p-3 ${
-                (match.score1 == 5 && match.player1 == Playerusername) ||
-                (match.player2 == Playerusername && match.score2 == 5)
+                (match.score1 == 5 && match.player1 == user?.username) ||
+                (match.player2 == user?.username && match.score2 == 5)
                   ? "linear-grad-green"
                   : "lenin-grad-red"
               }`}
@@ -159,20 +179,20 @@ const MatchHistory = () => {
                   className="w-12 h-12 rounded-full"
                 />
                 <span className="text-gray-200 text-base">
-                  {match.player1 == Playerusername
+                  {match.player1 == user?.username
                     ? match.player1
                     : match.player2}
                 </span>
               </div>
               <div className="flex items-center space-x-2">
                 <span className="text-green-500">
-                  {match.player1 == Playerusername
+                  {match.player1 == user?.username
                     ? match.score1
                     : match.score2}
                 </span>
                 <span className="text-gray-500">-</span>
                 <span className="text-red-500">
-                  {match.player1 != Playerusername
+                  {match.player1 != user?.username
                     ? match.score1
                     : match.score2}
                 </span>
@@ -184,7 +204,7 @@ const MatchHistory = () => {
                   className="w-12 h-12 rounded-full"
                 />
                 <span className="text-gray-200 text-base">
-                  {match.player1 != Playerusername
+                  {match.player1 != user?.username
                     ? match.player1
                     : match.player2}
                 </span>
