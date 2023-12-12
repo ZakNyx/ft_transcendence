@@ -7,7 +7,6 @@ interface FriendsStatus {
 
 const FriendsStatus: React.FC<{ status: string, image: string }> = ({ status, image }) => {
   let statusColorClass = "bg-gray-500"; // Default gray color
-  console.log(status)
 
   switch (status) {
     case "ONLINE":

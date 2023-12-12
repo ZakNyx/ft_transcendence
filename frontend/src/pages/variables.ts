@@ -39,7 +39,6 @@ export function setIsReceived(newValue: boolean) {
 
 export function setChatSocket(newValue: Socket) {
     chatSocket = newValue;
-    console.log(`checking chatSocket.id in variables : ${chatSocket.id}`);
 }
 
 export  function InitSocket() {
@@ -65,7 +64,6 @@ export  function InitSocket() {
 
         test.on('connect', () => {
             sock = test;
-            console.log(`checking sock.id in variables: ${sock?.id}`);
             setSocket(test);
         })
         isSocketSet = true;

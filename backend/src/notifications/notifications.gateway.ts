@@ -41,7 +41,6 @@ export class NotificationsGateway
         throw new UnauthorizedException();
       }
       const userObj = this.jwtService.verify(token);
-      console.log('client connected to notification gateway : ', client.id)
       if (this.socketsByUser.has(userObj.username)) {
         this.socketsByUser.get(userObj.username).push(client);
       } else {
@@ -91,7 +90,6 @@ export class NotificationsGateway
         }
       }
 
-      console.log(`client ${client.id} has disconnect in notif Gateway`);
     } catch (err) {
       client.emit("unauthorized", "Unauthorized"); // Send unauthorized message
       client.disconnect(true);
@@ -101,7 +99,6 @@ export class NotificationsGateway
   @SubscribeMessage("sendNotification")
   @UseGuards(AuthGuard("websocket-jwt"))
   async sendNotification(@MessageBody() body: notificationBodyDTO, @Req() req) {
-    console.log('tststst', body);
     return await this.notificationsService.sendNotification(
       body,
       req.user,

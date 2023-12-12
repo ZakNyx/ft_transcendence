@@ -101,7 +101,6 @@ export class ProfileController extends PrismaClient {
   @UseGuards(AuthGuard('jwt'))
   @Post('setusername')
   async updateUsername(@Req() request: any, @Body() username: any) {
-    // console.log(username.username);
     const updatedUser = await this.user.update({
       where: {
         userId: request.user.userId,

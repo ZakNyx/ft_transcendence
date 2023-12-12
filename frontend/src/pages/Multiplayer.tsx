@@ -300,13 +300,11 @@ export default function Multiplayer() {
   useEffect(() => {
     if (socket) {
       socket.on("joined", (RoomId: number) => {
-        console.log("joined event received with this roomId : ", RoomId);
         setRoomNumber(RoomId);
       });
 
       socket.on("gameStarted", (data: {gamedata: GameData, OppName: string}) => {
         const {gamedata, OppName} = data;
-        console.log("game started :) in this room : ");
         setGameId(gamedata.gameId);
         setGameData(gamedata);
         setOppUsername(OppName);
@@ -320,20 +318,17 @@ export default function Multiplayer() {
       })
 
       socket.on("gameEnded", () => {
-        console.log("game ended nod tga3ad");
         socket.disconnect();
         setIsGameEnded(true);
         setStillInGame(false);
       });
 
       socket.on("won", () => {
-        console.log("you won the game");
         setResult("won");
       });
 
       socket.on("lost", () => {
         setResult("lost");
-        console.log("you lost the game");
       });
 
       socket.on(
@@ -348,7 +343,6 @@ export default function Multiplayer() {
     }
 
     return () => {
-      console.log("multiGame comp unmounted!!");
       if (socket) {
         if (InGame) {
           socket.emit('leaveAndStillInGame', {_room: RoomNumber});

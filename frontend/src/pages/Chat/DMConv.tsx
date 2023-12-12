@@ -62,7 +62,6 @@ const ContactBar = (barData: any) => {
         });
         // Set the user data in the state
         setOpponent(response.data);
-        console.log('check Opponent status : ', response.data.status);
       } catch (error: any) {
         if (error.response && error.response.status === 401) {
           // Redirect to localhost:5137/ if Axios returns a 401 error
@@ -78,13 +77,11 @@ const ContactBar = (barData: any) => {
 
     if (sock) {
       sock.on('joined', (roomNumber: number) => {
-          console.log('listening to joined event to set room Id in NavBar : ', roomNumber);
           setRoomId(roomNumber);
       })
 
       sock.on('sendInvitationToOpp', (inviSender: string) => {
         setMyGameOppName(inviSender);
-        console.log('you received a game invitation from : ', inviSender);
         setInvitationReceived(true);
         setIsSent(true);
       })
@@ -118,7 +115,6 @@ const ContactBar = (barData: any) => {
   
   const UserStatus: React.FC<{ status: string }> = ({ status }) => {
     let statusColorClass = "bg-gray-500"; // Default gray color
-    console.log("status   " + status);
     switch (status) {
       case "ONLINE":
         statusColorClass = "bg-green-500"; // Green for online status
@@ -162,7 +158,6 @@ const ContactBar = (barData: any) => {
               });
               setIsGameDeclined(false);
             }
-            console.log(barData.barData.participants[0].status, "statu");
             return (
               <div className="w-[98%] ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll flex-wrap justify-center">
     <div className="w-full h-full flex items-center justify-start">
@@ -302,7 +297,6 @@ const DMConveComponent = (props: any) => {
       });
 
       function messageListener() {
-        console.log("message listener!!!");
         fetchData();
         setTimeout(() => {
           if (containerRef.current) {
@@ -334,7 +328,6 @@ const DMConveComponent = (props: any) => {
     }
   };
   if (dataState) {
-    console.log(dataState, "geheh");
     return (
       <div className="lg:w-2/3 ml-6 md:ml-3 mr-4 my-3.5 rounded-xl overflow-y-scroll bg-npc-gray h-[86vh] flex flex-col justify-between shadow-xl">
         <div className="w-full h-12 border-solid mb-5">

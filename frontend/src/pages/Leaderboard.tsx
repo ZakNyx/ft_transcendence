@@ -37,9 +37,7 @@ export default function Leaderboard() {
               },
             }
           );
-            // console.log(response.data);
           setData(response.data);
-          console.log(response.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
         }

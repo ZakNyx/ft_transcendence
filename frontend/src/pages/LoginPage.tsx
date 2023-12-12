@@ -6,7 +6,6 @@ export default function LoginPage() {
   const tokenCookie = document.cookie
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
-  console.log(tokenCookie);
   useEffect(() => {
     if (tokenCookie) {
       navigate("/home");

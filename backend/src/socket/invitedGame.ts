@@ -86,13 +86,11 @@ export class InvitedEvent  {
             if (this.Rooms[i].client1.id === clientId) {
 
                 if (this.Rooms[i].client1.inGame) {
-                    console.log('ta sir f7alk rak deja in game a chamchoun1');
                     return true;
                 }
             }
             if (this.Rooms[i].client2.id === clientId) {
                 if (this.Rooms[i].client2.inGame) {
-                    console.log('ta sir f7alk rak deja in game a chamchoun2');
                     return true;
                 }
             }
@@ -103,7 +101,6 @@ export class InvitedEvent  {
     //Connection
     handleConnection = (client: Socket) => {
         try{
-            console.log(`client connected in invitedGame id : ${client.id}`);
             if (!client.handshake.headers.authorization)
                 return ;
             const token: string = client.handshake.headers.authorization.slice(7);
@@ -133,13 +130,11 @@ export class InvitedEvent  {
             }
         }
         catch (err) {
-            console.log(`InvitedGame Error: ${err}`);
         }
     }
 
     //Disconnection
     handleDisconnection = (client: Socket) => {
-        console.log(`Client Disconnected: ${client.id}`);
         const token: string = client.handshake.headers.authorization.slice(7);
         this.Rooms.forEach( (item) => {
             if (item.client1.id === client.id) {
@@ -211,12 +206,10 @@ export class InvitedEvent  {
                 if (room.client1.score === room.game.WinReq) {
                     this.server.to(`${room.client1.id}`).emit('won');
                     this.server.to(`${room.client2.id}`).emit('lost');
-                    console.log('client1 won the game');
                 }
                 else {
                     this.server.to(`${room.client1.id}`).emit('lost');
                     this.server.to(`${room.client2.id}`).emit('won');
-                    console.log('client2 won the game');
                 }
                 this.server.to(`${room.client1.id}`).emit('gameEnded');
                 this.server.to(`${room.client2.id}`).emit('gameEnded');
@@ -249,7 +242,6 @@ export class InvitedEvent  {
         const token: string = client.handshake.headers.authorization.slice(7);
         const userObj = this.jwtService.verify(token);
         if (this.connectedPlayers.has(oppUsername)) {
-            console.log(`${userObj.username} want to send a game invitation to ${oppUsername} with : ${this.connectedPlayers.get(oppUsername).id}`);
             this.server.to(`${this.connectedPlayers.get(oppUsername).id}`).emit('sendInvitationToOpp', userObj.username);
         }
     }
@@ -260,7 +252,6 @@ export class InvitedEvent  {
             const userObj = this.jwtService.verify(token);
             client1.join(`${this.RoomNum}`);
             const newRoom = new Room(this.RoomNum);
-            console.log(`new Room is created! ${newRoom.num}`);
             newRoom.client1 = new Client(1); // Initialize client1
             newRoom.ball = new Ball();
             newRoom.client1.id = client1.id;
@@ -268,7 +259,6 @@ export class InvitedEvent  {
             newRoom.client1.username = userObj.username;
             newRoom.client1.socket = client1;
             this.Rooms.push(newRoom);
-            // console.log(`newRoom.client1.id is : ${newRoom.client1.id}`);
             this.server.to(`${newRoom.client1.id}`).emit('joined', this.RoomNum);
             this.connectedCli++;
         // }
@@ -277,12 +267,10 @@ export class InvitedEvent  {
         //         return;
             client2.join(`${this.RoomNum}`);
             const currentRoom = this.Rooms[this.RoomNum];
-            console.log(`This room already created : ${currentRoom.num}`);
             // if (currentRoom && currentRoom.client1) {
                 const token2: string = client2.handshake.headers.authorization.slice(7);
                 const userObj2 = this.jwtService.verify(token2);
                 // if (currentRoom.client1.token === token){
-                //     console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal");
                 //     client2.leave(`${this.RoomNum}`);
                 //     currentRoom.client1.id = client2.id;
                 //     return ;
@@ -292,7 +280,6 @@ export class InvitedEvent  {
                 currentRoom.client2.socket = client2;
                 currentRoom.client2.token = token2;
                 currentRoom.client2.username = userObj2.username;
-                // console.log(`currentRoom.client2.id is : ${currentRoom.client2.id}`);
                 this.server.to(`${currentRoom.client2.id}`).emit('joined', this.RoomNum);
                 this.connectedCli++;
                 this.Rooms[this.RoomNum].IsFull = true;
@@ -309,7 +296,6 @@ export class InvitedEvent  {
         const   {acceptation, OppName} = data;
         if (acceptation){
             this.isInvitationAccepted = true;
-            console.log('Invitation accepted!')
             this.server.to(`${client.id}`).emit('IsGameAccepted');
             this.server.to(`${this.connectedPlayers.get(OppName).id}`).emit('IsGameAccepted');
             this.AfterIvitationAccepted(client, this.connectedPlayers.get(OppName));
@@ -318,7 +304,6 @@ export class InvitedEvent  {
             //if the opponent declined, client1 need to leave the room
             this.isInvitationDeclined = true;
             this.server.to(`${this.connectedPlayers.get(OppName).id}`).emit('IsGameDeclined');
-            console.log('Invitation declined');
         }
     }
 
@@ -354,7 +339,6 @@ export class InvitedEvent  {
     handlePaddleMovement(@ConnectedSocket() client: Socket, @MessageBody() data: { x: number, room: number }) {
         const {x, room} = data;
         const token = client.handshake.headers.authorization.slice(7);
-        // console.log('checking roomId in paddleMovement : ', room);
         if (this.SocketsByUser.has(token)) {
             if (this.SocketsByUser.get(token) === client.id) {
                 this.MoveEverthing(x, this.Rooms[room], client.id);

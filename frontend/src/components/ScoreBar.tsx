@@ -87,7 +87,6 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
     // Call the fetchUserData function
     fetchUserData();
     return (() => {
-      // console.log('scoreboard is unmount')
     })
   }, []);
 

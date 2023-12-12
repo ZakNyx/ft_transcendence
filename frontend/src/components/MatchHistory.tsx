@@ -75,39 +75,6 @@ const MatchHistory = () => {
     fetchUserPicture();
   }, [username]);
 
-  // useEffect(() => {
-  //   // Function to fetch user picture
-  //   const fetchUserPicture = async () => {
-  //     const tokenCookie = document.cookie
-  //       .split("; ")
-  //       .find((cookie) => cookie.startsWith("token="));
-
-  //     try {
-  //       if (tokenCookie) {
-  //         const token = tokenCookie.split("=")[1];
-  //         const response = await axios.get(
-  //           `http://localhost:3000/profile/${myGameOppName}`,
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${token}`,
-  //             },
-  //           },
-  //         );
-  //         setOppPicture(response.data.picture);
-  //       } else {
-  //         // Handle the case when there is no token (e.g., display a placeholder image)
-  //         setOppPicture("../../images/default.png");
-  //       }
-  //     } catch (error) {
-  //       // Handle errors gracefully (e.g., display an error message to the user)
-  //       console.error("Error fetching user picture:", error);
-  //     }
-  //   };
-
-    // Call the fetchUserPicture function
-  //   fetchUserPicture();
-  // }, []);
-
   useEffect(() => {
     if (gameData) {
       gameData.map((match: any, index: any) => {
@@ -128,7 +95,7 @@ const MatchHistory = () => {
   }, [myName, myOpponentName, myScore, myOpponentScore]);
 
   const getOpponentImage = (game : any) => {
-    if (game?.users?.[0]?.username === Playerusername) {
+    if (game?.users?.[0]?.username === username) {
       return game?.users?.[1]?.image || null;
     } else {
       return game?.users?.[0]?.image || null;
