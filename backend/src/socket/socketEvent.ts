@@ -113,13 +113,13 @@ export class SocketEvent  {
     IfClientInGame = (clientId: string): boolean => {
         let i: number = 0;
         for (i; i < this.RoomNum; i++) {
-            if (this.Rooms[i].client1.id === clientId) {
+            if (this.Rooms[i].client1 && this.Rooms[i].client1.id === clientId) {
 
                 if (this.Rooms[i].client1.inGame) {
                     return true;
                 }
             }
-            if (this.Rooms[i].client2.id === clientId) {
+            if (this.Rooms[i].client2 && this.Rooms[i].client2.id === clientId) {
                 if (this.Rooms[i].client2.inGame) {
                     return true;
                 }
@@ -128,8 +128,9 @@ export class SocketEvent  {
         return false;
     }
 
-    IfClientInQueue = (Client: Socket, PreviousId: string, token: string) => {
+    IfClientInQueue = (Client: Socket, PreviousId: string, token: string): boolean => {
         for (let i: number = 0; i <= this.RoomNum; i++) {
+            // console.log('here in IfClientInQueue')
             if (this.Rooms[i]) {
                 if (this.Rooms[i].client1 && this.Rooms[i].client1.id === PreviousId
                     && this.Rooms[i].client1.inQueue) {
@@ -139,12 +140,14 @@ export class SocketEvent  {
                     this.Rooms[i].client1.id = Client.id;
                     this.Rooms[i].client1.socket = Client;
                     Client.emit('joined', i);
+                    return true;
                 }
                 if (this.Rooms[i].client2 && this.Rooms[i].client2.id === PreviousId) {
                     this.SocketsByUser.set(token, Client.id);
                 }
             }
         }
+        return false;
     }
 
     //Connection
@@ -188,9 +191,12 @@ export class SocketEvent  {
                 client.join(`${this.RoomNum}`);
                 const currentRoom = this.Rooms[this.RoomNum];
                 if (currentRoom && currentRoom.client1) {
-                    if (currentRoom.client1.token === token){
+                    if (currentRoom.client1.username === userObj.username){
                         client.leave(`${this.RoomNum}`);
-                        currentRoom.client1.id = client.id;
+                        client.emit('PlayWithYourself');
+                        if (currentRoom.client1.token === token) {                        
+                            currentRoom.client1.id = client.id;
+                        }
                         return ;
                     }
                     currentRoom.client2 = new Client(2); // Initialize client2

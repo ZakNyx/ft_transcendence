@@ -45,7 +45,7 @@ function NavBar() {
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
   const location = useLocation();
   const isLoginPage = location.pathname === "/"
-
+  const isGameMultiplayerPage = location.pathname === "/game/multiplayer";
   const navigate = useNavigate();
   InitSocket();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -191,9 +191,9 @@ function NavBar() {
   }, [isSent, invitationReceived]);
 
   
-  if (isLoginPage) {
+  if (isLoginPage || isGameMultiplayerPage ) {
     return null; // Don't render the NavBar on the login page
-  }
+  } 
 
   return (
     <header>

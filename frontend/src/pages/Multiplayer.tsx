@@ -221,11 +221,11 @@ const CallEverything = (props: any) => {
 };
 
 const leaveQueue = (props: any) => {
-  // if (props.socket) {
-  //   props.socket.emit('leaveQueue', props.roomId);
-  // }
-  const navigate = useNavigate();
-  navigate('/home');
+  if (props.socket) {
+    props.socket.emit('leaveQueue', props.roomId);
+  }
+  // const navigate = useNavigate();
+  // navigate('/home');
 }
 
 const RotatedCircle: React.FC<any> = (props) => {
@@ -317,6 +317,10 @@ export default function Multiplayer() {
         setStillInGame(true);
       })
 
+      socket.on("PlayWithYourself", () => {
+        navigate('/home');
+      })
+
       socket.on("gameEnded", () => {
         socket.disconnect();
         setIsGameEnded(true);
@@ -395,7 +399,7 @@ export default function Multiplayer() {
       return (
         <div className="h-screen no-scroll">
           <div className="App h-screen flex flex-col items-center justify-center">
-            <h2>You are already in game, go finish it first.</h2>
+            <h2>You are already in queue or game, go finish it first.</h2>
           </div>
         </div>
       );
