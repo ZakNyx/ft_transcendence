@@ -127,13 +127,19 @@ function NavBar() {
         }
       }
     };
+
+    if(socket)
+    {
+      socket.on("notification", () => console.log("notif"))
+    }
+
     const pollInterval = setInterval(() => {
       fetchNotifications();
     }, 700);
 
     fetchNotifications();
     return (() => {
-      clearInterval(pollInterval);
+      socket?.off("notification");
     })
   }, [notifications]);
 

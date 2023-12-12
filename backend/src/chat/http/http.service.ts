@@ -228,8 +228,10 @@ export class HttpService {
           select: {
             userId: true,
             username: true,
-            picture: true,
+            image: true,
             blockedUsers: true,
+            blocks: true,
+            blockedBy: true
           },
         },
         msg: true,
@@ -238,29 +240,31 @@ export class HttpService {
         lastUpdate: 'desc',
       },
     });
-
-    // console.log("dms: ",dms)
     
     const currentUser = await this.prismaService.user.findUnique({
       where: {
         username: userId,
       },
-    });
-
-    let customArray: [number, Message[], User[]][] = [];
-    dms.forEach((dm: { participants: User[]; msg: Message[] } & DM) => {
-      if (
-        !dm.participants[0].blockedUsers.includes(userId) &&
-        !currentUser.blockedUsers.includes(dm.participants[0].userId)
-      ) {
-        dm.msg.sort(this.compareMessages)
-        customArray.push([dm.id, dm.msg, dm.participants]);
+      select:{
+        blocks:true,
+        blockedBy:true,
+        username: true,
       }
     });
-    // console.log("customarray: ", customArray)
+    let customArray: [number, Message[], User[]][] = [];
+    
+    dms.forEach((dm: any & DM) => {
+      dm.participants.forEach((participant) => {
+        if (!(currentUser.blockedBy.find((obj) => obj.username === participant.username) )
+        && !currentUser.blocks.find((obj) => obj.username === participant.username))
+          {
+            dm.msg.sort(this.compareMessages)
+            customArray.push([dm.id, dm.msg, dm.participants]);
+          }   
+        })
+      });
     return customArray;
   }
-
   async fetchDMContent(dmId: number, userId: string) {
     
     const currentUser = await this.prismaService.user.findUnique({

@@ -239,7 +239,6 @@ const DMConveComponent = (props: any) => {
 
   const [message, setMessage] = useState("");
   const token = Cookies.get("token");
-  // if (props.socket) console.log('check socket in DMConv.tsx : ', props.socket);
 
   const fetchData = async () => {
     try {
@@ -256,24 +255,23 @@ const DMConveComponent = (props: any) => {
       );
       if (response.status === 200) {
         setDataState(response.data);
-        console.log(response.data, "lfoog");
       }
     } catch (error) {
       navigate("/chat", { replace: true });
     }
   };
 
-  useEffect(() => {
-    if (receivedData) {
-      fetchData();
-    }
-  }, [receivedData]);
+  // useEffect(() => {
+  //   if (receivedData) {
+  //     fetchData();
+  //   }
+  // }, [receivedData]);
 
   useEffect(() => {
     if (receivedData) {
-      // const pollInterval = setInterval(() => {
-      //   fetchData();
-      // }, 700);
+      const pollInterval = setInterval(() => {
+        fetchData();
+      }, 200);
 
       props.socket.on("dmDeleted", () => {
         const path: string =
@@ -308,7 +306,7 @@ const DMConveComponent = (props: any) => {
       props.socket.on("createdMessage", messageListener);
 
       return () => {
-        // clearInterval(pollInterval);
+        clearInterval(pollInterval);
         props.socket.removeListener("createdMessage", messageListener);
       };
     }

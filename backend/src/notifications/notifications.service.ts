@@ -74,6 +74,7 @@ export class NotificationsService {
         socketsByUser
           .get(reciever.username)
           [i].emit("notification", notification);
+          console.log("notif sent");
       }
     }
   }
