@@ -5,7 +5,6 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
 const JoinRoomButton = (props: any) => {
-  // console.log("here: ----", props)
   const [display, setDisplay] = useState(true);
   const [password, setPassword] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);

@@ -92,8 +92,6 @@ const Mssg = (msgData: any) => {
 };
 
 const GroupConveComponent = (props: any) => {
-  //console.log("userId f conv: ", props);
-  // const socket = props.socket;props.
 
   const navigate = useNavigate();
 
@@ -214,7 +212,6 @@ const GroupConveComponent = (props: any) => {
     e.preventDefault();
     //check this below
     if (props.socket && message.trim() !== "" && dataState) {
-      console.log("Sendr id ==== ", props.userId);
       props.socket.emit("sendMessage", {
         messageContent: message,
         dmId: null,

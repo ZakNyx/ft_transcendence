@@ -55,12 +55,9 @@ const ParticipantOwner = (props: any) => {
   const role = props.roomState.rooms[0].role;
   const [display, setDisplay] = useState(true);
 
-  // //console.log("props in Owner:  ", props.roomState.rooms[0]);
 
   const handleButtonClick = (action: any) => {
     if (props.socket) {
-      //console.log("THE action:", action);
-      // //console.log("THE action:", action);
       props.socket.emit(action, {
         userId: props.userId,
         subjectId: props.roomState.userId,

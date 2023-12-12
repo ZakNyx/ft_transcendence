@@ -140,15 +140,7 @@ export class ProfileService {
       },
     });
 
-    if (!targetUser) {
-      throw new HttpException("user not found", 404);
-    }
-
     let status = this.checkUserStatus(user, targetUser);
-
-    if (status == "blocked") {
-      throw new UnauthorizedException("no access");
-    }
 
     targetUser.profilestatus = status;
     if (status !== "me") {
@@ -216,7 +208,6 @@ export class ProfileService {
       },
     });
     if (user.pictureStatus === true) {
-      console.log();
       try {
         await fs.unlink(req.user.filePath);
       } catch (error) {}

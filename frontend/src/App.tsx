@@ -46,7 +46,6 @@ function App() {
       setToken(newToken);
       if (newToken && !socket) {
         const decode: Token = jwtDecode(newToken);
-        console.log('check token in App : ', newToken);
         //Debug 2 : Verify user Id type
         //@ts-ignore
         setUserId(decode["username"]);
@@ -57,11 +56,9 @@ function App() {
           });
           
           newSocket.on("connect", () => {
-            console.log("Socket connected");
           });
       
           newSocket.on("disconnect", () => {
-            console.log("Socket disconnected");
           });
       
           setSocket(newSocket);

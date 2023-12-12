@@ -57,7 +57,6 @@ export class MessageService {
         },
       });
     } else {
-      console.log('sendInfo ===> ',payload.roomId)  
       await this.prismaService.room.update({
         where: {
           id: payload.roomId,
@@ -97,8 +96,6 @@ export class MessageService {
   }
 
   async createDm(client: Socket, payload: dmDTO, mapy: Map<string, Socket>) {
-    console.log(`payload.receiverName : ${payload.receiverName}`);
-    console.log(`payload.senderId : ${payload.senderId}`);
     const user = await this.prismaService.user.findUnique({
       where: {
         username: payload.receiverName,
@@ -182,7 +179,6 @@ export class MessageService {
         password: payload.password ? hash : null,
       },
     });
-    console.log('naaaame ===>', user)
     const roomMember = await this.prismaService.roomMember.create({
       data: {
         RoomId: room.id,
@@ -680,7 +676,6 @@ export class MessageService {
     const updatedBannedUsers = room.bannedUsers.filter(
       (username) =>  username != exactUsername
     );
-    // console.log(updatedBannedUsers)
     await this.prismaService.room.update({  
       where: {
         id: payload.roomId,
@@ -1211,10 +1206,6 @@ export class MessageService {
   }
 
   async fetchState(client: Socket, userid: string) {
-
-    // console.log('checking userid before findUnique : ', userid);
-    // if (userid) {
-
       const user = await this.prismaService.user.findUnique({
         where: {
           username: userid,

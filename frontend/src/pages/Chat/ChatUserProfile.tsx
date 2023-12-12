@@ -6,19 +6,7 @@ import getDataProfile from "../../utilities/geDataProfile";
 
 
 export default function ChatUserProfile(props:any) {
-    // const [isBlock, setIsBlock] = useState<boolean>(false);
-    // let textColor = props.darkMode ? "white" : "black";
 
-    // const handleBlockButton = () => {
-    //     if (!isBlock) {
-    //         props.socket.emit("blockUser", props.user.userId);
-    //     }
-    //     else
-    //         props.socket.emit("unblockUser", props.user.userId);
-    //     setIsBlock(!isBlock)
-    // }
-
-    // console.log(props.userId);
 
     const [userData, setUserData] = useState<any>();
 

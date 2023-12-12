@@ -6,10 +6,7 @@ import Cookies from 'js-cookie';
 
 const UnbanButton = (props:any) => {
   
-    //console.log("props:=-------------", props);
-    // console.log("props userId d invitee:=-------------", props.dataState.dataState.userId);
-    // console.log("props userId d sender:=-------------", props.dataState.userId);
-    // console.log("props: roomId=-------------", props.dataState.roomId);
+
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [display, setDisplay] = useState(true);
   
@@ -22,7 +19,6 @@ const UnbanButton = (props:any) => {
       e.preventDefault(); // Prevent the form from submitting traditionally
   
       setIsButtonDisabled(true);
-      console.log('first', props.dataState.dataState.userId)
         props.dataState.socketId.emit('unban', 
         {
             userId: props.dataState.userId,
@@ -93,7 +89,6 @@ function BannedList (props:any)
   const token = Cookies.get('token');
 
 
-  //console.log("oprps in banned list", props);
     const [banData, setBanData] = useState<any>(null);
     useEffect(() => {
         const fetchData = async () => {

@@ -95,7 +95,6 @@ export class HttpService {
     const asyncOperations = rooms.map(async (room) => {
       room.msgs = await Promise.all(room.msgs.map(async (msg) => {
         const res = await this.checkBlocked(username, msg.senderId);
-        console.log('res 1==>', res)
         return !res ? msg : null;
       }));
       room.msgs = room.msgs.filter((msg) => msg !== null);
@@ -343,7 +342,6 @@ export class HttpService {
     );
 
     const dmIds = currentUser.dms.map((dm) => dm.id);
-    console.log('bloc==> ', blockedUser)
     
     const users = await this.prismaService.user.findMany({
       where: {
@@ -372,11 +370,12 @@ export class HttpService {
       },
       include: {
         blocks : true,
+        blockedBy : true,
       }
     });
   
     const filteredUsers = users.filter((user) => {
-      if (!user.blocks.some((block) => block.username === userId)) {
+      if (!user.blocks.some((block) => block.username === userId) && !user.blockedBy.some((block) => block.username === userId)) {
         return user;
       }
       return null; 
@@ -391,7 +390,8 @@ export class HttpService {
       },
       include: {
         rooms: true,
-        blocks: true
+        blocks: true,
+        blockedBy: true,
       }
     });
     let accessCheck: boolean = false;
@@ -411,8 +411,7 @@ export class HttpService {
         bannedUsers: true,
       },
     });
-    console.log("hannnnnnnnnnnnnnnnni hnaaaaaaa ")  
-    const bloc = currentUser.blocks.map(
+    let bloc = currentUser.blocks.map(
       (block) => block.username,
     );
     const users = await this.prismaService.user.findMany({

@@ -4,10 +4,6 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const InvToRoomButton = (props: any) => {
-  //console.log("props:=-------------", props);
-  //console.log("props userId d invitee:=-------------", props.dataState.dataState.userId);
-  //console.log("props userId d sender:=-------------", props.dataState.userId);
-  //console.log("props: roomId=-------------", props.dataState.roomId);
   const [isButtonDisabled, setIsButtonDisabled] = useState<any>(false);
   const [display, setDisplay] = useState<any>(true);
 

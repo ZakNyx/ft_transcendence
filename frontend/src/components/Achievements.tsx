@@ -31,7 +31,6 @@ export default function Achievements() {
           );
 
           // Set the user data in the state
-          // console.log(response.data);
           setUser(response.data);
         } catch (error: any) {
           console.error("Error fetching user data:", error);

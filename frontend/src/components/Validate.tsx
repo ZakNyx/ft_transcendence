@@ -79,7 +79,6 @@ const Validate: React.FC = () => {
       const token = tokenCookie.split("=")[1];
 
       try {
-        console.log(password);
         const response = await axios.put(
           `http://localhost:3000/2fa/validate`,
           { token: password },
@@ -94,7 +93,6 @@ const Validate: React.FC = () => {
         expirationDate.setTime(expirationDate.getTime() +24 * 60 * 60 * 1000); // 24 hours in milliseconds
         const expires = `expires=${expirationDate.toUTCString()}`;
         document.cookie = `2faValidated=true; ${expires}; path=/;`;
-        console.log("2FA validated:", response.data);
         close();
         // window.location.reload();
       } catch (error: any) {

@@ -13,7 +13,6 @@ import {
     catch(exception: unknown, host: ArgumentsHost): void {
       let message: string;
   
-      // console.log("EXCEPTION")
       if (host.getType() == 'http') {
         const ctx = host.switchToHttp();
   

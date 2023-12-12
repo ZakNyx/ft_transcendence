@@ -10,7 +10,6 @@ const DmRoomButton = (props: any) => {
   const token = Cookies.get("token");
 
   const handleButtonClick = () => {
-    console.log('check socket.id in AddPeople.tsx : ', props.socket.id);
     props.socket.emit("createDm", {
       senderId: props.userData.userId,
       receiverName: props.userData.userData.username,
@@ -25,7 +24,7 @@ const DmRoomButton = (props: any) => {
         <div className="w-full h-full flex items-center">
           <img
             className="logoImg rounded-[40px] w-[40px] h-[40px]"
-            src={props.userData.userData.image}
+            src={props.userData.userData.picture}
             alt={""}
           />
 
@@ -97,7 +96,6 @@ export default function AddPeople(props: any) {
   const token = Cookies.get("token");
   const navigate = useNavigate();
 
-  console.log('check socket.id in AddPeople.tsx : ', props.socket.id);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -114,12 +112,9 @@ export default function AddPeople(props: any) {
           },
         );
         if (response.status === 200) {
-          // Debug 1 :check out response content
-          // console.log("check response : ", response);
           setAddUsers(response.data);
         }
       } catch (error) {
-        // console.error('Error fetching data:', error);
         navigate("/chat", { replace: true });
       }
     };

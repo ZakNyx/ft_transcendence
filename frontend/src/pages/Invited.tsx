@@ -282,30 +282,11 @@ export default function Invited() {
     sock?.emit("InvitedCompCalled");
   }
 
-  // if (RoomNumber === -1){
-  //   console.log('check room ID in invited.tsx : ', RoomId);
-  //   setRoomNumber(RoomId);
-  // }
-
-  // const handleSettingsChange = (paddleColor: string, ballColor: string) => {
-  //   setSettings({ paddleColor, ballColor });
-  //   setChangeSettings(true);
-  // };
 
   useEffect(() => {
     if (socket) {
-      // if (RoomNumber !== -1) {
-      //   console.log('check room ID in invited.tsx : ', RoomNumber);
-      // }
-      // socket.on("joined", (RoomId: number) => {
-      //   console.log("joined event received!");
-      //   console.log(`my room id is : ${RoomId}`);
-      //   setRoomNumber(RoomId);
-      // });
 
       socket.on("gameStarted", (data: { roomId: number; OppName: string }) => {
-        console.log("game Started ;)");
-        console.log("my Opponent name is : ", data.OppName);
         const { roomId, OppName } = data;
         setInGame(true);
         setIsGameStarted(true);
@@ -318,7 +299,6 @@ export default function Invited() {
       });
 
       socket.on("gameEnded", () => {
-        console.log("game ended nod tga3ad");
         setIsGameEnded(true);
         setStillInGame(false);
       });

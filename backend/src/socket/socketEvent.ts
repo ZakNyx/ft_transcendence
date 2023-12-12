@@ -112,18 +112,15 @@ export class SocketEvent  {
 
     IfClientInGame = (clientId: string): boolean => {
         let i: number = 0;
-        // console.log('ifClientInGame!!!');
         for (i; i < this.RoomNum; i++) {
             if (this.Rooms[i].client1.id === clientId) {
 
                 if (this.Rooms[i].client1.inGame) {
-                    console.log('ta sir f7alk rak deja in game a chamchoun1: ', i);
                     return true;
                 }
             }
             if (this.Rooms[i].client2.id === clientId) {
                 if (this.Rooms[i].client2.inGame) {
-                    console.log('ta sir f7alk rak deja in game a chamchoun2: ', i);
                     return true;
                 }
             }
@@ -136,14 +133,12 @@ export class SocketEvent  {
             if (this.Rooms[i]) {
                 if (this.Rooms[i].client1 && this.Rooms[i].client1.id === PreviousId
                     && this.Rooms[i].client1.inQueue) {
-                    console.log('test');
                     this.SocketsByUser.set(token, Client.id);
                     this.Rooms[i].client1.socket.leave(`${i}`);
                     Client.join(`${i}`);
                     this.Rooms[i].client1.id = Client.id;
                     this.Rooms[i].client1.socket = Client;
                     Client.emit('joined', i);
-                    console.log('check new socket now : ', this.Rooms[i].client1.id);
                 }
                 if (this.Rooms[i].client2 && this.Rooms[i].client2.id === PreviousId) {
                     this.SocketsByUser.set(token, Client.id);
@@ -155,7 +150,6 @@ export class SocketEvent  {
     //Connection
     handleConnection = (client: Socket) => {
         try{
-            console.log(`client connected id in Game multi : ${client.id}`);
             const token: string = client.handshake.headers.authorization.slice(7);
             if (!token)
                 throw new UnauthorizedException();
@@ -178,7 +172,6 @@ export class SocketEvent  {
             if (this.connectedCli % 2 === 0) {
                 client.join(`${this.RoomNum}`);
                 const newRoom = new Room(this.RoomNum);
-                console.log(`new Room is created! ${newRoom.num}`);
                 newRoom.client1 = new Client(1); // Initialize client1
                 newRoom.ball = new Ball();
                 newRoom.client1.id = client.id;
@@ -196,7 +189,6 @@ export class SocketEvent  {
                 const currentRoom = this.Rooms[this.RoomNum];
                 if (currentRoom && currentRoom.client1) {
                     if (currentRoom.client1.token === token){
-                        console.log("wach baghi tal3ab m3a rassak wach nta howa l mfarbal");
                         client.leave(`${this.RoomNum}`);
                         currentRoom.client1.id = client.id;
                         return ;
@@ -231,7 +223,6 @@ export class SocketEvent  {
 
     //Disconnection
     handleDisconnection = (client: Socket) => {
-        console.log(`Client game Disconnected: ${client.id}`);
         const token: string = client.handshake.headers.authorization.slice(7);
         this.Rooms.forEach( (item) => {
             if (item.client1.id === client.id) {
@@ -304,12 +295,10 @@ export class SocketEvent  {
                 if (room.client1.score === room.game.WinReq) {
                     this.server.to(`${room.client1.id}`).emit('won');
                     this.server.to(`${room.client2.id}`).emit('lost');
-                    console.log('client1 won the game');
                 }
                 else {
                     this.server.to(`${room.client1.id}`).emit('lost');
                     this.server.to(`${room.client2.id}`).emit('won');
-                    console.log('client2 won the game');
                 }
                 this.server.to(`${room.client1.id}`).emit('gameEnded');
                 this.server.to(`${room.client2.id}`).emit('gameEnded');
@@ -397,7 +386,6 @@ export class SocketEvent  {
         if (room.client1.inGame || room.client2.inGame)
             return ;
         else if (!room.client1.inGame && !room.client2.inGame) {
-            console.log('game is finish and database is updated');
             this.updateGameResult(gamedata.gameId, room.client1.score.toString(), room.client2.score.toString());
             await this.prismaService.game.findUnique({
                 where: {
@@ -468,15 +456,12 @@ export class SocketEvent  {
                     if (userObj.username === this.Rooms[_room].client1.username){
                         this.Rooms[_room].client1.leave = true;
                         this.Rooms[_room].client1.inQueue = false;
-                        console.log('client1 leaves the game!');
                     }
                     if (userObj.username === this.Rooms[_room].client2.username) {
                         this.Rooms[_room].client2.leave = true;
                         this.Rooms[_room].client2.inQueue = false;
-                        console.log('client2 leaves the game!');
                     }
                     if (this.Rooms[_room].client1.leave && this.Rooms[_room].client2.leave){
-                        console.log('Both players leave the game')
                         this.Rooms[_room].game.IsFinish = true;
                         this.Rooms[_room].client1.inGame = false;
                         this.Rooms[_room].client2.inGame = false;
@@ -495,7 +480,6 @@ export class SocketEvent  {
 
                 if (this.Rooms[roomId].client1 && this.Rooms[roomId].client1.id === this.SocketsByUser.get(token)) {
                     this.Rooms[roomId].client1.inQueue = true;
-                    console.log(`check client1: ${this.Rooms[roomId].client1.id} if he is inQueue : `, this.Rooms[roomId].client1.inQueue);
                 }
                 if (this.Rooms[roomId].client2 && this.Rooms[roomId].client2.id === this.SocketsByUser.get(token)) {
                     this.Rooms[roomId].client2.inQueue = true;
@@ -506,7 +490,6 @@ export class SocketEvent  {
 
     @SubscribeMessage('leaveQueue')
     handleleavequeue(@ConnectedSocket() client: Socket, @MessageBody() room: number) {
-        console.log(`checking room Number if exist: ${room}`);
         if (this.Rooms[room] && !this.Rooms[room].client1.inGame) {
             if (this.Rooms[room].client1.id === client.id) {
                 this.Rooms[room].client1.inQueue = false;
@@ -516,8 +499,6 @@ export class SocketEvent  {
                 this.Rooms[room].client1.socket.leave(`${room}`);
                 this.connectedCli--;
                 this.RoomNum++;
-                console.log(`check connectedCli after leaving the queue ${this.connectedCli}`);
-                console.log('client leaves the room');
             }
         }
     }

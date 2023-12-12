@@ -16,9 +16,6 @@ export class NotificationsService {
     reqUser,
     socketsByUser: Map<string, Socket[]>,
   ) {
-    console.log(`sender name is : ${reqUser.username}`);
-    console.log(`receiver name is : ${notifBody.reciever}`);
-    console.log(notifBody);
     const sender = await this.prismaService.user.findUnique({
       where: {
         username: reqUser.username,
@@ -74,7 +71,6 @@ export class NotificationsService {
         socketsByUser
           .get(reciever.username)
           [i].emit("notification", notification);
-          console.log("notif sent");
       }
     }
   }
@@ -128,7 +124,6 @@ export class NotificationsService {
         socketsByUser
           .get(reciever.username)
           [i].emit("notification");
-          console.log("notif sent");
       }
     }
 

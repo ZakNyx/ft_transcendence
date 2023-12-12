@@ -13,7 +13,6 @@ export class GameController {
 
   @Get('user/:username')
   async getUserGamesByUsername(@Param('username') username: string) {
-    console.log(username);
     return this.gameService.getUserGamesByUsername(username);
   }
 }

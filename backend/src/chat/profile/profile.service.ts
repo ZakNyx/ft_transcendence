@@ -24,7 +24,6 @@ export class ProfileService {
         blockedUsers: true,
       },
     });
-    // console.log('searcher: ', searcher);
     let users = await this.prisma.user.findMany({
       where: {
         username: {

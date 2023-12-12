@@ -83,6 +83,8 @@ export default function ProfileCard() {
 
           // Set the user data in the state
           setUser(response.data);
+          if (response.data.profilestatus == "blocked")
+            navigate("/Error401");
         } catch (error: any) {
           if (error.response && error.response.status == 401) {
             navigate("/Error401");
