@@ -1,12 +1,15 @@
 import {
   HttpException,
   Injectable,
+  StreamableFile,
   UnauthorizedException,
 } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { SearchNameNameDTO, updateNameDTO } from "./dto/profile.dto";
+import { updateNameDTO } from "./dto/profile.dto";
 import * as fs from "fs/promises";
 import axios from "axios";
+import { createReadStream } from 'fs';
+import { lookup } from 'mime-types';
 
 @Injectable()
 export class ProfileService {
@@ -58,6 +61,7 @@ export class ProfileService {
       },
       include: {
         friends:true,
+        games:true,
         notifications:true,
       },
     });
@@ -131,19 +135,12 @@ export class ProfileService {
       },
       include: {
         friends: true,
+        games: true,
         requested: true,
       },
     });
 
-    if (!targetUser) {
-      throw new HttpException("user not found", 404);
-    }
-
     let status = this.checkUserStatus(user, targetUser);
-
-    if (status == "blocked") {
-      throw new UnauthorizedException("no access");
-    }
 
     targetUser.profilestatus = status;
     if (status !== "me") {
@@ -152,51 +149,22 @@ export class ProfileService {
     return targetUser;
   }
 
-  async profilePictureMe(requser, res) {
-    try {
-      const user = await this.prismaService.user.findUnique({
-        where: {
-          username: requser.username,
-        },
-      });
-      if (user.picture) {
-        const imageBuffer = await fs.readFile(user.picture);
-        res.setHeader("Content-Type", user.pictureMimetype);
-        res.send(imageBuffer);
-      } else {
-        const url_image = await axios.get(user.imageUrl, {
-          responseType: "arraybuffer",
-        });
-        const imageBuffer = Buffer.from(url_image.data, "binary");
-        res.setHeader("Content-Type", "image/jpg");
-        res.send(imageBuffer);
-      }
-    } catch (error) {
-      res.status(500).send("could not upload the image");
-    }
-  }
-
-  async profilePicture(username, res) {
-    try {
-      const user = await this.prismaService.user.findUnique({
-        where: {
-          username: username,
-        },
-      });
-      if (user.picture) {
-        const imageBuffer = await fs.readFile(user.picture);
-        res.setHeader("Content-Type", user.pictureMimetype);
-        res.send(imageBuffer);
-      } else {
-        const url_image = await axios.get(user.imageUrl, {
-          responseType: "arraybuffer",
-        });
-        const imageBuffer = Buffer.from(url_image.data, "binary");
-        res.setHeader("Content-Type", "image/jpg");
-        res.send(imageBuffer);
-      }
-    } catch (error) {
-      res.status(500).send("could not upload the image");
+  async getprofilePicture(res, username): Promise<StreamableFile>{
+    const user = await this.prismaService.user.findUnique({where : {
+     username: username,
+    }})
+    if (user){
+      let path;
+      if (user.pictureStatus)
+        path = user.filePath;
+      else
+        path = 'uploads/default.png';
+      const file = createReadStream(path)
+      const mimetype = lookup(path)
+      res.set({
+        'content-type': mimetype
+      })
+      return new StreamableFile(file);
     }
   }
 
@@ -226,9 +194,9 @@ export class ProfileService {
         username: req.user.username,
       },
       data: {
-        picture: filepath,
+        picture: `http://localhost:3000/profile/ProfilePicture/${req.user.username}`,
         pictureStatus: true,
-        pictureMimetype: mimetype,
+        filePath: filepath,
       },
     });
   }
@@ -241,7 +209,7 @@ export class ProfileService {
     });
     if (user.pictureStatus === true) {
       try {
-        await fs.unlink(req.user.picture);
+        await fs.unlink(req.user.filePath);
       } catch (error) {}
     }
     const updateUser = await this.prismaService.user.update({
@@ -249,10 +217,10 @@ export class ProfileService {
         username: req.user.username,
       },
       data: {
-        picture: "./uploads/default.png",
+        picture: `http://localhost:3000/profile/ProfilePicture/${req.user.username}`,
         pictureStatus: false,
       },
-    });
+    }); 
   }
 
   async deleteName(req) {

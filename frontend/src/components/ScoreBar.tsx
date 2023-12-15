@@ -1,4 +1,7 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { initializeSocket } from "./socketManager";
+import { useNavigate } from "react-router-dom";
 
 interface ScoreBarProps {
   score: number;
@@ -7,12 +10,125 @@ interface ScoreBarProps {
   opps: string;
 }
 
+interface notifData {
+  int: number;
+
+  reciever: string;
+  sender: string;
+  sernderdisplayname: string;
+  senderPicture: string;
+  type: string;
+  data: string;
+}
+
+interface UserData {
+  userID: string;
+  username: string;
+  picture: string;
+  displayname: string;
+  gamesPlayed: number;
+  wins: number;
+  loses: number;
+  winrate: number;
+  elo: number;
+  status2fa: boolean;
+  secret2fa: boolean;
+  secretAuthUrl: boolean;
+  notifications: notifData[];
+}
+
+
 const ScoreBar: React.FC<ScoreBarProps> = ({
   score,
   enemy_score,
   you,
   opps,
 }) => {
+  const [user, setUser] = useState<UserData | null>(null);
+  const [opp, setOpp] = useState<UserData | null>(null);
+  const navigate = useNavigate();
+
+
+
+  useEffect(() => {
+    // Function to fetch user data and set it in the state
+    const fetchUserData = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+
+        try {
+          // Configure Axios to send the token in the headers
+          const response = await axios.get(`http://localhost:3000/profile/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          // Set the user data in the state
+          setUser(response.data);
+          const socket = initializeSocket('');
+        } catch (error: any) {
+          if (error.response && error.response.status === 401) {
+            // Redirect to localhost:5137/ if Axios returns a 401 error
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            navigate("/");
+          } // Redirect to the root path
+          console.error("Error fetching user data:", error);
+        }
+      } else {
+        navigate("/");
+      }
+    };
+
+    // Call the fetchUserData function
+    fetchUserData();
+    return (() => {
+    })
+  }, []);
+
+  useEffect(() => {
+    // Function to fetch user data and set it in the state
+    const fetchUserData = async () => {
+      const tokenCookie = document.cookie
+        .split("; ")
+        .find((cookie) => cookie.startsWith("token="));
+
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+
+        try {
+          // Configure Axios to send the token in the headers
+          const response = await axios.get(`http://localhost:3000/profile/${opps}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          // Set the user data in the state
+          setOpp(response.data);
+          const socket = initializeSocket('');
+        } catch (error: any) {
+          if (error.response && error.response.status === 401) {
+            // Redirect to localhost:5137/ if Axios returns a 401 error
+            document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            navigate("/");
+          } // Redirect to the root path
+          console.error("Error fetching user data:", error);
+        }
+      } else {
+        navigate("/");
+      }
+    };
+
+    // Call the fetchUserData function
+    fetchUserData();
+  }, []);
+
+
   return (
     <div className="bg-npc-gray w-[45%] max-w-screen-md rounded-lg">
       <style>
@@ -21,11 +137,13 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
       </style>
       <div className="flex flex-col sm:flex-row items-center justify-between text-gray-100 font-[Montserrat] text-base sm:text-s md:text-lg lg:text-xl xl:text-2xl rounded-md p-3">
         <div className="flex items-center space-x-2 mb-2 sm:mb-0">
-          <img
-            src="../public/images/zihirri.jpg"
-            alt="Profile Owner"
-            className="w-12 h-12 rounded-full"
-          />
+          {user && (
+            <img
+              src={user.picture}
+              alt="Profile Owner"
+              className="w-12 h-12 rounded-full"
+            />
+          )}
           <span className="whitespace-nowrap">{you}</span>
         </div>
         <div className="flex items-center space-x-2">
@@ -35,11 +153,13 @@ const ScoreBar: React.FC<ScoreBarProps> = ({
         </div>
         <div className="flex items-center space-x-2">
           <span className="whitespace-nowrap">{opps}</span>
-          <img
-            src={`../public/images/${opps}.jpg`}
-            alt={`${opps}'s profile`}
-            className="w-12 h-12 rounded-full"
-          />
+          {opp && (
+            <img
+              src={opp.picture}
+              alt={`${opp.username}'s profile`}
+              className="w-12 h-12 rounded-full"
+            />
+          )}
         </div>
       </div>
     </div>

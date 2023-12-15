@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -8,10 +9,9 @@ import {
 } from "@nestjs/websockets";
 import { NotificationsService } from "./notifications.service";
 import { JwtService } from "@nestjs/jwt";
-import { Socket } from "socket.io";
+import { Namespace, Server, Socket } from "socket.io";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Req, UnauthorizedException, UseGuards } from "@nestjs/common";
-import { jwtStrategy } from "src/strategies/jwt.strategy";
 import { AuthGuard } from "@nestjs/passport";
 import {
   cancelNotificationDTO,
@@ -23,6 +23,7 @@ import {
 export class NotificationsGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
+  @WebSocketServer() server: Server;
   socketsByUser: Map<string, Socket[]>;
   constructor(
     private readonly jwtService: JwtService,
@@ -36,7 +37,6 @@ export class NotificationsGateway
   async handleConnection(client: Socket) {
     try {
       const token = client.handshake.headers.authorization.slice(7);
-      // console.log(client.id);
       if (!token) {
         throw new UnauthorizedException();
       }
@@ -90,7 +90,6 @@ export class NotificationsGateway
         }
       }
 
-      console.log(`client ${client.id} has disconnect`);
     } catch (err) {
       client.emit("unauthorized", "Unauthorized"); // Send unauthorized message
       client.disconnect(true);
@@ -133,5 +132,10 @@ export class NotificationsGateway
       body,
       this.socketsByUser,
     );
+  }
+
+  @SubscribeMessage("sendToInvited")
+  async handleMessage(@ConnectedSocket() client: Socket) {
+    
   }
 }

@@ -20,5 +20,4 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
-.env
 *.sw?

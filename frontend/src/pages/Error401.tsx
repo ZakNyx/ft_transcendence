@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import NavBar from "../components/Navbar";
 
 function Error401() {
+  //background-image removed
   return (
-    <div className="background-image h-screen ">
-      <NavBar />
+    <div className="h-screen ">
+      {/* <NavBar /> */}
       <div className="flex flex-col items-center justify-center h-[80vh]">
         <h1 className="text-3xl font-bold text-red-600 mb-4">
           Oops.. cannot view this user

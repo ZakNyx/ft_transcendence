@@ -1,22 +1,26 @@
-import React, { useState, useRef, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import IconButton from "./IconButton";
 import SearchBar from "./SearchBar";
 import axios from "axios";
 import { initializeSocket } from "./socketManager";
 import Validate from "../components/Validate";
 import Notification from "./Notification";
+import { InitSocket, RoomId, isSent, myGameOppName, setIsSent, setMyGameOppName, setRoomId, sock } from "../pages/variables";
+import Swal from "sweetalert2";
+import { Socket } from "socket.io-client";
 
 interface UserData {
   userID: string;
   username: string;
-  profilePicture: string;
+  picture: string;
   displayname: string;
   gamesPlayed: number;
   wins: number;
   loses: number;
   winrate: number;
   elo: number;
+  status: string;
   status2fa: boolean;
   secret2fa: boolean;
   secretAuthUrl: boolean;
@@ -25,7 +29,6 @@ interface UserData {
 
 interface notifData {
   int: number;
-
   reciever: string;
   sender: string;
   sernderDisplayName: string;
@@ -36,12 +39,15 @@ interface notifData {
 
 function NavBar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | undefined>(
-    undefined,
-  );
+  const [invitationReceived, setInvitationReceived] = useState<boolean>(false);
+  const [isGameDeclined, setIsGameDeclined] = useState<boolean>(false);
+  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | undefined>(undefined);
   const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
-
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/"
+  const isGameMultiplayerPage = location.pathname === "/game/multiplayer";
   const navigate = useNavigate();
+  InitSocket();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const openDropdown = () => {
@@ -55,7 +61,8 @@ function NavBar() {
 
   const [username, setUsername] = useState<string | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
-  const [userPicture, setUserPicture] = useState<string | null>(null);
+  const [opponent, setOpponent] = useState<UserData | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
     // Function to fetch user data and set it in the state
@@ -66,7 +73,6 @@ function NavBar() {
 
       if (tokenCookie) {
         const token = tokenCookie.split("=")[1];
-
         try {
           // Configure Axios to send the token in the headers
           const response = await axios.get(`http://localhost:3000/profile/me`, {
@@ -78,7 +84,7 @@ function NavBar() {
           // Set the user data in the state
           setUser(response.data);
           setUsername(response.data.username);
-          const socket = initializeSocket(token);
+          if (!socket) setSocket(initializeSocket(token));
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             // Redirect to localhost:5137/ if Axios returns a 401 error
@@ -91,48 +97,45 @@ function NavBar() {
         navigate("/");
       }
     };
-
     // Call the fetchUserData function
     fetchUserData();
   }, [username]);
 
+  const [notifications, setNotifications] = useState<notifData[] | null>(null);
   useEffect(() => {
-    // Function to fetch user picture
-    const fetchUserPicture = async () => {
+    const fetchNotifications = async () => {
       const tokenCookie = document.cookie
         .split("; ")
         .find((cookie) => cookie.startsWith("token="));
 
-      try {
-        if (tokenCookie && username) {
-          const token = tokenCookie.split("=")[1];
-          const response = await axios.get(
-            `http://localhost:3000/profile/ProfilePicture/${username}`,
+      if (tokenCookie) {
+        const token = tokenCookie.split("=")[1];
+
+        try {
+          const response = await axios.get<notifData[]>(
+            `http://localhost:3000/profile/notifications/`,
             {
-              responseType: "arraybuffer",
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            },
+            }
           );
 
-          const contentType = response.headers["content-type"];
-          const blob = new Blob([response.data], { type: contentType });
-          const imageUrl = URL.createObjectURL(blob);
-          setUserPicture(imageUrl);
-        } else {
-          // Handle the case when there is no token (e.g., display a placeholder image)
-          setUserPicture("../../public/images/default.png");
+          setNotifications(response.data);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
         }
-      } catch (error) {
-        // Handle errors gracefully (e.g., display an error message to the user)
-        console.error("Error fetching user picture:", error);
       }
     };
 
-    // Call the fetchUserPicture function
-    fetchUserPicture();
-  }, [username]);
+    if(socket)
+    {
+      socket.on("notification", async() => await fetchNotifications())
+    }
+    return (() => {
+      socket?.off("notification");
+    })
+  });
 
   const closeDropdown = () => {
     const timeout = setTimeout(() => {
@@ -146,8 +149,52 @@ function NavBar() {
       clearTimeout(dropdownTimeout);
     };
   }, [dropdownTimeout]);
+  
+  useEffect(() => {
+    
+    sock?.on('sendInvitationToOpp', (inviSender: string) => {
+      setMyGameOppName(inviSender);
+      setInvitationReceived(true);
+      // setIsSent(true);
+    })
 
-  // Render your Navbar JSX here, using the username and userPicture states
+    const redirectToInvitedGame = () => {
+      if (sock)
+        sock.emit('AcceptingInvitation', {acceptation: true, OppName: myGameOppName});
+    }
+  
+    const invitationDenied = () => {
+      if (sock) {
+        sock.emit('AcceptingInvitation', {acceptation: false, OppName: myGameOppName});
+        navigate('/home');
+      }
+    } 
+    
+    if (invitationReceived) {
+      Swal.fire({
+        title: `${myGameOppName} invited you to a game!`,
+        showDenyButton: true,
+        showCancelButton: false,
+        allowOutsideClick: false,
+        confirmButtonText: 'Accept',
+        denyButtonText: `Deny`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          redirectToInvitedGame();
+        } else if (result.isDenied) {
+          invitationDenied();
+        }
+        setInvitationReceived(false);
+      })
+    }
+
+  }, [isSent, invitationReceived]);
+
+  
+  if (isLoginPage || isGameMultiplayerPage ) {
+    return null; // Don't render the NavBar on the login page
+  } 
+
   return (
     <header>
       <style>
@@ -160,7 +207,7 @@ function NavBar() {
           <NavLink to="/home">
             <img
               className="top-2 left-2 w-32 h-auto cursor-pointer"
-              src="../public/images/pingpong.png"
+              src="../../images/pingpong.png"
               alt="PingPong"
             />
           </NavLink>
@@ -173,7 +220,7 @@ function NavBar() {
             <li>
               <NavLink to="/home">
                 <IconButton
-                  imagePath="../public/images/Home.svg"
+                  imagePath="../../images/Home.svg"
                   isActive={window.location.pathname === "/home"}
                 />
               </NavLink>
@@ -182,7 +229,7 @@ function NavBar() {
             <li>
               <NavLink to="/chat">
                 <IconButton
-                  imagePath="../public/images/Chat.svg"
+                  imagePath="../../images/Chat.svg"
                   isActive={window.location.pathname === "/chat"}
                 />
               </NavLink>
@@ -190,7 +237,7 @@ function NavBar() {
             <li>
               <NavLink to="/leaderboard">
                 <IconButton
-                  imagePath="../public/images/Leaderboard.svg"
+                  imagePath="../../images/Leaderboard.svg"
                   isActive={window.location.pathname === "/leaderboard"}
                 />
               </NavLink>
@@ -198,13 +245,13 @@ function NavBar() {
             <div>
               <li onClick={toggleNotification} className="relative">
                 <IconButton
-                  imagePath="../public/images/Notification.svg"
+                  imagePath="../../images/Notification.svg"
                   isActive={isNotificationOpen}
                 />
                 {/* Notification counter */}
-                {!isNotificationOpen && (user && user.notifications.length > 0) && (
+                {!isNotificationOpen && (notifications && notifications.length > 0) && (
                   <div className="absolute w-4 h-4 bg-red-600 rounded-full text-white text-xs -top-1 -right-1 flex items-center justify-center">
-                    {user.notifications.length}
+                    {notifications.length}
                   </div>
                 )}
               </li>
@@ -219,9 +266,9 @@ function NavBar() {
                 onMouseEnter={openDropdown}
                 onMouseLeave={closeDropdown}
               >
-                {userPicture && (
+                {user && (
                   <img
-                    src={userPicture}
+                    src={user.picture}
                     alt="profile picture"
                     className="w-12 h-12 cursor-pointer rounded-[30px] flex-shrink-0 min-w-[48px] min-h-[48px]"
                   />
@@ -236,7 +283,7 @@ function NavBar() {
                       <li className="px-4 text-gray-700 hover:bg-gray-300 flex items-center">
                         <img
                           className="w-4 h-4 mr-2"
-                          src="../../public/images/user.svg"
+                          src="../../images/user.svg"
                           alt="User"
                         />
                         <NavLink to="/profile" className="block">
@@ -246,7 +293,7 @@ function NavBar() {
                       <li className="px-4 text-gray-700 hover:bg-gray-300 flex items-center">
                         <img
                           className="w-4 h-4 mr-2"
-                          src="../../public/images/setting.svg"
+                          src="../../images/setting.svg"
                           alt="User"
                         />
                         <NavLink to="/settings" className="block">
@@ -256,7 +303,7 @@ function NavBar() {
                       <li className="px-4 text-gray-700 hover:bg-gray-300 flex items-center">
                         <img
                           className="w-4 h-4 mr-2"
-                          src="../../public/images/logout.svg"
+                          src="../../images/logout.svg"
                           alt="logout"
                         />
                         <NavLink
@@ -264,7 +311,8 @@ function NavBar() {
                             // Clear the 'token' cookie
                             document.cookie =
                               "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                            navigate("/");
+                              // window.location.reload();
+                              navigate("/");
                           }}
                           to="/"
                         >

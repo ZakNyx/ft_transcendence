@@ -1,17 +1,22 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
 export class notificationBodyDTO {
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsString()
-  type: string;
+  type?: string;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @IsString()
-  data: string;
+  data?: string;
 
   @IsNotEmpty()
   @IsString()
   reciever: string;
+
+  @IsNotEmpty()
+  @IsString()
+  sender?: string;
+
 }
 
 export class replyToFriendRequestDTO {

@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  post:
+    container_name: db
+    image: postgres:13
+    networks:
+      - transcendence
+    ports:
+      - 5432:5432
+    env_file:
+    - ./backend/.env
+    restart: always
+  backend:
+    build: 
+      context: ./backend
+    image: backend
+    container_name: backend
+    networks:
+      - transcendence
+    ports:
+      - 3000:3000
+    depends_on:
+      - post
+    volumes:
+      - ./backend:/usr/src/app
+    restart: always
+  frontend:
+    build: 
+      context: ./frontend
+    image: frontend
+    container_name: frontend
+    networks:
+      - transcendence
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/src/app
+    restart: always
+networks:
+  transcendence:

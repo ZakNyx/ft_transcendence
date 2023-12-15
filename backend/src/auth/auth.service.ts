@@ -33,8 +33,10 @@ export class AuthService {
           username: newUser.username,
           displayname: newUser.username,
           email: newUser.email,
-          imageUrl : imageLink,
-          picture:null,
+          picture : imageLink,
+          pictureStatus : true,
+          userId:newUser.userId,
+          image: imageLink //mybe need to fix later
         },
       });
       user.first = 0;

@@ -31,7 +31,6 @@ export default function Achievements() {
           );
 
           // Set the user data in the state
-          console.log(response.data);
           setUser(response.data);
         } catch (error: any) {
           console.error("Error fetching user data:", error);
@@ -55,14 +54,14 @@ export default function Achievements() {
   }
   return (
     <div>
-      <div className="background-gray rounded-[30px] p-6 mt-7 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top">
+      <div className="background-gray rounded-[30px] h-[44vh] p-6 mt-7 shadow-[0px_10px_30px_20px_#00000024] animate-fade-in-top overflow-y-scroll">
         <h2 className="text-gray-200 font-[Rubik] text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl mb-4">
           Achievements
         </h2>
-        <div className="h-[18rem] flex items-center justify-center">
+        <div className="h-[44vh] flex items-center justify-center">
           {!friend && !played && !won ? (
             <div className="text-center">
-              <p className="text-gray-200 font-[Rubik] text-lg">
+              <p className="text-gray-200 font-[Rubik] text-lg mb-28">
                 Boohoo! You haven't achieved anything yet (In life too)
               </p>
             </div>
@@ -71,7 +70,7 @@ export default function Achievements() {
               {friend && (
                 <li className="flex items-center space-x-4 mb-4">
                   <img
-                    src="../../public/images/bronze.png"
+                    src="../../images/bronze.png"
                     alt="bronze"
                     className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl"
                   />
@@ -84,7 +83,7 @@ export default function Achievements() {
               {played && (
                 <li className="flex items-center space-x-4 mb-4">
                   <img
-                    src="../../public/images/silver.png"
+                    src="../../images/silver.png"
                     alt="silver"
                     className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl "
                   />
@@ -97,7 +96,7 @@ export default function Achievements() {
               {won && (
                 <li className="flex items-center space-x-4 mb-4">
                   <img
-                    src="../../public/images/gold.png"
+                    src="../../images/gold.png"
                     alt="gold"
                     className="2xl:w-24 xl:w-20 lg:w-16 w-12 max-w-22 2xl:h-24 xl:h-20 lg:h-16 h-12 object-contain rounded-xl"
                   />

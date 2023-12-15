@@ -25,7 +25,6 @@ function Modal() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassCode(e.target.value);
-    console.log(passCode);
   };
 
   const [user, setUser] = useState<UserData | null>(null);
@@ -104,14 +103,13 @@ function Modal() {
               },
             },
           );
-          console.log("2FA enabled:", response.data);
           const expirationDate = new Date();
           expirationDate.setTime(
             expirationDate.getTime() + 24 * 60 * 60 * 1000,
           ); // 24 hours in milliseconds
           const expires = `expires=${expirationDate.toUTCString()}`;
           document.cookie = `2faValidated=true; ${expires}; path=/;`;
-          console.log("2FA validated:", response.data);
+          window.location.reload();
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
@@ -136,7 +134,7 @@ function Modal() {
             },
           );
           document.cookie = "2faValidated=true; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          console.log("2FA disabled:", response.data);
+          window.location.reload();
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
@@ -151,11 +149,11 @@ function Modal() {
         trigger={
           user && (
             <div
-              className={`button relative p-2 ${
-                user.status2fa
-                  ? "bg-red-500 hover:bg-red-600"
-                  : "bg-blue-500 hover:bg-blue-600"
-              }  hover:cursor-pointer text-gray-200 w-auto rounded-lg flex items-center transition`}
+            className={`button relative p-2 ${
+              user.status2fa
+              ? "bg-red-500 hover:bg-red-600"
+              : "bg-blue-500 hover:bg-blue-600"
+            }  hover:cursor-pointer text-gray-200 w-auto rounded-lg flex items-center transition`}
             >
               {user.status2fa ? "Disable 2FA" : "Enable 2FA"}
             </div>
@@ -164,7 +162,7 @@ function Modal() {
         modal
         nested
         onOpen={handlePopupOpen} // Use the onOpen callback
-      >
+        >
         {/* @ts-ignore  */}
         {(close: () => void) => (
           <div className="modal background-gray  text-gray-200 font-montserrat rounded-lg shadow-[0px_10px_30px_20px_#00000024] pl-4 pr-4">
@@ -213,11 +211,11 @@ function Modal() {
                     <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"></hr>
                     {data2fa && (
                       <img
-                        src={data2fa}
-                        alt="QR Code"
-                        className="w-56 h-auto"
+                      src={data2fa}
+                      alt="QR Code"
+                      className="w-56 h-auto"
                       />
-                    )}
+                      )}
                   </div>
                 </div>
               )}
@@ -229,7 +227,7 @@ function Modal() {
                   onChange={handleChange}
                   className="bg-gray-600 rounded-md p-0.5 text-npc-light-gray"
                   placeholder="Authentication Code"
-                ></input>
+                  ></input>
               </div>
               <div className="flex justify-end">
                 <button
@@ -237,15 +235,15 @@ function Modal() {
                   id="submit"
                   className={`button relative p-2 ${
                     user?.status2fa
-                      ? "bg-red-500 hover:bg-red-600"
-                      : "bg-blue-500 hover:bg-blue-600"
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-blue-500 hover:bg-blue-600"
                   }  hover:cursor-pointer text-gray-200 w-auto rounded-lg flex items-center transition mb-4`}
                   onClick={() => {
                     handleSubmit();
                     <NavLink to="/setting"></NavLink>;
                     close();
                   }}
-                >
+                  >
                   {user?.status2fa ? "Disable" : "Enable"}
                 </button>
               </div>

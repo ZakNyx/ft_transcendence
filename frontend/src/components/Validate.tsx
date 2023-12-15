@@ -93,8 +93,8 @@ const Validate: React.FC = () => {
         expirationDate.setTime(expirationDate.getTime() +24 * 60 * 60 * 1000); // 24 hours in milliseconds
         const expires = `expires=${expirationDate.toUTCString()}`;
         document.cookie = `2faValidated=true; ${expires}; path=/;`;
-        console.log("2FA validated:", response.data);
         close();
+        // window.location.reload();
       } catch (error: any) {
         if (error.response && error.response.status == 400) {
           Swal.fire({

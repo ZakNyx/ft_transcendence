@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { initializeSocket } from "./socketManager";
 
@@ -74,7 +74,7 @@ function StateChangingButton(props: { username: string }) {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [user]); // Include `username` in the dependency array
+  }, []); // Include `username` in the dependency array
   const handleButtonClick = () => {
     // Toggle between states by using a switch statement
     switch (user?.profilestatus) {
@@ -98,14 +98,14 @@ function StateChangingButton(props: { username: string }) {
   const sendFriendRequest = async () => {
     try {
       const notificationData = {
-        // Customize the notification data as needed
+        sender: jwtUser?.username,
         type: "friendRequest", // You can define your notification types
         data: "You have a new friend request from " + jwtUser?.username,
         reciever: user?.username,
         // Add any other relevant data
       };
       // Emit the "sendNotification" event to the WebSocket server
-      socket.emit("sendNotification", notificationData);
+      await socket.emit("sendNotification", notificationData);
       window.location.reload();
     } catch (error: any) {
       console.error("Error fetching user data:", error);

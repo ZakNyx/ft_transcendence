@@ -1,6 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { initializeSocket } from "./socketManager";
+import {isEqual} from "lodash";
 
 
 interface notifData {
@@ -8,7 +9,7 @@ interface notifData {
 
   reciever: string;
   sender: string;
-  sernderDisplayName:string;
+  sernderdisplayname:string;
   senderPicture: string;
   type: string;
   data:string;
@@ -22,7 +23,7 @@ interface UserData {
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState<notifData[] | null>(null);
-
+  const [newNotifications, setNewNotifications] = useState<notifData[] | null>(null);
   const [jwtUser, setJwtUser] = useState<UserData | null>(null);
 
   useEffect(() => {
@@ -53,7 +54,7 @@ const Notifications = () => {
 
     // Call the fetchUserData function
     fetchUserData();
-  }, [jwtUser]);
+  }, []);
 
   const socket = initializeSocket('');
   useEffect(() => {
@@ -91,54 +92,20 @@ const Notifications = () => {
         const updatedData: notifData[] = [];
 
         for (const user of notifications) {
-          const imageUrl = await fetchUserPicture(user.sender);
-          const displayname = await fetchUserDisplay(user.sender);
-          user.sernderDisplayName = displayname;
-          user.senderPicture = imageUrl;
+          const fetchedUser:any = await fetchUser(user.sender);
+          user.sernderdisplayname = fetchedUser.username;
+          user.senderPicture = fetchedUser.picture;
           updatedData.push(user);
         }
-
-        setNotifications(updatedData);
+          setNewNotifications(updatedData);
       }
     };
 
     if(notifications && notifications.length > 0)
-    updateUserPictures();
+      updateUserPictures();
   }, [notifications]);
 
-  const fetchUserPicture = async (username: string) => {
-    const tokenCookie = document.cookie
-      .split("; ")
-      .find((cookie) => cookie.startsWith("token="));
-
-    try {
-      if (tokenCookie) {
-        const token = tokenCookie.split("=")[1];
-        const response = await axios.get<string>(
-          `http://localhost:3000/profile/ProfilePicture/${username}`,
-          {
-            responseType: "arraybuffer",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const contentType = response.headers["content-type"];
-        const blob = new Blob([response.data], { type: contentType });
-        const imageUrl = URL.createObjectURL(blob);
-
-        return imageUrl;
-      } else {
-        return "URL_OF_PLACEHOLDER_IMAGE";
-      }
-    } catch (error) {
-      console.error("Error fetching user picture:", error);
-      return "URL_OF_PLACEHOLDER_IMAGE";
-    }
-  };
-
-  const fetchUserDisplay = async (username:string) => {
+  const fetchUser = async (username:string) => {
     const tokenCookie = document.cookie
       .split("; ")
       .find((cookie) => cookie.startsWith("token="));
@@ -155,7 +122,7 @@ const Notifications = () => {
           }
         );
 
-        return response.data.displayname;
+        return response.data;
         }
     } catch (error) {
       console.error("Error fetching user displayname", error);
@@ -200,7 +167,7 @@ const cancelFriendRequest = async (user: string) => {
     <div className="text-gray-200 flex justify-center items-center font-montserrat pr-3 pl-3 max-h-screen overflow-y-scroll">
 
       <ul>
-        {notifications && notifications.map((notification, index) => (
+        {newNotifications && newNotifications.map((notification, index) => (
           <li className="" key={index}>
             <div className="items-center flex space-x-3">
               <img
@@ -209,7 +176,7 @@ const cancelFriendRequest = async (user: string) => {
                 alt="User profile picture"
               />
               <p className="max-w-[12rem] break-words text-xs xs:text-xs md:text-xs lg:text-sm">
-                <b>{notification.sernderDisplayName}</b> has sent you a friend request.
+                <b>{notification.sernderdisplayname}</b> has sent you a friend request.
               </p>
               <div className="space-x-2">
                 <button onClick={()=> {acceptRequest(notification.sender)}} className="rounded-md bg-npc-purple hover:bg-purple-hover p-1.5 shadow-md text-xs xs:text-xs md:text-xs lg:text-sm ">

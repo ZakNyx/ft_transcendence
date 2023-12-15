@@ -1,5 +1,4 @@
 import { Body, Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "../prisma/prisma.service";
 import {
   cancelNotificationDTO,
@@ -61,8 +60,9 @@ export class NotificationsService {
       data: {
         sender: sender.username,
         reciever: reciever.username,
-        data: notifBody.data,
         type: notifBody.type,
+        data: notifBody.data,
+
       },
     });
 
@@ -113,6 +113,19 @@ export class NotificationsService {
         type: "friendRequest",
       },
     });
+    const reciever = await this.prismaService.user.findUnique({
+      where: {
+        username: notifBody.reciever,
+      },
+    });
+
+    if (socketsByUser.has(notifBody.reciever)) {
+      for (let i = 0; i < socketsByUser.get(reciever.username).length; i++) {
+        socketsByUser
+          .get(reciever.username)
+          [i].emit("notification");
+      }
+    }
 
   }
 

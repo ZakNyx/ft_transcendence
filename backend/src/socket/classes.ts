@@ -50,6 +50,7 @@ export class Win {
 
 export class Client {
     window: Win;
+    inGame: boolean;
     number: number;
     x: number;
     y: number;
@@ -59,12 +60,16 @@ export class Client {
     height: number;
     thickness: number;
     socket: Socket;
+    username: string;
     id: string;
     token: string;
+    leave: boolean;
+    inQueue: boolean;
     constructor(num: number) {
         this.number = num;
         this.score = 0;
         this.winner = false;
+        this.inGame = false;
         this.paddleSpeed = 35;
         this.x = 0;
         this.y = 250;
@@ -72,6 +77,9 @@ export class Client {
         this.thickness = 13;
         this.id = "";
         this.token = "";
+        this.username = "";
+        this.leave = false;
+        this.inQueue = false;
         this.window = new Win();
     }
 }
@@ -83,6 +91,10 @@ export class Room {
     client1: Client;
     client2: Client;
     game: Game;
+    winner: string;
+    loser: string;
+    isDatabaseUpdated: boolean;
+    setVars: boolean;
     constructor(Rnum: number) {
         this.num = Rnum;
         this.IsFull = false;
@@ -90,5 +102,9 @@ export class Room {
         this.client1 = null;
         this.client2 = null;
         this.ball = null;
+        this.winner = "";
+        this.loser = "";
+        this.isDatabaseUpdated = false;
+        this.setVars = false;
     }
 }
